@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -537,6 +538,278 @@ func Test_GoodResponse(t *testing.T) {
 	//todo: add url #2 and #3
 }
 
+//TestNewPerson testing new person function
+func TestNewPerson(t *testing.T) {
+	person := NewPerson()
+	if reflect.TypeOf(person).String() != "*pipl.Person" {
+		t.Fatal("expected type to be *pipl.Person")
+	}
+}
+
+// TestAddName test adding a name to a person object
+func TestAddName(t *testing.T) {
+	person := NewPerson()
+	person.AddName("clark", "ryan", "kent", "mr", "jr")
+	if len(person.Names) == 0 {
+		t.Fatal("expected a name in this person object")
+	}
+	if person.Names[0].First != "clark" {
+		t.Fatalf("expected value to be clark, got %s", person.Names[0].First)
+	}
+	if person.Names[0].Middle != "ryan" {
+		t.Fatalf("expected value to be ryan, got %s", person.Names[0].Middle)
+	}
+	if person.Names[0].Last != "kent" {
+		t.Fatalf("expected value to be kent, got %s", person.Names[0].Last)
+	}
+	if person.Names[0].Prefix != "mr" {
+		t.Fatalf("expected value to be mr, got %s", person.Names[0].Prefix)
+	}
+	if person.Names[0].Suffix != "jr" {
+		t.Fatalf("expected value to be jr, got %s", person.Names[0].Suffix)
+	}
+}
+
+// TestAddNameRaw test adding a raw name to a person object
+func TestAddNameRaw(t *testing.T) {
+	person := NewPerson()
+	person.AddNameRaw("clark ryan kent")
+	if len(person.Names) == 0 {
+		t.Fatal("expected a name in this person object")
+	}
+	if person.Names[0].Raw != "clark ryan kent" {
+		t.Fatalf("expected value to be clark ryan kent, got %s", person.Names[0].Raw)
+	}
+}
+
+// TestAddEmail test adding an email to a person object
+func TestAddEmail(t *testing.T) {
+	person := NewPerson()
+	person.AddEmail("clarkkent@gmail.com")
+	if len(person.Emails) == 0 {
+		t.Fatal("expected an email in this person object")
+	}
+	if person.Emails[0].Address != "clarkkent@gmail.com" {
+		t.Fatalf("expected value to be clarkkent@gmail.com, got %s", person.Emails[0].Address)
+	}
+}
+
+// TestAddUsername test adding an username to a person object
+func TestAddUsername(t *testing.T) {
+	person := NewPerson()
+	person.AddUsername("clarkkent")
+	if len(person.Usernames) == 0 {
+		t.Fatal("expected a username in this person object")
+	}
+	if person.Usernames[0].Content != "clarkkent" {
+		t.Fatalf("expected value to be clarkkent, got %s", person.Usernames[0].Content)
+	}
+}
+
+// TestAddPhone test adding a phone to a person object
+func TestAddPhone(t *testing.T) {
+	person := NewPerson()
+	person.AddPhone(9785550145, 1)
+	if len(person.Phones) == 0 {
+		t.Fatal("expected a phone in this person object")
+	}
+	if person.Phones[0].Number != 9785550145 {
+		t.Fatalf("expected value to be 9785550145, got %d", person.Phones[0].Number)
+	}
+	if person.Phones[0].CountryCode != 1 {
+		t.Fatalf("expected value to be 1, got %d", person.Phones[0].CountryCode)
+	}
+}
+
+// TestSetGender test setting a gender on a person object
+func TestSetGender(t *testing.T) {
+	person := NewPerson()
+	person.SetGender("male")
+	if person.Gender.Content != "male" {
+		t.Fatalf("expected value to be male, got %s", person.Gender.Content)
+	}
+	person.SetGender("female")
+	if person.Gender.Content != "female" {
+		t.Fatalf("expected value to be female, got %s", person.Gender.Content)
+	}
+
+	// This is a case where gender is NOT male/female
+	person.SetGender("other")
+	if person.Gender.Content != "male" {
+		t.Fatalf("expected value to be male, got %s", person.Gender.Content)
+	}
+}
+
+// TestSetDateOfBirth test setting a DOB on a person object
+func TestSetDateOfBirth(t *testing.T) {
+	person := NewPerson()
+	person.SetDateOfBirth("1987-01-01")
+	if person.DateOfBirth.DateRange.Start != "1987-01-01" {
+		t.Fatalf("expected value to be 1987-01-01, got %s", person.DateOfBirth.DateRange.Start)
+	}
+	if person.DateOfBirth.DateRange.End != "1987-01-01" {
+		t.Fatalf("expected value to be 1987-01-01, got %s", person.DateOfBirth.DateRange.End)
+	}
+}
+
+// TestAddLanguage test adding a language to a person object
+func TestAddLanguage(t *testing.T) {
+	person := NewPerson()
+	person.AddLanguage("en", "US")
+	if len(person.Languages) == 0 {
+		t.Fatal("expected a language in this person object")
+	}
+	if person.Languages[0].Language != "en" {
+		t.Fatalf("expected value to be en, got %s", person.Languages[0].Language)
+	}
+	if person.Languages[0].Region != "US" {
+		t.Fatalf("expected value to be US, got %s", person.Languages[0].Region)
+	}
+}
+
+// TestAddEthnicity test adding a ethnicity to a person object
+func TestAddEthnicity(t *testing.T) {
+	person := NewPerson()
+	person.AddEthnicity("white")
+	if len(person.Ethnicities) == 0 {
+		t.Fatal("expected an ethnicity in this person object")
+	}
+	if person.Ethnicities[0].Content != "white" {
+		t.Fatalf("expected value to be white, got %s", person.Ethnicities[0].Content)
+	}
+}
+
+// TestAddOriginCountry test adding a an origin country to a person object
+func TestAddOriginCountry(t *testing.T) {
+	person := NewPerson()
+	person.AddOriginCountry("US")
+	if len(person.OriginCountries) == 0 {
+		t.Fatal("expected an origin country in this person object")
+	}
+	if person.OriginCountries[0].Country != "US" {
+		t.Fatalf("expected value to be US, got %s", person.OriginCountries[0].Country)
+	}
+}
+
+// TestAddAddress test adding an address to a person object
+func TestAddAddress(t *testing.T) {
+	person := NewPerson()
+	person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+	if len(person.Addresses) == 0 {
+		t.Fatal("expected an address in this person object")
+	}
+	if person.Addresses[0].House != "10" {
+		t.Fatalf("expected value to be 10, got %s", person.Addresses[0].House)
+	}
+	if person.Addresses[0].Street != "Hickory Lane" {
+		t.Fatalf("expected value to be Hickory Lane, got %s", person.Addresses[0].Street)
+	}
+	if person.Addresses[0].Apartment != "1" {
+		t.Fatalf("expected value to be 1, got %s", person.Addresses[0].Apartment)
+	}
+	if person.Addresses[0].City != "Smallville" {
+		t.Fatalf("expected value to be Smallville, got %s", person.Addresses[0].City)
+	}
+	if person.Addresses[0].State != "KS" {
+		t.Fatalf("expected value to be KS, got %s", person.Addresses[0].State)
+	}
+	if person.Addresses[0].Country != "US" {
+		t.Fatalf("expected value to be US, got %s", person.Addresses[0].Country)
+	}
+	if person.Addresses[0].POBox != "123" {
+		t.Fatalf("expected value to be 123, got %s", person.Addresses[0].POBox)
+	}
+}
+
+// TestAddAddressRaw test adding a an address to a person object
+func TestAddAddressRaw(t *testing.T) {
+	person := NewPerson()
+	person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
+	if len(person.Addresses) == 0 {
+		t.Fatal("expected an address in this person object")
+	}
+	if person.Addresses[0].Raw != "10 Hickory Lane, Kansas, USA" {
+		t.Fatalf("expected value to be 10 Hickory Lane, Kansas, USA, got %s", person.Addresses[0].Raw)
+	}
+}
+
+// TestAddJob test adding a job to a person object
+func TestAddJob(t *testing.T) {
+	person := NewPerson()
+	person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+	if len(person.Jobs) == 0 {
+		t.Fatal("expected a job in this person object")
+	}
+	if person.Jobs[0].Title != "reporter" {
+		t.Fatalf("expected value to be reporter, got %s", person.Jobs[0].Title)
+	}
+	if person.Jobs[0].Organization != "daily post" {
+		t.Fatalf("expected value to be daily post, got %s", person.Jobs[0].Organization)
+	}
+	if person.Jobs[0].Industry != "news" {
+		t.Fatalf("expected value to be news, got %s", person.Jobs[0].Industry)
+	}
+	if person.Jobs[0].DateRange.Start != "2010-01-01" {
+		t.Fatalf("expected value to be 2010-01-01, got %s", person.Jobs[0].DateRange.Start)
+	}
+	if person.Jobs[0].DateRange.End != "2011-01-01" {
+		t.Fatalf("expected value to be 2011-01-01, got %s", person.Jobs[0].DateRange.End)
+	}
+}
+
+// TestAddEducation test adding a an education to a person object
+func TestAddEducation(t *testing.T) {
+	person := NewPerson()
+	person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+	if len(person.Educations) == 0 {
+		t.Fatal("expected an education in this person object")
+	}
+	if person.Educations[0].Degree != "masters" {
+		t.Fatalf("expected value to be masters, got %s", person.Educations[0].Degree)
+	}
+	if person.Educations[0].School != "fau" {
+		t.Fatalf("expected value to be fau, got %s", person.Educations[0].School)
+	}
+	if person.Educations[0].DateRange.Start != "2010-01-01" {
+		t.Fatalf("expected value to be 2010-01-01, got %s", person.Educations[0].DateRange.Start)
+	}
+	if person.Educations[0].DateRange.End != "2011-01-01" {
+		t.Fatalf("expected value to be 2011-01-01, got %s", person.Educations[0].DateRange.End)
+	}
+}
+
+// TestAddUserID test adding a user id to a person object
+func TestAddUserID(t *testing.T) {
+	person := NewPerson()
+	person.AddUserID("clarkkent")
+	if len(person.UserIDs) == 0 {
+		t.Fatal("expected a user id in this person object")
+	}
+	if person.UserIDs[0].Content != "clarkkent" {
+		t.Fatalf("expected value to be clarkkent, got %s", person.UserIDs[0].Content)
+	}
+}
+
+// TestAddURL test adding a url to a person object
+func TestAddURL(t *testing.T) {
+	person := NewPerson()
+	person.AddURL("https://twitter.com/clarkkent")
+	if len(person.URLs) == 0 {
+		t.Fatal("expected a url in this person object")
+	}
+	if person.URLs[0].URL != "https://twitter.com/clarkkent" {
+		t.Fatalf("expected value to be https://twitter.com/clarkkent, got %s", person.URLs[0].URL)
+	}
+}
+
+//todo: test AddRelationship()
+
+//todo: test meetsMinimumCriteria()
+
+//todo: test SearchByPerson()
+
+//todo: test SearchByPointer()
+
 // TestLiveSearch tests a live search using a real API key
 func TestLiveSearch(t *testing.T) {
 	// Skip tis test in short mode (not needed)
@@ -568,7 +841,6 @@ func TestLiveSearch(t *testing.T) {
 	// Launch the search (if you don't meet the minimum search criteria, an error
 	// should be returned to you here stating such).
 	results, err := client.SearchByPerson(searchObject)
-	// Handle errors better than I do pls
 	if err != nil {
 		t.Fatal(err)
 	}
