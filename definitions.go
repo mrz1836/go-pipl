@@ -251,6 +251,7 @@ type Person struct {
 	Ethnicities     []Ethnicity     `json:"ethnicities,omitempty"`
 	Gender          *Gender         `json:"gender,omitempty"`
 	ID              GUID            `json:"@id,omitempty"`
+	Images          []Image         `json:"images,omitempty"`
 	Inferred        bool            `json:"@inferred,omitempty"`
 	Jobs            []Job           `json:"jobs,omitempty"`
 	Languages       []Language      `json:"languages,omitempty"`
