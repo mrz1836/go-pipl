@@ -122,21 +122,21 @@ type SearchParameters struct {
 // For more information:
 // https://docs.pipl.com/reference#configuration-parameters
 func NewClient(APIKey string) (client *Client) {
-	piplClient := new(Client)
-	piplClient.HTTPClient = new(http.Client)
-	piplClient.SearchParameters = new(SearchParameters)
-	piplClient.SearchParameters.APIKey = APIKey
-	//piplClient.SearchParameters.HideSponsored = false
-	piplClient.SearchParameters.HideSponsored = true
-	piplClient.SearchParameters.InferPersons = false
-	piplClient.SearchParameters.LiveFeeds = true
-	piplClient.SearchParameters.MatchRequirements = MatchRequirementsNone
-	piplClient.SearchParameters.MinimumMatch = MinimumMatch
-	piplClient.SearchParameters.MinimumProbability = MinimumProbability
-	piplClient.SearchParameters.ShowSources = ShowSourcesAll
-	//piplClient.SearchParameters.ShowSources = ShowSourcesNone
-	piplClient.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
-	return piplClient
+	client = new(Client)
+	client.HTTPClient = new(http.Client)
+	client.SearchParameters = new(SearchParameters)
+	client.SearchParameters.APIKey = APIKey
+	//client.SearchParameters.HideSponsored = false
+	client.SearchParameters.HideSponsored = true
+	client.SearchParameters.InferPersons = false
+	client.SearchParameters.LiveFeeds = true
+	client.SearchParameters.MatchRequirements = MatchRequirementsNone
+	client.SearchParameters.MinimumMatch = MinimumMatch
+	client.SearchParameters.MinimumProbability = MinimumProbability
+	client.SearchParameters.ShowSources = ShowSourcesAll
+	//client.SearchParameters.ShowSources = ShowSourcesNone
+	client.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
+	return
 }
 
 // meetsMinimumCriteria is used internally by SearchByPerson to do some very
@@ -198,21 +198,21 @@ func meetsMinimumCriteria(searchObject *Person) bool {
 // results in the form of a Response struct. If successful, the response struct
 // will contains the results, and err will be nil. If an error occurs, the struct pointer
 // will be nil and you should check err for additional information.
-func (searchClient *Client) SearchByPerson(searchObject *Person) (response *Response, err error) {
+func (client *Client) SearchByPerson(searchObject *Person) (response *Response, err error) {
 	if !meetsMinimumCriteria(searchObject) {
 		return nil, &ErrInsufficientSearch{}
 	}
 	postData := url.Values{}
-	postData.Add("key", searchClient.SearchParameters.APIKey)
+	postData.Add("key", client.SearchParameters.APIKey)
 
-	if searchClient.SearchParameters.ShowSources != ShowSourcesNone {
-		postData.Add("show_sources", string(searchClient.SearchParameters.ShowSources))
+	if client.SearchParameters.ShowSources != ShowSourcesNone {
+		postData.Add("show_sources", string(client.SearchParameters.ShowSources))
 	}
-	if searchClient.SearchParameters.MatchRequirements != MatchRequirementsNone {
-		postData.Add("match_requirements", string(searchClient.SearchParameters.MatchRequirements))
+	if client.SearchParameters.MatchRequirements != MatchRequirementsNone {
+		postData.Add("match_requirements", string(client.SearchParameters.MatchRequirements))
 	}
-	if searchClient.SearchParameters.SourceCategoryRequirements != SourceCategoryRequirementsNone {
-		postData.Add("source_category_requirements", string(searchClient.SearchParameters.SourceCategoryRequirements))
+	if client.SearchParameters.SourceCategoryRequirements != SourceCategoryRequirementsNone {
+		postData.Add("source_category_requirements", string(client.SearchParameters.SourceCategoryRequirements))
 	}
 	var personJSON []byte
 	personJSON, err = json.Marshal(searchObject)
@@ -227,28 +227,25 @@ func (searchClient *Client) SearchByPerson(searchObject *Person) (response *Resp
 	}
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	var resp *http.Response
-	resp, err = searchClient.HTTPClient.Do(request)
+	resp, err = client.HTTPClient.Do(request)
 	if err != nil {
 		return
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 	response = new(Response)
 	err = json.Unmarshal(body, response)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
-func (searchClient *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
+func (client *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
 	postData := url.Values{}
-	postData.Add("key", searchClient.SearchParameters.APIKey)
+	postData.Add("key", client.SearchParameters.APIKey)
 	postData.Add("search_pointer", searchPointer)
 	var request *http.Request
 	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
@@ -257,7 +254,7 @@ func (searchClient *Client) SearchByPointer(searchPointer string) (person *Perso
 	}
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	var response *http.Response
-	response, err = searchClient.HTTPClient.Do(request)
+	response, err = client.HTTPClient.Do(request)
 	if err != nil {
 		return
 	}

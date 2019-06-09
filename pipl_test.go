@@ -1065,6 +1065,36 @@ func BenchmarkAddURL(b *testing.B) {
 	}
 }
 
+// TestNewClient test new client
+func TestNewClient(t *testing.T) {
+	client := NewClient("1234567890")
+	if client.SearchParameters.APIKey != "1234567890" {
+		t.Fatalf("expected value 1234567890, got %s", client.SearchParameters.APIKey)
+	}
+	if client.SearchParameters.MinimumMatch != MinimumMatch {
+		t.Fatalf("expected value %f, got %f", MinimumMatch, client.SearchParameters.MinimumMatch)
+	}
+	if client.SearchParameters.MinimumProbability != MinimumProbability {
+		t.Fatalf("expected value %f, got %f", MinimumProbability, client.SearchParameters.MinimumProbability)
+	}
+
+	//todo: test changing these values in the SearchParameters
+}
+
+//ExampleNewClient example using NewClient()
+func ExampleNewClient() {
+	client := NewClient("1234567890")
+	fmt.Println(client.SearchParameters.APIKey)
+	// Output:1234567890
+}
+
+// BenchmarkNewClient benchmarks the NewClient method
+func BenchmarkNewClient(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = NewClient("1234567890")
+	}
+}
+
 //todo: test AddRelationship()
 
 //todo: test meetsMinimumCriteria()
@@ -1073,8 +1103,11 @@ func BenchmarkAddURL(b *testing.B) {
 
 //todo: test SearchByPointer()
 
-// TestLiveSearch tests a live search using a real API key
-func TestLiveSearch(t *testing.T) {
+//======================================================================================================================
+// Full Integration Tests (-test.short to skip)
+
+// TestLiveSearchByPerson tests a live search using a real API key
+func TestLiveSearchByPerson(t *testing.T) {
 	// Skip tis test in short mode (not needed)
 	if testing.Short() {
 		t.Skip("skipping testing in short mode")
