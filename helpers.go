@@ -216,7 +216,7 @@ func NewPerson() *Person {
 }
 
 // AddName adds a name to the search object. For well defined names. Omit unused fields.
-func (searchObject *Person) AddName(firstName string, middleName string, lastName string, prefix string, suffix string) {
+func (searchObject *Person) AddName(firstName, middleName, lastName, prefix, suffix string) {
 	newName := new(Name)
 	newName.First = firstName
 	newName.Middle = middleName
@@ -274,7 +274,7 @@ func (searchObject *Person) SetDateOfBirth(dob string) {
 // AddLanguage appends a language to the specified search object.
 // Language is a 2 character language code (e.g. "en")
 // Region  is a country code (e.g "US")
-func (searchObject *Person) AddLanguage(languageCode string, regionCode string) {
+func (searchObject *Person) AddLanguage(languageCode, regionCode string) {
 	newLanguage := new(Language)
 	newLanguage.Language = languageCode
 	newLanguage.Region = regionCode
@@ -296,7 +296,7 @@ func (searchObject *Person) AddOriginCountry(countryCode string) {
 }
 
 // AddAddress appends an address to the specified search object
-func (searchObject *Person) AddAddress(house string, street string, apartment string, city string, state string, country string, poBox string) {
+func (searchObject *Person) AddAddress(house, street, apartment, city, state, country, poBox string) {
 	newAddress := new(Address)
 	newAddress.House = house
 	newAddress.Street = street
@@ -317,7 +317,7 @@ func (searchObject *Person) AddAddressRaw(fullAddress string) {
 }
 
 // AddJob appends a job entry to the specified search object
-func (searchObject *Person) AddJob(title string, organization string, industry string, dateRangeStart string, dateRangeEnd string) {
+func (searchObject *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) {
 	newJob := new(Job)
 	newJob.Title = title
 	newJob.Organization = organization
@@ -328,7 +328,7 @@ func (searchObject *Person) AddJob(title string, organization string, industry s
 }
 
 // AddEducation appends an education entry to the specified search object
-func (searchObject *Person) AddEducation(degree string, school string, dateRangeStart string, dateRangeEnd string) {
+func (searchObject *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) {
 	newEducation := new(Education)
 	newEducation.Degree = degree
 	newEducation.School = school
