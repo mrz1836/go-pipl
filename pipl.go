@@ -43,6 +43,24 @@ const (
 	// MatchRequirementsNone specifies that we don't have any match requirements for this search
 	MatchRequirementsNone MatchRequirements = ""
 
+	// MatchRequirementsEmail specifies that we want to match on this field
+	MatchRequirementsEmail MatchRequirements = "email"
+
+	// MatchRequirementsPhone specifies that we want to match on this field
+	MatchRequirementsPhone MatchRequirements = "phone"
+
+	// MatchRequirementsEmailAndPhone specifies that we want to match on this field
+	MatchRequirementsEmailAndPhone MatchRequirements = "email and phone"
+
+	// MatchRequirementsEmailAndName specifies that we want to match on this field
+	MatchRequirementsEmailAndName MatchRequirements = "email and name"
+
+	// MatchRequirementsEmailOrPhone specifies that we want to match on this field
+	MatchRequirementsEmailOrPhone MatchRequirements = "email or phone"
+
+	//todo: finish adding match criteria - also make this flexible and easier to use
+	// https://docs.pipl.com/reference#match-criteria
+
 	// MinimumProbability is the score for probability
 	MinimumProbability = 0.9
 
@@ -51,6 +69,9 @@ const (
 
 	// SourceCategoryRequirementsNone specifies that we don't require any specific sources in our results.
 	SourceCategoryRequirementsNone SourceCategoryRequirements = ""
+
+	// SourceCategoryRequirementsProfessionalAndBusiness is used for: match_requirements=(emails and jobs)
+	SourceCategoryRequirementsProfessionalAndBusiness SourceCategoryRequirements = "professional_and_business"
 )
 
 // Client holds client configuration settings
@@ -105,13 +126,15 @@ func NewClient(APIKey string) (client *Client) {
 	piplClient.HTTPClient = new(http.Client)
 	piplClient.SearchParameters = new(SearchParameters)
 	piplClient.SearchParameters.APIKey = APIKey
-	piplClient.SearchParameters.HideSponsored = false
+	//piplClient.SearchParameters.HideSponsored = false
+	piplClient.SearchParameters.HideSponsored = true
 	piplClient.SearchParameters.InferPersons = false
 	piplClient.SearchParameters.LiveFeeds = true
 	piplClient.SearchParameters.MatchRequirements = MatchRequirementsNone
 	piplClient.SearchParameters.MinimumMatch = MinimumMatch
 	piplClient.SearchParameters.MinimumProbability = MinimumProbability
-	piplClient.SearchParameters.ShowSources = ShowSourcesNone
+	piplClient.SearchParameters.ShowSources = ShowSourcesAll
+	//piplClient.SearchParameters.ShowSources = ShowSourcesNone
 	piplClient.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
 	return piplClient
 }
