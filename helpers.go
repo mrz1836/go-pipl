@@ -16,18 +16,18 @@ func (err *ErrInsufficientSearch) Error() string {
 }
 
 // Summarize returns a string summary of the attributes of a person object
-func (searchObject Person) Summarize() (response string, err error) {
+func (p Person) Summarize() (response string, err error) {
 	builder := strings.Builder{}
-	_, err = builder.WriteString(fmt.Sprintf("Match Confidence: %.f%%\n", searchObject.Match*100))
+	_, err = builder.WriteString(fmt.Sprintf("Match Confidence: %.f%%\n", p.Match*100))
 	if err != nil {
 		return
 	}
-	if len(searchObject.Names) > 0 {
+	if len(p.Names) > 0 {
 		_, err = builder.WriteString("Names:\n")
 		if err != nil {
 			return
 		}
-		for _, name := range searchObject.Names {
+		for _, name := range p.Names {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s %s %s\n", name.First, name.Middle, name.Last))
 			if err != nil {
 				return
@@ -35,12 +35,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Emails) > 0 {
+	if len(p.Emails) > 0 {
 		_, err = builder.WriteString("Email Addresses:\n")
 		if err != nil {
 			return
 		}
-		for _, email := range searchObject.Emails {
+		for _, email := range p.Emails {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", email.Address))
 			if err != nil {
 				return
@@ -48,12 +48,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Usernames) > 0 {
+	if len(p.Usernames) > 0 {
 		_, err = builder.WriteString("Usernames:\n")
 		if err != nil {
 			return
 		}
-		for _, username := range searchObject.Usernames {
+		for _, username := range p.Usernames {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", username.Content))
 			if err != nil {
 				return
@@ -61,12 +61,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Phones) > 0 {
+	if len(p.Phones) > 0 {
 		_, err = builder.WriteString("Phone Numbers:\n")
 		if err != nil {
 			return
 		}
-		for _, phone := range searchObject.Phones {
+		for _, phone := range p.Phones {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", phone.Display))
 			if err != nil {
 				return
@@ -74,26 +74,26 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if searchObject.Gender != nil {
-		_, err = builder.WriteString(fmt.Sprintf("Gender:\n\t%s\n", searchObject.Gender.Content))
+	if p.Gender != nil {
+		_, err = builder.WriteString(fmt.Sprintf("Gender:\n\t%s\n", p.Gender.Content))
 		if err != nil {
 			return
 		}
 	}
 
-	if searchObject.DateOfBirth != nil {
-		_, err = builder.WriteString(fmt.Sprintf("Date of Birth:\n\t%s\n", searchObject.DateOfBirth.Display))
+	if p.DateOfBirth != nil {
+		_, err = builder.WriteString(fmt.Sprintf("Date of Birth:\n\t%s\n", p.DateOfBirth.Display))
 		if err != nil {
 			return
 		}
 	}
 
-	if len(searchObject.Languages) > 0 {
+	if len(p.Languages) > 0 {
 		_, err = builder.WriteString("Languages:\n")
 		if err != nil {
 			return
 		}
-		for _, language := range searchObject.Languages {
+		for _, language := range p.Languages {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", language.Display))
 			if err != nil {
 				return
@@ -101,12 +101,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Ethnicities) > 0 {
+	if len(p.Ethnicities) > 0 {
 		_, err = builder.WriteString("Ethnicities:\n")
 		if err != nil {
 			return
 		}
-		for _, ethnicity := range searchObject.Ethnicities {
+		for _, ethnicity := range p.Ethnicities {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", ethnicity.Content))
 			if err != nil {
 				return
@@ -114,12 +114,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.OriginCountries) > 0 {
+	if len(p.OriginCountries) > 0 {
 		_, err = builder.WriteString("Origin Countries:\n")
 		if err != nil {
 			return
 		}
-		for _, originCountry := range searchObject.OriginCountries {
+		for _, originCountry := range p.OriginCountries {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", originCountry.Country))
 			if err != nil {
 				return
@@ -127,12 +127,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Addresses) > 0 {
+	if len(p.Addresses) > 0 {
 		_, err = builder.WriteString("Addresses:\n")
 		if err != nil {
 			return
 		}
-		for _, address := range searchObject.Addresses {
+		for _, address := range p.Addresses {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", address.Display))
 			if err != nil {
 				return
@@ -140,12 +140,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Jobs) > 0 {
+	if len(p.Jobs) > 0 {
 		_, err = builder.WriteString("Jobs:\n")
 		if err != nil {
 			return
 		}
-		for _, job := range searchObject.Jobs {
+		for _, job := range p.Jobs {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", job.Display))
 			if err != nil {
 				return
@@ -153,12 +153,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Educations) > 0 {
+	if len(p.Educations) > 0 {
 		_, err = builder.WriteString("Education:\n")
 		if err != nil {
 			return
 		}
-		for _, education := range searchObject.Educations {
+		for _, education := range p.Educations {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", education.Display))
 			if err != nil {
 				return
@@ -166,12 +166,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.Relationships) > 0 {
+	if len(p.Relationships) > 0 {
 		_, err = builder.WriteString("Relationships:\n")
 		if err != nil {
 			return
 		}
-		for _, relation := range searchObject.Relationships {
+		for _, relation := range p.Relationships {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s (%s, %s)\n", relation.Names[0].Display, relation.Type, relation.Subtype))
 			if err != nil {
 				return
@@ -179,12 +179,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.UserIDs) > 0 {
+	if len(p.UserIDs) > 0 {
 		_, err = builder.WriteString("User IDs:\n")
 		if err != nil {
 			return
 		}
-		for _, id := range searchObject.UserIDs {
+		for _, id := range p.UserIDs {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", id.Content))
 			if err != nil {
 				return
@@ -192,12 +192,12 @@ func (searchObject Person) Summarize() (response string, err error) {
 		}
 	}
 
-	if len(searchObject.URLs) > 0 {
+	if len(p.URLs) > 0 {
 		_, err = builder.WriteString("Related URLs:\n")
 		if err != nil {
 			return
 		}
-		for _, url := range searchObject.URLs {
+		for _, url := range p.URLs {
 			_, err = builder.WriteString(fmt.Sprintf("\t%s\n", url.URL))
 			if err != nil {
 				return
@@ -216,7 +216,7 @@ func NewPerson() *Person {
 }
 
 // AddName adds a name to the search object. For well defined names. Omit unused fields.
-func (searchObject *Person) AddName(firstName, middleName, lastName, prefix, suffix string) {
+func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string) {
 	//todo: add min/max validation
 	newName := new(Name)
 	newName.First = firstName
@@ -224,101 +224,101 @@ func (searchObject *Person) AddName(firstName, middleName, lastName, prefix, suf
 	newName.Last = lastName
 	newName.Prefix = prefix
 	newName.Suffix = suffix
-	searchObject.Names = append(searchObject.Names, *newName)
+	p.Names = append(p.Names, *newName)
 }
 
 // AddNameRaw can be used when you're unsure how to handle breaking down the name in
 // question into its constituent parts. Basically, let Pipl handle parsing it.
-func (searchObject *Person) AddNameRaw(fullName string) {
+func (p *Person) AddNameRaw(fullName string) {
 	//todo: add min/max validation
 	newName := new(Name)
 	newName.Raw = fullName
-	searchObject.Names = append(searchObject.Names, *newName)
+	p.Names = append(p.Names, *newName)
 }
 
 // AddEmail appends an email address to the specified search object
-func (searchObject *Person) AddEmail(emailAddress string) {
+func (p *Person) AddEmail(emailAddress string) {
 	//todo: add min/max validation
 	//todo: add email validation
 	newEmail := new(Email)
 	newEmail.Address = emailAddress
-	searchObject.Emails = append(searchObject.Emails, *newEmail)
+	p.Emails = append(p.Emails, *newEmail)
 }
 
 // AddUsername appends a username to the specified search object
-func (searchObject *Person) AddUsername(username string) {
+func (p *Person) AddUsername(username string) {
 	//todo: add min/max validation
 	newUsername := new(Username)
 	newUsername.Content = username
-	searchObject.Usernames = append(searchObject.Usernames, *newUsername)
+	p.Usernames = append(p.Usernames, *newUsername)
 }
 
 // AddPhone appends a phone to the specified search object
-func (searchObject *Person) AddPhone(phoneNumber, countryCode int) {
+func (p *Person) AddPhone(phoneNumber, countryCode int) {
 	//todo: add min/max validation
 	newPhone := new(Phone)
 	newPhone.Number = phoneNumber
 	if countryCode > 0 {
 		newPhone.CountryCode = countryCode
 	}
-	searchObject.Phones = append(searchObject.Phones, *newPhone)
+	p.Phones = append(p.Phones, *newPhone)
 }
 
 // SetGender sets the gender of the specified search object
-func (searchObject *Person) SetGender(gender string) {
+func (p *Person) SetGender(gender string) {
 	if gender != "male" && gender != "female" {
 		gender = "male"
 		//todo: return an error?
 	}
 	newGender := new(Gender)
 	newGender.Content = gender
-	searchObject.Gender = newGender
+	p.Gender = newGender
 }
 
 // SetDateOfBirth sets the DOB of the specified search object
 // DOB string format: "YYYY-MM-DD"
-func (searchObject *Person) SetDateOfBirth(dob string) {
+func (p *Person) SetDateOfBirth(dob string) {
 	//todo: add validation to the DOB (yyyy-mm-dd)
 	//todo: test date compared to today (cannot be future date)
 	newDOB := new(DateOfBirth)
 	newDOB.DateRange.Start = dob
 	newDOB.DateRange.End = dob
-	searchObject.DateOfBirth = newDOB
+	p.DateOfBirth = newDOB
 }
 
 // AddLanguage appends a language to the specified search object.
 // Language is a 2 character language code (e.g. "en")
 // Region  is a country code (e.g "US")
-func (searchObject *Person) AddLanguage(languageCode, regionCode string) {
+func (p *Person) AddLanguage(languageCode, regionCode string) {
 	//todo: add min/max validation
 	//todo: validate accepted languages and regions
 	//todo: for the case of the characters? (uppercase)
 	newLanguage := new(Language)
 	newLanguage.Language = languageCode
 	newLanguage.Region = regionCode
-	searchObject.Languages = append(searchObject.Languages, *newLanguage)
+	p.Languages = append(p.Languages, *newLanguage)
 }
 
 // AddEthnicity appends an ethnicity to the specified search object
-func (searchObject *Person) AddEthnicity(ethnicity string) {
+func (p *Person) AddEthnicity(ethnicity string) {
 	//todo: add min/max validation
 	//todo: accepted list of ethnicities?
 	newEthnicity := new(Ethnicity)
 	newEthnicity.Content = ethnicity
-	searchObject.Ethnicities = append(searchObject.Ethnicities, *newEthnicity)
+	p.Ethnicities = append(p.Ethnicities, *newEthnicity)
 }
 
 // AddOriginCountry appends an origin country to the specified search object
-func (searchObject *Person) AddOriginCountry(countryCode string) {
+func (p *Person) AddOriginCountry(countryCode string) {
 	//todo: add min/max validation
 	//todo: accepted list of countries?
 	newCountry := new(OriginCountry)
 	newCountry.Country = countryCode
-	searchObject.OriginCountries = append(searchObject.OriginCountries, *newCountry)
+	p.OriginCountries = append(p.OriginCountries, *newCountry)
 }
 
 // AddAddress appends an address to the specified search object
-func (searchObject *Person) AddAddress(house, street, apartment, city, state, country, poBox string) {
+func (p *Person) AddAddress(house, street, apartment, city, state, country, poBox string) {
 	//todo: add min/max validation
 	//todo: validation on city/state/country?
 	newAddress := new(Address)
@@ -329,20 +329,20 @@ func (searchObject *Person) AddAddress(house, street, apartment, city, state, co
 	newAddress.State = state
 	newAddress.Country = country
 	newAddress.POBox = poBox
-	searchObject.Addresses = append(searchObject.Addresses, *newAddress)
+	p.Addresses = append(p.Addresses, *newAddress)
 }
 
 // AddAddressRaw can be used when many of the address parts are missing, or
 // you're unsure how to split it up. Let Pipl handle parsing.
-func (searchObject *Person) AddAddressRaw(fullAddress string) {
+func (p *Person) AddAddressRaw(fullAddress string) {
 	//todo: add min/max validation
 	newAddress := new(Address)
 	newAddress.Raw = fullAddress
-	searchObject.Addresses = append(searchObject.Addresses, *newAddress)
+	p.Addresses = append(p.Addresses, *newAddress)
 }
 
 // AddJob appends a job entry to the specified search object
-func (searchObject *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) {
+func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) {
 	//todo: add min/max validation
 	//todo: same test for dates (like DOB)
 	newJob := new(Job)
@@ -351,11 +351,11 @@ func (searchObject *Person) AddJob(title, organization, industry, dateRangeStart
 	newJob.Industry = industry
 	newJob.DateRange.Start = dateRangeStart
 	newJob.DateRange.End = dateRangeEnd
-	searchObject.Jobs = append(searchObject.Jobs, *newJob)
+	p.Jobs = append(p.Jobs, *newJob)
 }
 
 // AddEducation appends an education entry to the specified search object
-func (searchObject *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) {
+func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) {
 	//todo: add min/max validation
 	//todo: same test for dates (like DOB)
 	newEducation := new(Education)
@@ -363,27 +363,27 @@ func (searchObject *Person) AddEducation(degree, school, dateRangeStart, dateRan
 	newEducation.School = school
 	newEducation.DateRange.Start = dateRangeStart
 	newEducation.DateRange.End = dateRangeEnd
-	searchObject.Educations = append(searchObject.Educations, *newEducation)
+	p.Educations = append(p.Educations, *newEducation)
 }
 
 // AddUserID appends a user ID to the specified search object
-func (searchObject *Person) AddUserID(userID string) {
+func (p *Person) AddUserID(userID string) {
 	//todo: add min/max validation
 	newUserID := new(UserID)
 	newUserID.Content = userID
-	searchObject.UserIDs = append(searchObject.UserIDs, *newUserID)
+	p.UserIDs = append(p.UserIDs, *newUserID)
 }
 
 // AddURL appends a URL to the specified search object
-func (searchObject *Person) AddURL(url string) {
+func (p *Person) AddURL(url string) {
 	//todo: add min/max validation
 	//todo: validate basic url requirements
 	newURL := new(URL)
 	newURL.URL = url
-	searchObject.URLs = append(searchObject.URLs, *newURL)
+	p.URLs = append(p.URLs, *newURL)
 }
 
 // AddRelationship appends a relationship entry to the specified search object
-func (searchObject *Person) AddRelationship(relationship Relationship) {
-	searchObject.Relationships = append(searchObject.Relationships, relationship)
+func (p *Person) AddRelationship(relationship Relationship) {
+	p.Relationships = append(p.Relationships, relationship)
 }
