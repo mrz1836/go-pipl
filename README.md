@@ -29,9 +29,17 @@ You can view the generated [documentation here](https://godoc.org/github.com/mrz
 
 ## Examples & Tests
 All unit tests and [examples](https://github.com/mrz1836/go-pipl/blob/master/pipl_test.go) run via [Travis CI](https://travis-ci.com/mrz1836/go-pipl) and uses [Go version 1.12.x](https://golang.org/doc/go1.12). View the [deployment configuration file](https://github.com/mrz1836/go-pipl/blob/master/.travis.yml).
+
+Run all tests (including integration tests)
 ```bash
 $ cd ../go-pipl
 $ go test ./... -v
+```
+
+Run tests (excluding integration tests)
+```bash
+$ cd ../go-pipl
+$ go test ./... -v -test.short
 ```
 
 ## Benchmarks
@@ -69,20 +77,19 @@ func main() {
     client.SearchParameters.MatchRequirements = "name and phone"
 
     // Create a new person
-    searchObject := pipl.NewPerson()
+    search := pipl.NewPerson()
 
     // Search by username
-    searchObject.AddUsername("@jeffbezos")
+    search.AddUsername("@jeffbezos")
 
     // Submit the search
-    results, err := client.SearchByPerson(searchObject)
+    response, err := client.SearchByPerson(search)
     if err != nil {
-        log.Println(err)
-        os.Exit(1)
+        log.Fatalln(err)
     }
 
-    // Show the results
-    fmt.Println(results.Person.Names[0].Display)
+    // Show the response
+    fmt.Println(response.Person.Names[0].Display)
     // Output: Jeff Preston Bezos
 }
 ```
