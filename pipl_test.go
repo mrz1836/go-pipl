@@ -1104,7 +1104,7 @@ func BenchmarkNewClient(b *testing.B) {
 //todo: test SearchByPointer()
 
 //======================================================================================================================
-// Full Integration Tests (-test.short to skip)
+// Full Pipl Integration Tests (-test.short to skip)
 
 // TestLiveSearchByPerson tests a live search using a real API key
 func TestLiveSearchByPerson(t *testing.T) {
