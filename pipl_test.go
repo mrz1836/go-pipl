@@ -538,11 +538,18 @@ func Test_GoodResponse(t *testing.T) {
 	//todo: add url #2 and #3
 }
 
-//TestNewPerson testing new person function
+// TestNewPerson testing new person function
 func TestNewPerson(t *testing.T) {
 	person := NewPerson()
 	if reflect.TypeOf(person).String() != "*pipl.Person" {
 		t.Fatal("expected type to be *pipl.Person")
+	}
+}
+
+// BenchmarkNewPerson benchmarks the NewPerson method
+func BenchmarkNewPerson(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = NewPerson()
 	}
 }
 
@@ -570,6 +577,22 @@ func TestAddName(t *testing.T) {
 	}
 }
 
+//ExampleAddName example using AddName()
+func ExampleAddName() {
+	person := NewPerson()
+	person.AddName("clark", "ryan", "kent", "mr", "jr")
+	fmt.Println(person.Names[0].First + " " + person.Names[0].Last)
+	// Output: clark kent
+}
+
+// BenchmarkAddName benchmarks the AddName method
+func BenchmarkAddName(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddName("clark", "ryan", "kent", "mr", "jr")
+	}
+}
+
 // TestAddNameRaw test adding a raw name to a person object
 func TestAddNameRaw(t *testing.T) {
 	person := NewPerson()
@@ -579,6 +602,22 @@ func TestAddNameRaw(t *testing.T) {
 	}
 	if person.Names[0].Raw != "clark ryan kent" {
 		t.Fatalf("expected value to be clark ryan kent, got %s", person.Names[0].Raw)
+	}
+}
+
+//ExampleAddNameRaw example using AddNameRaw()
+func ExampleAddNameRaw() {
+	person := NewPerson()
+	person.AddNameRaw("clark kent")
+	fmt.Println(person.Names[0].Raw)
+	// Output: clark kent
+}
+
+// BenchmarkAddNameRaw benchmarks the AddNameRaw method
+func BenchmarkAddNameRaw(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddNameRaw("clark ryan kent")
 	}
 }
 
@@ -594,6 +633,22 @@ func TestAddEmail(t *testing.T) {
 	}
 }
 
+//ExampleAddEmail example using AddEmail()
+func ExampleAddEmail() {
+	person := NewPerson()
+	person.AddEmail("clarkkent@gmail.com")
+	fmt.Println(person.Emails[0].Address)
+	// Output:clarkkent@gmail.com
+}
+
+// BenchmarkAddEmail benchmarks the AddEmail method
+func BenchmarkAddEmail(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddEmail("clarkkent@gmail.com")
+	}
+}
+
 // TestAddUsername test adding an username to a person object
 func TestAddUsername(t *testing.T) {
 	person := NewPerson()
@@ -603,6 +658,22 @@ func TestAddUsername(t *testing.T) {
 	}
 	if person.Usernames[0].Content != "clarkkent" {
 		t.Fatalf("expected value to be clarkkent, got %s", person.Usernames[0].Content)
+	}
+}
+
+//ExampleAddUsername example using AddUsername()
+func ExampleAddUsername() {
+	person := NewPerson()
+	person.AddUsername("clarkkent")
+	fmt.Println(person.Usernames[0].Content)
+	// Output:clarkkent
+}
+
+// BenchmarkAddUsername benchmarks the AddUsername method
+func BenchmarkAddUsername(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddUsername("clarkkent")
 	}
 }
 
@@ -618,6 +689,22 @@ func TestAddPhone(t *testing.T) {
 	}
 	if person.Phones[0].CountryCode != 1 {
 		t.Fatalf("expected value to be 1, got %d", person.Phones[0].CountryCode)
+	}
+}
+
+//ExampleAddPhone example using AddPhone()
+func ExampleAddPhone() {
+	person := NewPerson()
+	person.AddPhone(9785550145, 1)
+	fmt.Println(person.Phones[0].Number)
+	// Output:9785550145
+}
+
+// BenchmarkAddPhone benchmarks the AddPhone method
+func BenchmarkAddPhone(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddPhone(9785550145, 1)
 	}
 }
 
@@ -640,6 +727,22 @@ func TestSetGender(t *testing.T) {
 	}
 }
 
+//ExampleSetGender example using SetGender()
+func ExampleSetGender() {
+	person := NewPerson()
+	person.SetGender("male")
+	fmt.Println(person.Gender.Content)
+	// Output:male
+}
+
+// BenchmarkSetGender benchmarks the SetGender method
+func BenchmarkSetGender(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.SetGender("male")
+	}
+}
+
 // TestSetDateOfBirth test setting a DOB on a person object
 func TestSetDateOfBirth(t *testing.T) {
 	person := NewPerson()
@@ -649,6 +752,22 @@ func TestSetDateOfBirth(t *testing.T) {
 	}
 	if person.DateOfBirth.DateRange.End != "1987-01-01" {
 		t.Fatalf("expected value to be 1987-01-01, got %s", person.DateOfBirth.DateRange.End)
+	}
+}
+
+//ExampleSetDateOfBirth example using SetDateOfBirth()
+func ExampleSetDateOfBirth() {
+	person := NewPerson()
+	person.SetDateOfBirth("1987-01-01")
+	fmt.Println(person.DateOfBirth.DateRange.Start)
+	// Output:1987-01-01
+}
+
+// BenchmarkSetDateOfBirth benchmarks the SetDateOfBirth method
+func BenchmarkSetDateOfBirth(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.SetDateOfBirth("1987-01-01")
 	}
 }
 
@@ -667,6 +786,22 @@ func TestAddLanguage(t *testing.T) {
 	}
 }
 
+//ExampleAddLanguage example using AddLanguage()
+func ExampleAddLanguage() {
+	person := NewPerson()
+	person.AddLanguage("en", "US")
+	fmt.Println(person.Languages[0].Language)
+	// Output:en
+}
+
+// BenchmarkAddLanguage benchmarks the AddLanguage method
+func BenchmarkAddLanguage(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddLanguage("en", "US")
+	}
+}
+
 // TestAddEthnicity test adding a ethnicity to a person object
 func TestAddEthnicity(t *testing.T) {
 	person := NewPerson()
@@ -679,6 +814,22 @@ func TestAddEthnicity(t *testing.T) {
 	}
 }
 
+//ExampleAddEthnicity example using AddEthnicity()
+func ExampleAddEthnicity() {
+	person := NewPerson()
+	person.AddEthnicity("white")
+	fmt.Println(person.Ethnicities[0].Content)
+	// Output:white
+}
+
+// BenchmarkAddEthnicity benchmarks the AddEthnicity method
+func BenchmarkAddEthnicity(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddEthnicity("white")
+	}
+}
+
 // TestAddOriginCountry test adding a an origin country to a person object
 func TestAddOriginCountry(t *testing.T) {
 	person := NewPerson()
@@ -688,6 +839,22 @@ func TestAddOriginCountry(t *testing.T) {
 	}
 	if person.OriginCountries[0].Country != "US" {
 		t.Fatalf("expected value to be US, got %s", person.OriginCountries[0].Country)
+	}
+}
+
+//ExampleAddOriginCountry example using AddOriginCountry()
+func ExampleAddOriginCountry() {
+	person := NewPerson()
+	person.AddOriginCountry("US")
+	fmt.Println(person.OriginCountries[0].Country)
+	// Output:US
+}
+
+// BenchmarkAddOriginCountry benchmarks the AddOriginCountry method
+func BenchmarkAddOriginCountry(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddOriginCountry("US")
 	}
 }
 
@@ -721,6 +888,22 @@ func TestAddAddress(t *testing.T) {
 	}
 }
 
+//ExampleAddAddress example using AddAddress()
+func ExampleAddAddress() {
+	person := NewPerson()
+	person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+	fmt.Println(person.Addresses[0].House + " " + person.Addresses[0].Street + ", " + person.Addresses[0].City + " " + person.Addresses[0].State)
+	// Output:10 Hickory Lane, Smallville KS
+}
+
+// BenchmarkAddAddress benchmarks the AddAddress method
+func BenchmarkAddAddress(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+	}
+}
+
 // TestAddAddressRaw test adding a an address to a person object
 func TestAddAddressRaw(t *testing.T) {
 	person := NewPerson()
@@ -730,6 +913,22 @@ func TestAddAddressRaw(t *testing.T) {
 	}
 	if person.Addresses[0].Raw != "10 Hickory Lane, Kansas, USA" {
 		t.Fatalf("expected value to be 10 Hickory Lane, Kansas, USA, got %s", person.Addresses[0].Raw)
+	}
+}
+
+//ExampleAddAddressRaw example using AddAddressRaw()
+func ExampleAddAddressRaw() {
+	person := NewPerson()
+	person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
+	fmt.Println(person.Addresses[0].Raw)
+	// Output:10 Hickory Lane, Kansas, USA
+}
+
+// BenchmarkAddAddressRaw benchmarks the AddAddressRaw method
+func BenchmarkAddAddressRaw(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
 	}
 }
 
@@ -757,6 +956,22 @@ func TestAddJob(t *testing.T) {
 	}
 }
 
+//ExampleAddJob example using AddJob()
+func ExampleAddJob() {
+	person := NewPerson()
+	person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+	fmt.Println(person.Jobs[0].Title + " at " + person.Jobs[0].Organization + " in " + person.Jobs[0].Industry)
+	// Output:reporter at daily post in news
+}
+
+// BenchmarkAddJob benchmarks the AddJob method
+func BenchmarkAddJob(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+	}
+}
+
 // TestAddEducation test adding a an education to a person object
 func TestAddEducation(t *testing.T) {
 	person := NewPerson()
@@ -778,6 +993,22 @@ func TestAddEducation(t *testing.T) {
 	}
 }
 
+//ExampleAddEducation example using AddEducation()
+func ExampleAddEducation() {
+	person := NewPerson()
+	person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+	fmt.Println(person.Educations[0].Degree + " from " + person.Educations[0].School)
+	// Output:masters from fau
+}
+
+// BenchmarkAddEducation benchmarks the AddEducation method
+func BenchmarkAddEducation(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+	}
+}
+
 // TestAddUserID test adding a user id to a person object
 func TestAddUserID(t *testing.T) {
 	person := NewPerson()
@@ -790,6 +1021,22 @@ func TestAddUserID(t *testing.T) {
 	}
 }
 
+//ExampleAddUserID example using AddUserID()
+func ExampleAddUserID() {
+	person := NewPerson()
+	person.AddUserID("clarkkent")
+	fmt.Println(person.UserIDs[0].Content)
+	// Output:clarkkent
+}
+
+// BenchmarkAddUserID benchmarks the AddUserID method
+func BenchmarkAddUserID(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddUserID("clarkkent")
+	}
+}
+
 // TestAddURL test adding a url to a person object
 func TestAddURL(t *testing.T) {
 	person := NewPerson()
@@ -799,6 +1046,22 @@ func TestAddURL(t *testing.T) {
 	}
 	if person.URLs[0].URL != "https://twitter.com/clarkkent" {
 		t.Fatalf("expected value to be https://twitter.com/clarkkent, got %s", person.URLs[0].URL)
+	}
+}
+
+//ExampleAddURL example using AddURL()
+func ExampleAddURL() {
+	person := NewPerson()
+	person.AddURL("https://twitter.com/clarkkent")
+	fmt.Println(person.URLs[0].URL)
+	// Output:https://twitter.com/clarkkent
+}
+
+// BenchmarkAddURL benchmarks the AddURL method
+func BenchmarkAddURL(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddURL("https://twitter.com/clarkkent")
 	}
 }
 
