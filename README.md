@@ -60,7 +60,7 @@ import (
 
 func main() {
 
-	// Create a new client object to handle your queries (supply an API Key)
+    // Create a new client object to handle your queries (supply an API Key)
     client := pipl.NewClient("your-api-key")
 
     // Set your match requirements
