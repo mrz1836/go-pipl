@@ -577,8 +577,8 @@ func TestAddName(t *testing.T) {
 	}
 }
 
-//ExampleAddName example using AddName()
-func ExampleAddName() {
+//ExamplePerson_AddName example using AddName()
+func ExamplePerson_AddName() {
 	person := NewPerson()
 	person.AddName("clark", "ryan", "kent", "mr", "jr")
 	fmt.Println(person.Names[0].First + " " + person.Names[0].Last)
@@ -605,8 +605,8 @@ func TestAddNameRaw(t *testing.T) {
 	}
 }
 
-//ExampleAddNameRaw example using AddNameRaw()
-func ExampleAddNameRaw() {
+//ExamplePerson_AddNameRaw example using AddNameRaw()
+func ExamplePerson_AddNameRaw() {
 	person := NewPerson()
 	person.AddNameRaw("clark kent")
 	fmt.Println(person.Names[0].Raw)
@@ -633,8 +633,8 @@ func TestAddEmail(t *testing.T) {
 	}
 }
 
-//ExampleAddEmail example using AddEmail()
-func ExampleAddEmail() {
+//ExamplePerson_AddEmail example using AddEmail()
+func ExamplePerson_AddEmail() {
 	person := NewPerson()
 	person.AddEmail("clarkkent@gmail.com")
 	fmt.Println(person.Emails[0].Address)
@@ -661,8 +661,8 @@ func TestAddUsername(t *testing.T) {
 	}
 }
 
-//ExampleAddUsername example using AddUsername()
-func ExampleAddUsername() {
+//ExamplePerson_AddUsername example using AddUsername()
+func ExamplePerson_AddUsername() {
 	person := NewPerson()
 	person.AddUsername("clarkkent")
 	fmt.Println(person.Usernames[0].Content)
@@ -692,8 +692,8 @@ func TestAddPhone(t *testing.T) {
 	}
 }
 
-//ExampleAddPhone example using AddPhone()
-func ExampleAddPhone() {
+//ExamplePerson_AddPhone example using AddPhone()
+func ExamplePerson_AddPhone() {
 	person := NewPerson()
 	person.AddPhone(9785550145, 1)
 	fmt.Println(person.Phones[0].Number)
@@ -727,8 +727,8 @@ func TestSetGender(t *testing.T) {
 	}
 }
 
-//ExampleSetGender example using SetGender()
-func ExampleSetGender() {
+//ExamplePerson_SetGender example using SetGender()
+func ExamplePerson_SetGender() {
 	person := NewPerson()
 	person.SetGender("male")
 	fmt.Println(person.Gender.Content)
@@ -755,8 +755,8 @@ func TestSetDateOfBirth(t *testing.T) {
 	}
 }
 
-//ExampleSetDateOfBirth example using SetDateOfBirth()
-func ExampleSetDateOfBirth() {
+//ExamplePerson_SetDateOfBirth example using SetDateOfBirth()
+func ExamplePerson_SetDateOfBirth() {
 	person := NewPerson()
 	person.SetDateOfBirth("1987-01-01")
 	fmt.Println(person.DateOfBirth.DateRange.Start)
@@ -786,8 +786,8 @@ func TestAddLanguage(t *testing.T) {
 	}
 }
 
-//ExampleAddLanguage example using AddLanguage()
-func ExampleAddLanguage() {
+//ExamplePerson_AddLanguage example using AddLanguage()
+func ExamplePerson_AddLanguage() {
 	person := NewPerson()
 	person.AddLanguage("en", "US")
 	fmt.Println(person.Languages[0].Language)
@@ -814,8 +814,8 @@ func TestAddEthnicity(t *testing.T) {
 	}
 }
 
-//ExampleAddEthnicity example using AddEthnicity()
-func ExampleAddEthnicity() {
+//ExamplePerson_AddEthnicity example using AddEthnicity()
+func ExamplePerson_AddEthnicity() {
 	person := NewPerson()
 	person.AddEthnicity("white")
 	fmt.Println(person.Ethnicities[0].Content)
@@ -842,8 +842,8 @@ func TestAddOriginCountry(t *testing.T) {
 	}
 }
 
-//ExampleAddOriginCountry example using AddOriginCountry()
-func ExampleAddOriginCountry() {
+//ExamplePerson_AddOriginCountry example using AddOriginCountry()
+func ExamplePerson_AddOriginCountry() {
 	person := NewPerson()
 	person.AddOriginCountry("US")
 	fmt.Println(person.OriginCountries[0].Country)
@@ -888,8 +888,8 @@ func TestAddAddress(t *testing.T) {
 	}
 }
 
-//ExampleAddAddress example using AddAddress()
-func ExampleAddAddress() {
+//ExamplePerson_AddAddress example using AddAddress()
+func ExamplePerson_AddAddress() {
 	person := NewPerson()
 	person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
 	fmt.Println(person.Addresses[0].House + " " + person.Addresses[0].Street + ", " + person.Addresses[0].City + " " + person.Addresses[0].State)
@@ -916,8 +916,8 @@ func TestAddAddressRaw(t *testing.T) {
 	}
 }
 
-//ExampleAddAddressRaw example using AddAddressRaw()
-func ExampleAddAddressRaw() {
+//ExamplePerson_AddAddressRaw example using AddAddressRaw()
+func ExamplePerson_AddAddressRaw() {
 	person := NewPerson()
 	person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
 	fmt.Println(person.Addresses[0].Raw)
@@ -956,8 +956,8 @@ func TestAddJob(t *testing.T) {
 	}
 }
 
-//ExampleAddJob example using AddJob()
-func ExampleAddJob() {
+//ExamplePerson_AddJob example using AddJob()
+func ExamplePerson_AddJob() {
 	person := NewPerson()
 	person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
 	fmt.Println(person.Jobs[0].Title + " at " + person.Jobs[0].Organization + " in " + person.Jobs[0].Industry)
@@ -993,8 +993,8 @@ func TestAddEducation(t *testing.T) {
 	}
 }
 
-//ExampleAddEducation example using AddEducation()
-func ExampleAddEducation() {
+//ExamplePerson_AddEducation example using AddEducation()
+func ExamplePerson_AddEducation() {
 	person := NewPerson()
 	person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
 	fmt.Println(person.Educations[0].Degree + " from " + person.Educations[0].School)
@@ -1021,8 +1021,8 @@ func TestAddUserID(t *testing.T) {
 	}
 }
 
-//ExampleAddUserID example using AddUserID()
-func ExampleAddUserID() {
+//ExamplePerson_AddUserID example using AddUserID()
+func ExamplePerson_AddUserID() {
 	person := NewPerson()
 	person.AddUserID("clarkkent")
 	fmt.Println(person.UserIDs[0].Content)
@@ -1049,8 +1049,8 @@ func TestAddURL(t *testing.T) {
 	}
 }
 
-//ExampleAddURL example using AddURL()
-func ExampleAddURL() {
+//ExamplePerson_AddURL example using AddURL()
+func ExamplePerson_AddURL() {
 	person := NewPerson()
 	person.AddURL("https://twitter.com/clarkkent")
 	fmt.Println(person.URLs[0].URL)
