@@ -55,28 +55,35 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"github.com/mrz1836/go-pipl"
 )
 
 func main() {
 
-    // Create a new client object to handle your queries (supply an API Key)
+    // Create a client with your api key
     client := pipl.NewClient("your-api-key")
 
     // Set your match requirements
     client.SearchParameters.MatchRequirements = "name and phone"
 
-    // Create a blank person to fill out with search terms
+    // Create a new person
     searchObject := pipl.NewPerson()
 
-    // We'll search by a username.
+    // Search by username
     searchObject.AddUsername("@jeffbezos")
 
-    // Launch the search
+    // Submit the search
     results, err := client.SearchByPerson(searchObject)
     if err != nil {
-        t.Fatal(err)
+        log.Println(err)
+        os.Exit(1)
     }
+
+    // Show the results
+    fmt.Println(results.Person.Names[0].Display)
+    // Output: Jeff Preston Bezos
 }
 ```
 
