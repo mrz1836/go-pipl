@@ -58,7 +58,7 @@ const (
 	// MatchRequirementsEmailOrPhone specifies that we want to match on this field
 	MatchRequirementsEmailOrPhone MatchRequirements = "email or phone"
 
-	//todo: finish adding match criteria - also make this flexible and easier to use
+	// todo: finish adding match criteria - also make this flexible and easier to use
 	// https://docs.pipl.com/reference#match-criteria
 
 	// MinimumProbability is the score for probability
@@ -139,7 +139,7 @@ func NewClient(APIKey string) (client *Client) {
 	return
 }
 
-// meetsMinimumCriteria is used internally by SearchByPerson to do some very
+// SearchMeetsMinimumCriteria is used internally by SearchByPerson to do some very
 // basic verification that the verify that search object has enough terms to
 // meet the requirements for a search.
 // From Pipl documentation:
@@ -148,49 +148,44 @@ func NewClient(APIKey string) (client *Client) {
 //		(down to a house number). We can’t search for a job title or location
 //		alone. We’re not a directory and can't provide bulk lists of people,
 //		rather we specialize in identity resolution of single individuals."
-func meetsMinimumCriteria(searchObject *Person) bool {
-	if len(searchObject.Names) > 0 {
-		for _, name := range searchObject.Names {
-			if ((name.First != "") && (name.Last != "")) || (name.Raw != "") {
-				return true
-			}
-		}
+func SearchMeetsMinimumCriteria(p *Person) bool {
+
+	// If an email is found, that meets minimum criteria
+	if p.HasEmail() {
+		return true
 	}
-	if len(searchObject.Emails) > 0 {
-		for _, email := range searchObject.Emails {
-			if email.Address != "" {
-				return true
-			}
-		}
+
+	// If a phone is found, that meets minimum criteria
+	if p.HasPhone() {
+		return true
 	}
-	if len(searchObject.Phones) > 0 {
-		for _, phone := range searchObject.Phones {
-			if ((phone.CountryCode != 0) && (phone.Number != 0)) || (phone.Raw != "") {
-				return true
-			}
-		}
+
+	// If a userID is found, that meets minimum criteria
+	if p.HasUserID() {
+		return true
 	}
-	if len(searchObject.Usernames) > 0 {
-		for _, username := range searchObject.Usernames {
-			if username.Content != "" {
-				return true
-			}
-		}
+
+	// If a username is found, that meets minimum criteria
+	if p.HasUsername() {
+		return true
 	}
-	if len(searchObject.UserIDs) > 0 {
-		for _, userID := range searchObject.UserIDs {
-			if userID.Content != "" {
-				return true
-			}
-		}
+
+	// If a URL is found, that meets minimum criteria
+	if p.HasURL() {
+		return true
 	}
-	if len(searchObject.URLs) > 0 {
-		for _, u := range searchObject.URLs {
-			if u.URL != "" {
-				return true
-			}
-		}
+
+	// If a full name is found, that meets minimum criteria
+	if p.HasName() {
+		return true
 	}
+
+	// If an address is found, that meets minimum criteria
+	if p.HasAddress() {
+		return true
+	}
+
+	// Did not meet criteria, fail
 	return false
 }
 
@@ -199,7 +194,7 @@ func meetsMinimumCriteria(searchObject *Person) bool {
 // will contains the results, and err will be nil. If an error occurs, the struct pointer
 // will be nil and you should check err for additional information.
 func (client *Client) SearchByPerson(searchObject *Person) (response *Response, err error) {
-	if !meetsMinimumCriteria(searchObject) {
+	if !SearchMeetsMinimumCriteria(searchObject) {
 		return nil, &ErrInsufficientSearch{}
 	}
 	postData := url.Values{}
