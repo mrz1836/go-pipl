@@ -331,18 +331,17 @@ type AvailableData struct {
 // A search may be successful, but have some warnings. These are held in the
 // Warnings field.
 type Response struct {
-	AvailableData          AvailableData `json:"available_data"`
-	AvailableSources       int           `json:"@available_sources"`
-	Error                  string        `json:"error"`
-	HTTPStatusCode         int           `json:"@http_status_code"`
-	MatchRequirements      string        `json:"match_requirements"`
-	Person                 Person        `json:"person"`
-	PersonsCount           int           `json:"@persons_count"`
-	PossiblePersons        []Person      `json:"possible_persons"`
-	PossiblePersonsDetails []Person      `json:"possible_persons_details"`
-	Query                  Person        `json:"query"`
-	SearchID               string        `json:"@search_id"`
-	Sources                []Source      `json:"sources"`
-	VisibleSources         int           `json:"@visible_sources"`
-	Warnings               []string      `json:"warnings"`
+	AvailableData     AvailableData `json:"available_data"`
+	AvailableSources  int           `json:"@available_sources"`
+	Error             string        `json:"error"`
+	HTTPStatusCode    int           `json:"@http_status_code"`
+	MatchRequirements string        `json:"match_requirements"`
+	Person            Person        `json:"person"`
+	PersonsCount      int           `json:"@persons_count"`
+	PossiblePersons   []Person      `json:"possible_persons"`
+	Query             Person        `json:"query"`
+	SearchID          string        `json:"@search_id"`
+	Sources           []Source      `json:"sources"`
+	VisibleSources    int           `json:"@visible_sources"`
+	Warnings          []string      `json:"warnings"`
 }

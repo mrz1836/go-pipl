@@ -336,7 +336,8 @@ func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Respons
 	// When multiple PossiblePersons are returned, we get a "preview" of each of
 	// each of them (< 100% match confidence)
 	if response.PersonsCount > 1 {
-		for _, person := range response.PossiblePersons {
+		for index, person := range response.PossiblePersons {
+
 			// In order to get the full info on each, we need to a follow up query
 			// to pull a full person profile by search pointer
 			searchPointer := person.SearchPointer
@@ -345,7 +346,9 @@ func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Respons
 			if err != nil {
 				return
 			}
-			response.PossiblePersonsDetails = append(response.PossiblePersonsDetails, *pointerResults)
+
+			// Replace the preview with the full details
+			response.PossiblePersons[index] = *pointerResults
 		}
 	}
 
