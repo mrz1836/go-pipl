@@ -10,6 +10,9 @@ import (
 	"testing"
 )
 
+//======================================================================================================================
+// Response Parsing and Expected Values
+
 // loadGoodResponseData loads a good forged response JSON (6/8/2019)
 func loadGoodResponseData() (response *Response, rawJSON string, err error) {
 
@@ -418,7 +421,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "1000-355 Broadway, Metropolis, Kansas", response.Person.Addresses[0].Display)
 	}
 
-	//todo: add address #2
+	// todo: add address #2
 
 	//==================================================================================================================
 
@@ -447,7 +450,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "2012-10-09", response.Person.Jobs[0].DateRange.End)
 	}
 
-	//todo: add job #2 and #3
+	// todo: add job #2 and #3
 
 	//==================================================================================================================
 
@@ -473,7 +476,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "2008-05-14", response.Person.Educations[0].DateRange.End)
 	}
 
-	//todo: add education #2
+	// todo: add education #2
 
 	//==================================================================================================================
 
@@ -535,8 +538,11 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "http://linkedin.com/clark.kent", response.Person.URLs[0].URL)
 	}
 
-	//todo: add url #2 and #3
+	// todo: add url #2 and #3
 }
+
+//======================================================================================================================
+// Helper Methods
 
 // TestNewPerson testing new person function
 func TestNewPerson(t *testing.T) {
@@ -705,6 +711,34 @@ func BenchmarkAddPhone(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
 		person.AddPhone(9785550145, 1)
+	}
+}
+
+// TestAddPhoneRaw test adding a phone to a person object
+func TestAddPhoneRaw(t *testing.T) {
+	person := NewPerson()
+	person.AddPhoneRaw("9785550145")
+	if len(person.Phones) == 0 {
+		t.Fatal("expected a phone in this person object")
+	}
+	if person.Phones[0].Raw != "9785550145" {
+		t.Fatalf("expected value to be 9785550145, got %s", person.Phones[0].Raw)
+	}
+}
+
+//ExamplePerson_AddPhoneRaw example using AddPhoneRaw()
+func ExamplePerson_AddPhoneRaw() {
+	person := NewPerson()
+	person.AddPhoneRaw("9785550145")
+	fmt.Println(person.Phones[0].Raw)
+	// Output:9785550145
+}
+
+// BenchmarkAddPhoneRaw benchmarks the AddPhoneRaw method
+func BenchmarkAddPhoneRaw(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		person.AddPhoneRaw("9785550145")
 	}
 }
 
@@ -1065,6 +1099,11 @@ func BenchmarkAddURL(b *testing.B) {
 	}
 }
 
+// todo: test AddRelationship()
+
+//======================================================================================================================
+// Pipl Core Methods
+
 // TestNewClient test new client
 func TestNewClient(t *testing.T) {
 	client := NewClient("1234567890")
@@ -1078,7 +1117,7 @@ func TestNewClient(t *testing.T) {
 		t.Fatalf("expected value %f, got %f", MinimumProbability, client.SearchParameters.MinimumProbability)
 	}
 
-	//todo: test changing these values in the SearchParameters
+	// todo: test changing these values in the SearchParameters
 }
 
 //ExampleNewClient example using NewClient()
@@ -1095,13 +1134,165 @@ func BenchmarkNewClient(b *testing.B) {
 	}
 }
 
-//todo: test AddRelationship()
+// TestSearchMeetsMinimumCriteria test the minimum criteria for a search
+// 	This also tests: HasEmail, HasPhone, HasUserID, HasUsername, HasURL
+//	HasName, HasAddress
+func TestSearchMeetsMinimumCriteria(t *testing.T) {
+	person := new(Person)
 
-//todo: test meetsMinimumCriteria()
+	// Missing data, should fail
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
 
-//todo: test SearchByPerson()
+	// Raw name (good)
+	person.AddNameRaw("john smith")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true", person.Names[0].Raw)
+	}
 
-//todo: test SearchByPointer()
+	// Reset
+	person = new(Person)
+
+	// Just first (missing last)
+	person.AddName("john", "", "", "", "")
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Just last (missing first)
+	person.AddName("", "", "smith", "", "")
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test both first and last name
+	person.AddName("john", "", "smith", "", "")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test email address
+	person.AddEmail("clarkkent@gmail.com")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test phone with country code
+	person.AddPhone(9785550145, 1)
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test phone without country code
+	person.AddPhone(9785550145, 0)
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test phone RAW
+	person.AddPhoneRaw("9785550145")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test user id
+	person.AddUserID("clarkkent123")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test usernames
+	person.AddUsername("clarkkent")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Test urls
+	person.AddURL("https://twitter.com/clarkkent")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	// Reset
+	person = new(Person)
+
+	// Partial address
+	person.AddAddress("10", "", "", "", "", "", "")
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Partial address
+	person.AddAddress("10", "Hickory Lane", "", "", "", "", "")
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Partial address
+	person.AddAddress("10", "Hickory Lane", "", "Smallville", "", "", "")
+	if SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return false")
+	}
+
+	// Full address
+	person.AddAddress("10", "Hickory Lane", "", "Smallville", "KS", "", "")
+	if !SearchMeetsMinimumCriteria(person) {
+		t.Fatal("method should return true")
+	}
+
+	//person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+}
+
+//ExampleSearchMeetsMinimumCriteria example using SearchMeetsMinimumCriteria()
+func ExampleSearchMeetsMinimumCriteria() {
+	person := new(Person)
+	if SearchMeetsMinimumCriteria(person) {
+		fmt.Println("search meets minimum criteria")
+	} else {
+		fmt.Println("search does not meet minimum criteria")
+	}
+	// Output:search does not meet minimum criteria
+}
+
+// BenchmarkSearchMeetsMinimumCriteria benchmarks the SearchMeetsMinimumCriteria method
+func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
+	person := new(Person)
+	for i := 0; i < b.N; i++ {
+		_ = SearchMeetsMinimumCriteria(person)
+	}
+}
+
+// todo: test SearchByPerson()
+
+// todo: test SearchByPointer()
 
 //======================================================================================================================
 // Full Pipl Integration Tests (-test.short to skip)
