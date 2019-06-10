@@ -121,6 +121,7 @@ type Image struct {
 	Inferred       bool   `json:"@inferred,omitempty"`
 	LastSeen       string `json:"@last_seen,omitempty"`
 	ThumbnailToken string `json:"thumbnail_token,omitempty"`
+	ThumbnailURL   string `json:"thumbnail_url,omitempty"`
 	URL            string `json:"url,omitempty"`
 	ValidSince     string `json:"@valid_since,omitempty"`
 }
