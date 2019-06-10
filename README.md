@@ -26,6 +26,25 @@ $ go get -u github.com/mrz1836/go-pipl
 ## Documentation
 You can view the generated [documentation here](https://godoc.org/github.com/mrz1836/go-pipl).
 
+### Features
+- Complete configuration coverage for the pipl.com API
+- Pipl client is completely configurable
+- Minimum criteria detection before submitting a pipl query
+- Search by pipl pointer reference
+- Search for a single person via any of the following:
+    - Full Name
+    - Full Street Address
+    - Email
+    - Phone
+    - Username or UserID or URL
+- Search **all possible people**
+    - Returns the original full person record
+    - Searches all possible persons and gets full details
+    - Combines all persons into one single response
+- Thumbnail configuration for `person.Images`
+    - Adds `image.ThumbnailURL` with the complete url for a live thumbnail
+- Test and example coverage for all methods
+
 ## Examples & Tests
 All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.com/mrz1836/go-pipl) and uses [Go version 1.12.x](https://golang.org/doc/go1.12). View the [deployment configuration file](.travis.yml).
 
