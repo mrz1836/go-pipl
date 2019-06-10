@@ -17,6 +17,9 @@ const (
 	// SearchAPIEndpoint is where we POST queries to
 	SearchAPIEndpoint string = "https://api.pipl.com/search/"
 
+	// ThumbnailEndpoint is where the image thumbnails are located
+	ThumbnailEndpoint string = "http://thumb.pipl.com/image"
+
 	// ShowSourcesNone specifies that we don't need source info back with search results
 	ShowSourcesNone SourceLevel = "false"
 
@@ -58,6 +61,12 @@ const (
 
 	// SourceCategoryRequirementsProfessionalAndBusiness is used for: match_requirements=(emails and jobs)
 	SourceCategoryRequirementsProfessionalAndBusiness SourceCategoryRequirements = "professional_and_business"
+
+	// ThumbnailHeight is the default height
+	ThumbnailHeight int = 250
+
+	// ThumbnailWidth is the default width
+	ThumbnailWidth int = 250
 )
 
 // SourceLevel is used internally to represent the possible values
@@ -83,6 +92,9 @@ type Client struct {
 	// SearchParameters contains the search parameters that are submitted with your query,
 	// which may affect the data returned
 	SearchParameters *SearchParameters
+
+	// ThumbnailSettings is for the thumbnail url settings
+	ThumbnailSettings *ThumbnailSettings
 }
 
 // SearchParameters holds options that can affect data returned by a search.
@@ -119,25 +131,65 @@ type SearchParameters struct {
 	SourceCategoryRequirements SourceCategoryRequirements
 }
 
+// ThumbnailSettings is for the thumbnail url settings to be automatically returned
+// if any images are found and meet the criteria
+// http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
+type ThumbnailSettings struct {
+	// Enabled (detects images, automatically adds thumbnail urls)
+	Enabled bool
+
+	// URL is the thumbnail url
+	URL string
+
+	// Height of the image
+	Height int
+
+	// Width of the image
+	Width int
+
+	// Favicon if the icon should be shown or not
+	Favicon bool
+
+	// ZoomFace is whether to enable face zoom.
+	ZoomFace bool
+}
+
 // NewClient creates a new search client to submit queries with.
 // Parameters values are set to the defaults defined by Pipl.
 // For more information:
 // https://docs.pipl.com/reference#configuration-parameters
-func NewClient(APIKey string) (client *Client) {
+func NewClient(APIKey string) (client *Client, err error) {
+
+	// Test for the key
+	if len(APIKey) == 0 {
+		err = fmt.Errorf("api key must be set, %s", APIKey)
+		return
+	}
+
+	// Create a client
 	client = new(Client)
 	client.HTTPClient = new(http.Client)
+
+	// Create default search parameters
 	client.SearchParameters = new(SearchParameters)
 	client.SearchParameters.APIKey = APIKey
-	client.SearchParameters.HideSponsored = false
-	//client.SearchParameters.HideSponsored = true
+	client.SearchParameters.HideSponsored = true
 	client.SearchParameters.InferPersons = false
 	client.SearchParameters.LiveFeeds = true
 	client.SearchParameters.MatchRequirements = MatchRequirementsNone
 	client.SearchParameters.MinimumMatch = MinimumMatch
 	client.SearchParameters.MinimumProbability = MinimumProbability
-	client.SearchParameters.ShowSources = ShowSourcesAll
-	//client.SearchParameters.ShowSources = ShowSourcesNone
+	client.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
 	client.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
+
+	// Create default thumbnail parameters (thumbnail functionality)
+	client.ThumbnailSettings = new(ThumbnailSettings)
+	client.ThumbnailSettings.Enabled = false
+	client.ThumbnailSettings.Height = ThumbnailHeight
+	client.ThumbnailSettings.URL = ThumbnailEndpoint
+	client.ThumbnailSettings.Width = ThumbnailWidth
+
+	// Return the client
 	return
 }
 
@@ -265,6 +317,14 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 	// Try to parse the response
 	response = new(Response)
 	err = json.Unmarshal(body, response)
+	if err != nil {
+		return
+	}
+
+	// Thumbnail enabled?
+	if c.ThumbnailSettings.Enabled {
+		response.Person.ProcessThumbnails(c)
+	}
 	return
 }
 
@@ -354,5 +414,10 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 	// Set the person from the response
 	person = &piplResponse.Person
+
+	// Thumbnail enabled?
+	if c.ThumbnailSettings.Enabled {
+		person.ProcessThumbnails(c)
+	}
 	return
 }
