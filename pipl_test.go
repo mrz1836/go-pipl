@@ -1379,11 +1379,11 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 	}
 }
 
-// todo: test SearchByPerson()
+// todo: test Search()
 
 // todo: test SearchByPointer()
 
-// todo: test SearchByPersonExtended()
+// todo: test SearchAllPossiblePeople()
 
 //======================================================================================================================
 // Full Pipl Integration Tests (-test.short to skip)
@@ -1418,7 +1418,7 @@ func TestSearchByPerson(t *testing.T) {
 
 	// Launch the search (if you don't meet the minimum search criteria, an error
 	// should be returned to you here stating such).
-	results, err := client.SearchByPerson(searchObject)
+	results, err := client.Search(searchObject)
 	if err != nil {
 		t.Fatal(err)
 	}

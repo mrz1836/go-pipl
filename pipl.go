@@ -158,7 +158,7 @@ type ThumbnailSettings struct {
 // Parameters values are set to the defaults defined by Pipl.
 // For more information:
 // https://docs.pipl.com/reference#configuration-parameters
-func NewClient(APIKey string) (client *Client, err error) {
+func NewClient(APIKey string) (c *Client, err error) {
 
 	// Test for the key
 	if len(APIKey) == 0 {
@@ -167,33 +167,33 @@ func NewClient(APIKey string) (client *Client, err error) {
 	}
 
 	// Create a client
-	client = new(Client)
-	client.HTTPClient = new(http.Client)
+	c = new(Client)
+	c.HTTPClient = new(http.Client)
 
 	// Create default search parameters
-	client.SearchParameters = new(SearchParameters)
-	client.SearchParameters.APIKey = APIKey
-	client.SearchParameters.HideSponsored = true
-	client.SearchParameters.InferPersons = false
-	client.SearchParameters.LiveFeeds = true
-	client.SearchParameters.MatchRequirements = MatchRequirementsNone
-	client.SearchParameters.MinimumMatch = MinimumMatch
-	client.SearchParameters.MinimumProbability = MinimumProbability
-	client.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
-	client.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
+	c.SearchParameters = new(SearchParameters)
+	c.SearchParameters.APIKey = APIKey
+	c.SearchParameters.HideSponsored = true
+	c.SearchParameters.InferPersons = false
+	c.SearchParameters.LiveFeeds = true
+	c.SearchParameters.MatchRequirements = MatchRequirementsNone
+	c.SearchParameters.MinimumMatch = MinimumMatch
+	c.SearchParameters.MinimumProbability = MinimumProbability
+	c.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
+	c.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
 
 	// Create default thumbnail parameters (thumbnail url functionality)
-	client.ThumbnailSettings = new(ThumbnailSettings)
-	client.ThumbnailSettings.Enabled = false
-	client.ThumbnailSettings.Height = ThumbnailHeight
-	client.ThumbnailSettings.URL = ThumbnailEndpoint
-	client.ThumbnailSettings.Width = ThumbnailWidth
+	c.ThumbnailSettings = new(ThumbnailSettings)
+	c.ThumbnailSettings.Enabled = false
+	c.ThumbnailSettings.Height = ThumbnailHeight
+	c.ThumbnailSettings.URL = ThumbnailEndpoint
+	c.ThumbnailSettings.Width = ThumbnailWidth
 
 	// Return the client
 	return
 }
 
-// SearchMeetsMinimumCriteria is used internally by SearchByPerson to do some very
+// SearchMeetsMinimumCriteria is used internally by Search to do some very
 // basic verification that the verify that search object has enough terms to
 // meet the requirements for a search.
 // From Pipl documentation:
@@ -243,13 +243,13 @@ func SearchMeetsMinimumCriteria(p *Person) bool {
 	return false
 }
 
-// SearchByPerson takes a person object (filled with search terms) and returns the
+// Search takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If successful, the response struct
 // will contains the results, and err will be nil. If an error occurs, the struct pointer
 // will be nil and you should check err for additional information. This method will only
-// return one full person, and a preview of possible people if < 100% match. Use the SearchByPersonExtended()
+// return one full person, and a preview of possible people if < 100% match. Use the SearchAllPossiblePeople()
 // method to get all the details when searching.
-func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err error) {
+func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 
 	// Do we meet the minimum requirements for searching?
 	if !SearchMeetsMinimumCriteria(searchPerson) {
@@ -289,7 +289,10 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 	// Add the person to the request
 	postData.Add("person", string(personJSON))
 
-	// Start the post request
+	// Fire the request
+	return c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
+
+	/*// Start the post request
 	var request *http.Request
 	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
 	if err != nil {
@@ -325,16 +328,16 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 	if c.ThumbnailSettings.Enabled {
 		response.Person.ProcessThumbnails(c)
 	}
-	return
+	return*/
 }
 
-// SearchByPersonExtended takes a person object (filled with search terms) and returns the
+// SearchAllPossiblePeople takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If possible people are found, they are also
 // looked up using the SearchByPointer()
-func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Response, err error) {
+func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Response, err error) {
 
 	// Lookup the person(s)
-	response, err = c.SearchByPerson(searchPerson)
+	response, err = c.Search(searchPerson)
 	if err != nil {
 		return
 	}
@@ -380,7 +383,18 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 	// Add the search pointer
 	postData.Add("search_pointer", searchPointer)
 
-	// Start the post request
+	// Fire the request
+	var piplResponse *Response
+	piplResponse, err = c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
+	if err != nil {
+		return
+	}
+
+	// Set the person from the response
+	person = &piplResponse.Person
+	return
+
+	/*// Start the post request
 	var request *http.Request
 	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
 	if err != nil {
@@ -419,5 +433,59 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 	if c.ThumbnailSettings.Enabled {
 		person.ProcessThumbnails(c)
 	}
+	return*/
+}
+
+// PiplRequest is a generic pipl request wrapper that can be used without the constraints
+// of the Search or SearchByPointer methods
+func (c *Client) PiplRequest(endpoint string, method string, postData *url.Values) (piplResponse *Response, err error) {
+
+	// Start the post request
+	var request *http.Request
+	request, err = http.NewRequest(method, endpoint, strings.NewReader(postData.Encode()))
+	if err != nil {
+		return
+	}
+
+	// Change the header (user agent is in case they block default Go user agents)
+	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Fire the http request
+	var response *http.Response
+	response, err = c.HTTPClient.Do(request)
+	if err != nil {
+		return
+	}
+
+	// Read the body
+	var body []byte
+	body, err = ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+
+	// Parse the response
+	piplResponse = new(Response)
+	err = json.Unmarshal(body, piplResponse)
+	if err != nil {
+		return
+	}
+
+	// Thumbnail generation enabled?
+	if c.ThumbnailSettings.Enabled {
+
+		// Process the current person
+		piplResponse.Person.ProcessThumbnails(c)
+
+		// Do we have possible persons?
+		if len(piplResponse.PossiblePersons) > 0 {
+			for index, _ := range piplResponse.PossiblePersons {
+				piplResponse.PossiblePersons[index].ProcessThumbnails(c)
+			}
+		}
+	}
+
+	// Done
 	return
 }
