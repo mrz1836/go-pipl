@@ -7,8 +7,14 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
+
+//======================================================================================================================
+// Testing variables
+var testImage = "https://vignette3.wikia.nocookie.net/smallville/images/5/55/S10E18-Booster21.jpg"
+var testThumbnailToken = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3F484345CE74536C19A85D0BA3D32DC9E7D1878CD4D341254E7AD129255C6983E6E154C4530A0DAAF665EA325FC0206F8B1D7E0B6B7AD9EBF71FCF610D57D"
 
 //======================================================================================================================
 // Response Parsing and Expected Values
@@ -1099,7 +1105,85 @@ func BenchmarkAddURL(b *testing.B) {
 	}
 }
 
-// todo: test ProcessThumbnails()
+// TestPerson_ProcessThumbnails test processing images for thumbnails
+func TestPerson_ProcessThumbnails(t *testing.T) {
+
+	// Create the client
+	client, err := NewClient("1234567890")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create person and image
+	person := NewPerson()
+	image := new(Image)
+	image.URL = testImage
+	image.ThumbnailToken = testThumbnailToken
+	person.Images = append(person.Images, *image)
+
+	// Process using defaults
+	person.ProcessThumbnails(client)
+
+	// Test for url
+	if len(person.Images[0].ThumbnailURL) == 0 {
+		t.Fatal("this url should not be empty")
+	}
+
+	// Does it have the right width
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("width=%d", ThumbnailWidth)) {
+		t.Fatal("expected value is not the same", ThumbnailWidth)
+	}
+
+	// Does it have the right height
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("height=%d", ThumbnailHeight)) {
+		t.Fatal("expected value is not the same", ThumbnailHeight)
+	}
+
+	// Does it have the right favicon
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("favicon=%t", client.ThumbnailSettings.Favicon)) {
+		t.Fatal("expected value is not the same", client.ThumbnailSettings.Favicon)
+	}
+
+	// Does it have the right zoom face
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("zoom_face=%t", client.ThumbnailSettings.ZoomFace)) {
+		t.Fatal("expected value is not the same", client.ThumbnailSettings.ZoomFace)
+	}
+
+	// Does it have the right token
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("tokens=%s", person.Images[0].ThumbnailToken)) {
+		t.Fatal("expected value is not the same", person.Images[0].ThumbnailToken)
+	}
+}
+
+//ExamplePerson_ProcessThumbnails example using ProcessThumbnails()
+func ExamplePerson_ProcessThumbnails() {
+	client, _ := NewClient("1234567890")
+	person := NewPerson()
+
+	image := new(Image)
+	image.URL = testImage
+	image.ThumbnailToken = testThumbnailToken
+	person.Images = append(person.Images, *image)
+
+	person.ProcessThumbnails(client)
+	fmt.Println(person.Images[0].ThumbnailURL)
+	// Output: https://thumb.pipl.com/image?height=250&width=250&favicon=false&zoom_face=false&tokens=AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3F484345CE74536C19A85D0BA3D32DC9E7D1878CD4D341254E7AD129255C6983E6E154C4530A0DAAF665EA325FC0206F8B1D7E0B6B7AD9EBF71FCF610D57D
+}
+
+// BenchmarkProcessThumbnails benchmarks the ProcessThumbnails method
+func BenchmarkProcessThumbnails(b *testing.B) {
+	client, _ := NewClient("1234567890")
+	person := NewPerson()
+
+	image := new(Image)
+	image.URL = testImage
+	image.ThumbnailToken = testThumbnailToken
+	person.Images = append(person.Images, *image)
+
+	for i := 0; i < b.N; i++ {
+		person.ProcessThumbnails(client)
+	}
+}
 
 // todo: test AddRelationship()
 
@@ -1298,6 +1382,8 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 // todo: test SearchByPerson()
 
 // todo: test SearchByPointer()
+
+// todo: test SearchByPersonExtended()
 
 //======================================================================================================================
 // Full Pipl Integration Tests (-test.short to skip)

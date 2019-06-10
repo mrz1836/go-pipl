@@ -18,7 +18,7 @@ const (
 	SearchAPIEndpoint string = "https://api.pipl.com/search/"
 
 	// ThumbnailEndpoint is where the image thumbnails are located
-	ThumbnailEndpoint string = "http://thumb.pipl.com/image"
+	ThumbnailEndpoint string = "https://thumb.pipl.com/image"
 
 	// ShowSourcesNone specifies that we don't need source info back with search results
 	ShowSourcesNone SourceLevel = "false"
@@ -182,7 +182,7 @@ func NewClient(APIKey string) (client *Client, err error) {
 	client.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
 	client.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
 
-	// Create default thumbnail parameters (thumbnail functionality)
+	// Create default thumbnail parameters (thumbnail url functionality)
 	client.ThumbnailSettings = new(ThumbnailSettings)
 	client.ThumbnailSettings.Enabled = false
 	client.ThumbnailSettings.Height = ThumbnailHeight
@@ -321,7 +321,7 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 		return
 	}
 
-	// Thumbnail enabled?
+	// Thumbnail generation enabled?
 	if c.ThumbnailSettings.Enabled {
 		response.Person.ProcessThumbnails(c)
 	}
@@ -415,7 +415,7 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 	// Set the person from the response
 	person = &piplResponse.Person
 
-	// Thumbnail enabled?
+	// Thumbnail generation enabled?
 	if c.ThumbnailSettings.Enabled {
 		person.ProcessThumbnails(c)
 	}
