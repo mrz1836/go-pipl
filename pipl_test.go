@@ -1099,6 +1099,8 @@ func BenchmarkAddURL(b *testing.B) {
 	}
 }
 
+// todo: test ProcessThumbnails()
+
 // todo: test AddRelationship()
 
 //======================================================================================================================
@@ -1106,7 +1108,10 @@ func BenchmarkAddURL(b *testing.B) {
 
 // TestNewClient test new client
 func TestNewClient(t *testing.T) {
-	client := NewClient("1234567890")
+	client, err := NewClient("1234567890")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if client.SearchParameters.APIKey != "1234567890" {
 		t.Fatalf("expected value 1234567890, got %s", client.SearchParameters.APIKey)
 	}
@@ -1122,7 +1127,7 @@ func TestNewClient(t *testing.T) {
 
 //ExampleNewClient example using NewClient()
 func ExampleNewClient() {
-	client := NewClient("1234567890")
+	client, _ := NewClient("1234567890")
 	fmt.Println(client.SearchParameters.APIKey)
 	// Output:1234567890
 }
@@ -1130,7 +1135,7 @@ func ExampleNewClient() {
 // BenchmarkNewClient benchmarks the NewClient method
 func BenchmarkNewClient(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = NewClient("1234567890")
+		_, _ = NewClient("1234567890")
 	}
 }
 
@@ -1305,7 +1310,7 @@ func TestSearchByPerson(t *testing.T) {
 	}
 
 	// Create a new client object to handle your queries (supply an API Key)
-	client := NewClient("your-api-key")
+	client, _ := NewClient("your-api-key")
 
 	// Set your match requirements if you have any. You don't pay for results that
 	// don't satisfy your match requirements (but your returned results will be empty)
