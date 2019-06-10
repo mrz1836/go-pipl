@@ -67,6 +67,15 @@ const (
 
 	// ThumbnailWidth is the default width
 	ThumbnailWidth int = 250
+
+	// DefaultCountry is the default country for address
+	DefaultCountry string = "US"
+
+	// DefaultLanguage is the default language
+	DefaultLanguage string = "en"
+
+	// DefaultDisplayLanguage is the default display language
+	DefaultDisplayLanguage string = "en_US"
 )
 
 // SourceLevel is used internally to represent the possible values
