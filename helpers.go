@@ -217,7 +217,7 @@ func NewPerson() *Person {
 
 // AddName adds a name to the search object. For well defined names. Omit unused fields.
 func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string) {
-	//todo: add min/max validation
+	// todo: add min/max validation
 	newName := new(Name)
 	newName.First = firstName
 	newName.Middle = middleName
@@ -230,7 +230,7 @@ func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string)
 // AddNameRaw can be used when you're unsure how to handle breaking down the name in
 // question into its constituent parts. Basically, let Pipl handle parsing it.
 func (p *Person) AddNameRaw(fullName string) {
-	//todo: add min/max validation
+	// todo: add min/max validation
 	newName := new(Name)
 	newName.Raw = fullName
 	p.Names = append(p.Names, *newName)
@@ -238,8 +238,8 @@ func (p *Person) AddNameRaw(fullName string) {
 
 // AddEmail appends an email address to the specified search object
 func (p *Person) AddEmail(emailAddress string) {
-	//todo: add min/max validation
-	//todo: add email validation
+	// todo: add min/max validation
+	// todo: add email validation
 	newEmail := new(Email)
 	newEmail.Address = emailAddress
 	p.Emails = append(p.Emails, *newEmail)
@@ -247,15 +247,32 @@ func (p *Person) AddEmail(emailAddress string) {
 
 // AddUsername appends a username to the specified search object
 func (p *Person) AddUsername(username string) {
-	//todo: add min/max validation
+	// todo: add min/max validation
 	newUsername := new(Username)
 	newUsername.Content = username
 	p.Usernames = append(p.Usernames, *newUsername)
 }
 
+// AddUserID appends a user ID to the specified search object
+func (p *Person) AddUserID(userID string) {
+	// todo: add min/max validation
+	newUserID := new(UserID)
+	newUserID.Content = userID
+	p.UserIDs = append(p.UserIDs, *newUserID)
+}
+
+// AddURL appends a URL to the specified search object (website, social, etc)
+func (p *Person) AddURL(url string) {
+	// todo: add min/max validation
+	// todo: validate basic url requirements
+	newURL := new(URL)
+	newURL.URL = url
+	p.URLs = append(p.URLs, *newURL)
+}
+
 // AddPhone appends a phone to the specified search object
 func (p *Person) AddPhone(phoneNumber, countryCode int) {
-	//todo: add min/max validation
+	// todo: add min/max validation
 	newPhone := new(Phone)
 	newPhone.Number = phoneNumber
 	if countryCode > 0 {
@@ -264,63 +281,18 @@ func (p *Person) AddPhone(phoneNumber, countryCode int) {
 	p.Phones = append(p.Phones, *newPhone)
 }
 
-// SetGender sets the gender of the specified search object
-func (p *Person) SetGender(gender string) {
-	if gender != "male" && gender != "female" {
-		gender = "male"
-		//todo: return an error?
-	}
-	newGender := new(Gender)
-	newGender.Content = gender
-	p.Gender = newGender
-}
-
-// SetDateOfBirth sets the DOB of the specified search object
-// DOB string format: "YYYY-MM-DD"
-func (p *Person) SetDateOfBirth(dob string) {
-	//todo: add validation to the DOB (yyyy-mm-dd)
-	//todo: test date compared to today (cannot be future date)
-	newDOB := new(DateOfBirth)
-	newDOB.DateRange.Start = dob
-	newDOB.DateRange.End = dob
-	p.DateOfBirth = newDOB
-}
-
-// AddLanguage appends a language to the specified search object.
-// Language is a 2 character language code (e.g. "en")
-// Region  is a country code (e.g "US")
-func (p *Person) AddLanguage(languageCode, regionCode string) {
-	//todo: add min/max validation
-	//todo: validate accepted languages and regions
-	//todo: for the case of the characters? (uppercase)
-	newLanguage := new(Language)
-	newLanguage.Language = languageCode
-	newLanguage.Region = regionCode
-	p.Languages = append(p.Languages, *newLanguage)
-}
-
-// AddEthnicity appends an ethnicity to the specified search object
-func (p *Person) AddEthnicity(ethnicity string) {
-	//todo: add min/max validation
-	//todo: accepted list of ethnicities?
-	newEthnicity := new(Ethnicity)
-	newEthnicity.Content = ethnicity
-	p.Ethnicities = append(p.Ethnicities, *newEthnicity)
-}
-
-// AddOriginCountry appends an origin country to the specified search object
-func (p *Person) AddOriginCountry(countryCode string) {
-	//todo: add min/max validation
-	//todo: accepted list of countries?
-	newCountry := new(OriginCountry)
-	newCountry.Country = countryCode
-	p.OriginCountries = append(p.OriginCountries, *newCountry)
+// AddPhoneRaw appends a phone to the specified search object
+func (p *Person) AddPhoneRaw(phoneNumber string) {
+	// todo: add min/max validation
+	newPhone := new(Phone)
+	newPhone.Raw = phoneNumber
+	p.Phones = append(p.Phones, *newPhone)
 }
 
 // AddAddress appends an address to the specified search object
 func (p *Person) AddAddress(house, street, apartment, city, state, country, poBox string) {
-	//todo: add min/max validation
-	//todo: validation on city/state/country?
+	// todo: add min/max validation
+	// todo: validation on city/state/country?
 	newAddress := new(Address)
 	newAddress.House = house
 	newAddress.Street = street
@@ -335,7 +307,7 @@ func (p *Person) AddAddress(house, street, apartment, city, state, country, poBo
 // AddAddressRaw can be used when many of the address parts are missing, or
 // you're unsure how to split it up. Let Pipl handle parsing.
 func (p *Person) AddAddressRaw(fullAddress string) {
-	//todo: add min/max validation
+	// todo: add min/max validation
 	newAddress := new(Address)
 	newAddress.Raw = fullAddress
 	p.Addresses = append(p.Addresses, *newAddress)
@@ -343,8 +315,8 @@ func (p *Person) AddAddressRaw(fullAddress string) {
 
 // AddJob appends a job entry to the specified search object
 func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) {
-	//todo: add min/max validation
-	//todo: same test for dates (like DOB)
+	// todo: add min/max validation
+	// todo: same test for dates (like DOB)
 	newJob := new(Job)
 	newJob.Title = title
 	newJob.Organization = organization
@@ -356,8 +328,8 @@ func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRange
 
 // AddEducation appends an education entry to the specified search object
 func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) {
-	//todo: add min/max validation
-	//todo: same test for dates (like DOB)
+	// todo: add min/max validation
+	// todo: same test for dates (like DOB)
 	newEducation := new(Education)
 	newEducation.Degree = degree
 	newEducation.School = school
@@ -366,24 +338,144 @@ func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd strin
 	p.Educations = append(p.Educations, *newEducation)
 }
 
-// AddUserID appends a user ID to the specified search object
-func (p *Person) AddUserID(userID string) {
-	//todo: add min/max validation
-	newUserID := new(UserID)
-	newUserID.Content = userID
-	p.UserIDs = append(p.UserIDs, *newUserID)
+// AddLanguage appends a language to the specified search object.
+// Language is a 2 character language code (e.g. "en")
+// Region  is a country code (e.g "US")
+func (p *Person) AddLanguage(languageCode, regionCode string) {
+	// todo: add min/max validation
+	// todo: validate accepted languages and regions
+	// todo: for the case of the characters? (uppercase)
+	newLanguage := new(Language)
+	newLanguage.Language = languageCode
+	newLanguage.Region = regionCode
+	p.Languages = append(p.Languages, *newLanguage)
 }
 
-// AddURL appends a URL to the specified search object
-func (p *Person) AddURL(url string) {
-	//todo: add min/max validation
-	//todo: validate basic url requirements
-	newURL := new(URL)
-	newURL.URL = url
-	p.URLs = append(p.URLs, *newURL)
+// AddEthnicity appends an ethnicity to the specified search object
+func (p *Person) AddEthnicity(ethnicity string) {
+	// todo: add min/max validation
+	// todo: accepted list of ethnicities?
+	newEthnicity := new(Ethnicity)
+	newEthnicity.Content = ethnicity
+	p.Ethnicities = append(p.Ethnicities, *newEthnicity)
+}
+
+// AddOriginCountry appends an origin country to the specified search object
+func (p *Person) AddOriginCountry(countryCode string) {
+	// todo: add min/max validation
+	// todo: accepted list of countries?
+	newCountry := new(OriginCountry)
+	newCountry.Country = countryCode
+	p.OriginCountries = append(p.OriginCountries, *newCountry)
 }
 
 // AddRelationship appends a relationship entry to the specified search object
 func (p *Person) AddRelationship(relationship Relationship) {
 	p.Relationships = append(p.Relationships, relationship)
+}
+
+// SetGender sets the gender of the specified search object
+func (p *Person) SetGender(gender string) {
+	if gender != "male" && gender != "female" {
+		gender = "male"
+		// todo: return an error?
+	}
+	newGender := new(Gender)
+	newGender.Content = gender
+	p.Gender = newGender
+}
+
+// SetDateOfBirth sets the DOB of the specified search object
+// DOB string format: "YYYY-MM-DD"
+func (p *Person) SetDateOfBirth(dob string) {
+	// todo: add validation to the DOB (yyyy-mm-dd)
+	// todo: test date compared to today (cannot be future date)
+	newDOB := new(DateOfBirth)
+	newDOB.DateRange.Start = dob
+	newDOB.DateRange.End = dob
+	p.DateOfBirth = newDOB
+}
+
+// HasEmail returns true if the person has an email address
+func (p *Person) HasEmail() bool {
+	if len(p.Emails) > 0 {
+		for _, email := range p.Emails {
+			if email.Address != "" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasPhone returns true if the person has a phone number
+func (p *Person) HasPhone() bool {
+	if len(p.Phones) > 0 {
+		for _, phone := range p.Phones {
+			if (phone.CountryCode != 0 && phone.Number != 0) || (phone.Raw != "") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasUserID returns true if the person has a user id
+func (p *Person) HasUserID() bool {
+	if len(p.UserIDs) > 0 {
+		for _, userID := range p.UserIDs {
+			if userID.Content != "" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasUsername returns true if the person has a username
+func (p *Person) HasUsername() bool {
+	if len(p.Usernames) > 0 {
+		for _, username := range p.Usernames {
+			if username.Content != "" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasURL returns true if the person has a url
+func (p *Person) HasURL() bool {
+	if len(p.URLs) > 0 {
+		for _, u := range p.URLs {
+			if u.URL != "" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasName returns true if the person has a name (minimum required)
+func (p *Person) HasName() bool {
+	if len(p.Names) > 0 {
+		for _, name := range p.Names {
+			if (name.First != "" && name.Last != "") || (name.Raw != "") {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasAddress returns true if the person has an address (minimum required)
+func (p *Person) HasAddress() bool {
+	if len(p.Addresses) > 0 {
+		for _, address := range p.Addresses {
+			if address.House != "" && address.Street != "" && address.City != "" && address.State != "" {
+				return true
+			}
+		}
+	}
+	return false
 }
