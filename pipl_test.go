@@ -351,14 +351,14 @@ func Test_GoodResponse(t *testing.T) {
 	}
 
 	// Test language 1
-	if response.Person.Languages[0].Region != "US" {
-		t.Fatalf("expected: %s, got: %s", "US", response.Person.Languages[0].Region)
+	if response.Person.Languages[0].Region != DefaultCountry {
+		t.Fatalf("expected: %s, got: %s", DefaultCountry, response.Person.Languages[0].Region)
 	}
-	if response.Person.Languages[0].Language != "en" {
-		t.Fatalf("expected: %s, got: %s", "en", response.Person.Languages[0].Language)
+	if response.Person.Languages[0].Language != DefaultLanguage {
+		t.Fatalf("expected: %s, got: %s", DefaultLanguage, response.Person.Languages[0].Language)
 	}
-	if response.Person.Languages[0].Display != "en_US" {
-		t.Fatalf("expected: %s, got: %s", "en_US", response.Person.Languages[0].Display)
+	if response.Person.Languages[0].Display != DefaultDisplayLanguage {
+		t.Fatalf("expected: %s, got: %s", DefaultDisplayLanguage, response.Person.Languages[0].Display)
 	}
 
 	//==================================================================================================================
@@ -387,8 +387,8 @@ func Test_GoodResponse(t *testing.T) {
 	}
 
 	// Test countries
-	if response.Person.OriginCountries[0].Country != "US" {
-		t.Fatalf("expected: %s, got: %s", "US", response.Person.OriginCountries[0].Country)
+	if response.Person.OriginCountries[0].Country != DefaultCountry {
+		t.Fatalf("expected: %s, got: %s", DefaultCountry, response.Person.OriginCountries[0].Country)
 	}
 
 	//==================================================================================================================
@@ -405,8 +405,8 @@ func Test_GoodResponse(t *testing.T) {
 	if response.Person.Addresses[0].Type != "work" {
 		t.Fatalf("expected: %s, got: %s", "work", response.Person.Addresses[0].Type)
 	}
-	if response.Person.Addresses[0].Country != "US" {
-		t.Fatalf("expected: %s, got: %s", "US", response.Person.Addresses[0].Country)
+	if response.Person.Addresses[0].Country != DefaultCountry {
+		t.Fatalf("expected: %s, got: %s", DefaultCountry, response.Person.Addresses[0].Country)
 	}
 	if response.Person.Addresses[0].State != "KS" {
 		t.Fatalf("expected: %s, got: %s", "KS", response.Person.Addresses[0].State)
@@ -643,7 +643,16 @@ func BenchmarkNewPerson(b *testing.B) {
 // TestAddName test adding a name to a person object
 func TestAddName(t *testing.T) {
 	person := NewPerson()
-	person.AddName("clark", "ryan", "kent", "mr", "jr")
+
+	// Test missing first and last
+	err := person.AddName("", "", "", "mr", "jr")
+	if err == nil {
+		t.Fatal("missing error, first and last are missing")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddName("clark", "ryan", "kent", "mr", "jr")
 	if len(person.Names) == 0 {
 		t.Fatal("expected a name in this person object")
 	}
@@ -667,7 +676,7 @@ func TestAddName(t *testing.T) {
 //ExamplePerson_AddName example using AddName()
 func ExamplePerson_AddName() {
 	person := NewPerson()
-	person.AddName("clark", "ryan", "kent", "mr", "jr")
+	_ = person.AddName("clark", "ryan", "kent", "mr", "jr")
 	fmt.Println(person.Names[0].First + " " + person.Names[0].Last)
 	// Output: clark kent
 }
@@ -676,14 +685,23 @@ func ExamplePerson_AddName() {
 func BenchmarkAddName(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddName("clark", "ryan", "kent", "mr", "jr")
+		_ = person.AddName("clark", "ryan", "kent", "mr", "jr")
 	}
 }
 
 // TestAddNameRaw test adding a raw name to a person object
 func TestAddNameRaw(t *testing.T) {
+
+	// Test too short
 	person := NewPerson()
-	person.AddNameRaw("clark ryan kent")
+	err := person.AddNameRaw("clark")
+	if err == nil {
+		t.Fatal("missing error, should have error for too short")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddNameRaw("clark ryan kent")
 	if len(person.Names) == 0 {
 		t.Fatal("expected a name in this person object")
 	}
@@ -695,7 +713,7 @@ func TestAddNameRaw(t *testing.T) {
 //ExamplePerson_AddNameRaw example using AddNameRaw()
 func ExamplePerson_AddNameRaw() {
 	person := NewPerson()
-	person.AddNameRaw("clark kent")
+	_ = person.AddNameRaw("clark kent")
 	fmt.Println(person.Names[0].Raw)
 	// Output: clark kent
 }
@@ -704,14 +722,30 @@ func ExamplePerson_AddNameRaw() {
 func BenchmarkAddNameRaw(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddNameRaw("clark ryan kent")
+		_ = person.AddNameRaw("clark ryan kent")
 	}
 }
 
 // TestAddEmail test adding an email to a person object
 func TestAddEmail(t *testing.T) {
+
+	// Invalid email
 	person := NewPerson()
-	person.AddEmail("clarkkent@gmail.com")
+	err := person.AddEmail("clarkkent")
+	if err == nil {
+		t.Fatal("should have failed, invalid email")
+	}
+
+	// Empty email
+	person = NewPerson()
+	err = person.AddEmail("")
+	if err == nil {
+		t.Fatal("should have failed, invalid email")
+	}
+
+	// Valid email
+	person = NewPerson()
+	_ = person.AddEmail("clarkkent@gmail.com")
 	if len(person.Emails) == 0 {
 		t.Fatal("expected an email in this person object")
 	}
@@ -723,7 +757,7 @@ func TestAddEmail(t *testing.T) {
 //ExamplePerson_AddEmail example using AddEmail()
 func ExamplePerson_AddEmail() {
 	person := NewPerson()
-	person.AddEmail("clarkkent@gmail.com")
+	_ = person.AddEmail("clarkkent@gmail.com")
 	fmt.Println(person.Emails[0].Address)
 	// Output:clarkkent@gmail.com
 }
@@ -732,14 +766,21 @@ func ExamplePerson_AddEmail() {
 func BenchmarkAddEmail(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddEmail("clarkkent@gmail.com")
+		_ = person.AddEmail("clarkkent@gmail.com")
 	}
 }
 
 // TestAddUsername test adding an username to a person object
 func TestAddUsername(t *testing.T) {
 	person := NewPerson()
-	person.AddUsername("clarkkent")
+	err := person.AddUsername("cc")
+	if err == nil {
+		t.Fatal("should have failed, username too short")
+	}
+
+	// Reset / test valid user name
+	person = NewPerson()
+	_ = person.AddUsername("clarkkent")
 	if len(person.Usernames) == 0 {
 		t.Fatal("expected a username in this person object")
 	}
@@ -751,7 +792,7 @@ func TestAddUsername(t *testing.T) {
 //ExamplePerson_AddUsername example using AddUsername()
 func ExamplePerson_AddUsername() {
 	person := NewPerson()
-	person.AddUsername("clarkkent")
+	_ = person.AddUsername("clarkkent")
 	fmt.Println(person.Usernames[0].Content)
 	// Output:clarkkent
 }
@@ -760,14 +801,37 @@ func ExamplePerson_AddUsername() {
 func BenchmarkAddUsername(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddUsername("clarkkent")
+		_ = person.AddUsername("clarkkent")
 	}
 }
 
 // TestAddPhone test adding a phone to a person object
 func TestAddPhone(t *testing.T) {
+
+	// Missing both phone and country code
 	person := NewPerson()
-	person.AddPhone(9785550145, 1)
+	err := person.AddPhone(0, 0)
+	if err == nil {
+		t.Fatal("should have failed, missing phone")
+	}
+
+	// Missing country code
+	person = NewPerson()
+	err = person.AddPhone(9785550145, 0)
+	if err == nil {
+		t.Fatal("should have failed, missing country code")
+	}
+
+	// Missing phone
+	person = NewPerson()
+	err = person.AddPhone(0, 1)
+	if err == nil {
+		t.Fatal("should have failed, missing phone")
+	}
+
+	// Valid phone
+	person = NewPerson()
+	_ = person.AddPhone(9785550145, 1)
 	if len(person.Phones) == 0 {
 		t.Fatal("expected a phone in this person object")
 	}
@@ -782,7 +846,7 @@ func TestAddPhone(t *testing.T) {
 //ExamplePerson_AddPhone example using AddPhone()
 func ExamplePerson_AddPhone() {
 	person := NewPerson()
-	person.AddPhone(9785550145, 1)
+	_ = person.AddPhone(9785550145, 1)
 	fmt.Println(person.Phones[0].Number)
 	// Output:9785550145
 }
@@ -791,26 +855,35 @@ func ExamplePerson_AddPhone() {
 func BenchmarkAddPhone(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddPhone(9785550145, 1)
+		_ = person.AddPhone(9785550145, 1)
 	}
 }
 
 // TestAddPhoneRaw test adding a phone to a person object
 func TestAddPhoneRaw(t *testing.T) {
+
+	// Too short
 	person := NewPerson()
-	person.AddPhoneRaw("9785550145")
+	err := person.AddPhoneRaw("12")
+	if err == nil {
+		t.Fatal("should have failed, phone too short")
+	}
+
+	// Reset / Valid phone
+	person = NewPerson()
+	_ = person.AddPhoneRaw("19785550145")
 	if len(person.Phones) == 0 {
 		t.Fatal("expected a phone in this person object")
 	}
-	if person.Phones[0].Raw != "9785550145" {
-		t.Fatalf("expected value to be 9785550145, got %s", person.Phones[0].Raw)
+	if person.Phones[0].Raw != "19785550145" {
+		t.Fatalf("expected value to be 19785550145, got %s", person.Phones[0].Raw)
 	}
 }
 
 //ExamplePerson_AddPhoneRaw example using AddPhoneRaw()
 func ExamplePerson_AddPhoneRaw() {
 	person := NewPerson()
-	person.AddPhoneRaw("9785550145")
+	_ = person.AddPhoneRaw("9785550145")
 	fmt.Println(person.Phones[0].Raw)
 	// Output:9785550145
 }
@@ -819,33 +892,43 @@ func ExamplePerson_AddPhoneRaw() {
 func BenchmarkAddPhoneRaw(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddPhoneRaw("9785550145")
+		_ = person.AddPhoneRaw("9785550145")
 	}
 }
 
 // TestSetGender test setting a gender on a person object
 func TestSetGender(t *testing.T) {
+
+	// Missing
 	person := NewPerson()
-	person.SetGender("male")
-	if person.Gender.Content != "male" {
-		t.Fatalf("expected value to be male, got %s", person.Gender.Content)
-	}
-	person.SetGender("female")
-	if person.Gender.Content != "female" {
-		t.Fatalf("expected value to be female, got %s", person.Gender.Content)
+	err := person.SetGender("")
+	if err == nil {
+		t.Fatal("should have failed, missing gender")
 	}
 
-	// This is a case where gender is NOT male/female
-	person.SetGender("other")
+	// Invalid
+	person = NewPerson()
+	err = person.SetGender("binary")
+	if err == nil {
+		t.Fatal("should have failed, invalid gender")
+	}
+
+	// Valid values
+	person = NewPerson()
+	_ = person.SetGender("male")
 	if person.Gender.Content != "male" {
 		t.Fatalf("expected value to be male, got %s", person.Gender.Content)
+	}
+	_ = person.SetGender("female")
+	if person.Gender.Content != "female" {
+		t.Fatalf("expected value to be female, got %s", person.Gender.Content)
 	}
 }
 
 //ExamplePerson_SetGender example using SetGender()
 func ExamplePerson_SetGender() {
 	person := NewPerson()
-	person.SetGender("male")
+	_ = person.SetGender("male")
 	fmt.Println(person.Gender.Content)
 	// Output:male
 }
@@ -854,26 +937,56 @@ func ExamplePerson_SetGender() {
 func BenchmarkSetGender(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.SetGender("male")
+		_ = person.SetGender("male")
 	}
 }
 
 // TestSetDateOfBirth test setting a DOB on a person object
 func TestSetDateOfBirth(t *testing.T) {
+
+	// Missing dates
 	person := NewPerson()
-	person.SetDateOfBirth("1987-01-01")
+	err := person.SetDateOfBirth("", "")
+	if err == nil {
+		t.Fatal("should have failed, missing dates")
+	}
+
+	// Missing dates
+	person = NewPerson()
+	err = person.SetDateOfBirth("1981-01-01", "")
+	if err == nil {
+		t.Fatal("should have failed, missing dates")
+	}
+
+	// Invalid start dates
+	person = NewPerson()
+	err = person.SetDateOfBirth("19810101", "1987-01-31")
+	if err == nil {
+		t.Fatal("should have failed, invalid dates")
+	}
+
+	// Invalid start dates
+	person = NewPerson()
+	err = person.SetDateOfBirth("1987-01-01", "19870131")
+	if err == nil {
+		t.Fatal("should have failed, invalid dates")
+	}
+
+	// Valid dates
+	person = NewPerson()
+	_ = person.SetDateOfBirth("1987-01-01", "1987-01-31")
 	if person.DateOfBirth.DateRange.Start != "1987-01-01" {
 		t.Fatalf("expected value to be 1987-01-01, got %s", person.DateOfBirth.DateRange.Start)
 	}
-	if person.DateOfBirth.DateRange.End != "1987-01-01" {
-		t.Fatalf("expected value to be 1987-01-01, got %s", person.DateOfBirth.DateRange.End)
+	if person.DateOfBirth.DateRange.End != "1987-01-31" {
+		t.Fatalf("expected value to be 1987-01-31, got %s", person.DateOfBirth.DateRange.End)
 	}
 }
 
 //ExamplePerson_SetDateOfBirth example using SetDateOfBirth()
 func ExamplePerson_SetDateOfBirth() {
 	person := NewPerson()
-	person.SetDateOfBirth("1987-01-01")
+	_ = person.SetDateOfBirth("1987-01-01", "1987-01-01")
 	fmt.Println(person.DateOfBirth.DateRange.Start)
 	// Output:1987-01-01
 }
@@ -882,45 +995,78 @@ func ExamplePerson_SetDateOfBirth() {
 func BenchmarkSetDateOfBirth(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.SetDateOfBirth("1987-01-01")
+		_ = person.SetDateOfBirth("1987-01-01", "1987-01-01")
 	}
 }
 
 // TestAddLanguage test adding a language to a person object
 func TestAddLanguage(t *testing.T) {
+
+	// Invalid language code
 	person := NewPerson()
-	person.AddLanguage("en", "US")
+	err := person.AddLanguage("wrong", DefaultCountry)
+	if err == nil {
+		t.Fatal("should have failed, invalid language code")
+	}
+
+	// Invalid country
+	person = NewPerson()
+	err = person.AddLanguage(DefaultLanguage, "wrong")
+	if err == nil {
+		t.Fatal("should have failed, invalid language code")
+	}
+
+	person = NewPerson()
+	_ = person.AddLanguage(DefaultLanguage, DefaultCountry)
 	if len(person.Languages) == 0 {
 		t.Fatal("expected a language in this person object")
 	}
-	if person.Languages[0].Language != "en" {
-		t.Fatalf("expected value to be en, got %s", person.Languages[0].Language)
+	if person.Languages[0].Language != DefaultLanguage {
+		t.Fatalf("expected value to be %s, got %s", DefaultLanguage, person.Languages[0].Language)
 	}
-	if person.Languages[0].Region != "US" {
-		t.Fatalf("expected value to be US, got %s", person.Languages[0].Region)
+	if person.Languages[0].Region != DefaultCountry {
+		t.Fatalf("expected value to be %s, got %s", DefaultCountry, person.Languages[0].Region)
+	}
+	if person.Languages[0].Display != DefaultLanguage+"_"+DefaultCountry {
+		t.Fatalf("expected value to be %s, got %s", DefaultLanguage+"_"+DefaultCountry, person.Languages[0].Region)
 	}
 }
 
 //ExamplePerson_AddLanguage example using AddLanguage()
 func ExamplePerson_AddLanguage() {
 	person := NewPerson()
-	person.AddLanguage("en", "US")
-	fmt.Println(person.Languages[0].Language)
-	// Output:en
+	_ = person.AddLanguage(DefaultLanguage, DefaultCountry)
+	fmt.Println(person.Languages[0].Display)
+	// Output:en_US
 }
 
 // BenchmarkAddLanguage benchmarks the AddLanguage method
 func BenchmarkAddLanguage(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddLanguage("en", "US")
+		_ = person.AddLanguage(DefaultLanguage, DefaultCountry)
 	}
 }
 
 // TestAddEthnicity test adding a ethnicity to a person object
 func TestAddEthnicity(t *testing.T) {
+
+	// Missing value
 	person := NewPerson()
-	person.AddEthnicity("white")
+	err := person.AddEthnicity("")
+	if err == nil {
+		t.Fatal("should have failed, missing value")
+	}
+
+	// Invalid value
+	person = NewPerson()
+	err = person.AddEthnicity("unknown")
+	if err == nil {
+		t.Fatal("should have failed, missing value")
+	}
+
+	person = NewPerson()
+	_ = person.AddEthnicity("white")
 	if len(person.Ethnicities) == 0 {
 		t.Fatal("expected an ethnicity in this person object")
 	}
@@ -932,7 +1078,7 @@ func TestAddEthnicity(t *testing.T) {
 //ExamplePerson_AddEthnicity example using AddEthnicity()
 func ExamplePerson_AddEthnicity() {
 	person := NewPerson()
-	person.AddEthnicity("white")
+	_ = person.AddEthnicity("white")
 	fmt.Println(person.Ethnicities[0].Content)
 	// Output:white
 }
@@ -941,26 +1087,32 @@ func ExamplePerson_AddEthnicity() {
 func BenchmarkAddEthnicity(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddEthnicity("white")
+		_ = person.AddEthnicity("white")
 	}
 }
 
 // TestAddOriginCountry test adding a an origin country to a person object
 func TestAddOriginCountry(t *testing.T) {
 	person := NewPerson()
-	person.AddOriginCountry("US")
+	err := person.AddOriginCountry("")
+	if err == nil {
+		t.Fatal("should have failed, missing country code")
+	}
+
+	person = NewPerson()
+	_ = person.AddOriginCountry(DefaultCountry)
 	if len(person.OriginCountries) == 0 {
 		t.Fatal("expected an origin country in this person object")
 	}
-	if person.OriginCountries[0].Country != "US" {
-		t.Fatalf("expected value to be US, got %s", person.OriginCountries[0].Country)
+	if person.OriginCountries[0].Country != DefaultCountry {
+		t.Fatalf("expected value to be %s, got %s", DefaultCountry, person.OriginCountries[0].Country)
 	}
 }
 
 //ExamplePerson_AddOriginCountry example using AddOriginCountry()
 func ExamplePerson_AddOriginCountry() {
 	person := NewPerson()
-	person.AddOriginCountry("US")
+	_ = person.AddOriginCountry(DefaultCountry)
 	fmt.Println(person.OriginCountries[0].Country)
 	// Output:US
 }
@@ -969,14 +1121,30 @@ func ExamplePerson_AddOriginCountry() {
 func BenchmarkAddOriginCountry(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddOriginCountry("US")
+		_ = person.AddOriginCountry(DefaultCountry)
 	}
 }
 
 // TestAddAddress test adding an address to a person object
 func TestAddAddress(t *testing.T) {
+
+	// Missing number and street
 	person := NewPerson()
-	person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+	err := person.AddAddress("", "", "1", "Smallville", "KS", DefaultCountry, "123")
+	if err == nil {
+		t.Fatal("should have failed, missing number/street")
+	}
+
+	// Missing city and state
+	person = NewPerson()
+	err = person.AddAddress("10", "Hickory Lane", "1", "", "", DefaultCountry, "123")
+	if err == nil {
+		t.Fatal("should have failed, missing number/street")
+	}
+
+	// Valid address
+	person = NewPerson()
+	_ = person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", DefaultCountry, "123")
 	if len(person.Addresses) == 0 {
 		t.Fatal("expected an address in this person object")
 	}
@@ -995,8 +1163,8 @@ func TestAddAddress(t *testing.T) {
 	if person.Addresses[0].State != "KS" {
 		t.Fatalf("expected value to be KS, got %s", person.Addresses[0].State)
 	}
-	if person.Addresses[0].Country != "US" {
-		t.Fatalf("expected value to be US, got %s", person.Addresses[0].Country)
+	if person.Addresses[0].Country != DefaultCountry {
+		t.Fatalf("expected value to be %s, got %s", DefaultCountry, person.Addresses[0].Country)
 	}
 	if person.Addresses[0].POBox != "123" {
 		t.Fatalf("expected value to be 123, got %s", person.Addresses[0].POBox)
@@ -1006,7 +1174,7 @@ func TestAddAddress(t *testing.T) {
 //ExamplePerson_AddAddress example using AddAddress()
 func ExamplePerson_AddAddress() {
 	person := NewPerson()
-	person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+	_ = person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", DefaultCountry, "123")
 	fmt.Println(person.Addresses[0].House + " " + person.Addresses[0].Street + ", " + person.Addresses[0].City + " " + person.Addresses[0].State)
 	// Output:10 Hickory Lane, Smallville KS
 }
@@ -1015,42 +1183,67 @@ func ExamplePerson_AddAddress() {
 func BenchmarkAddAddress(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
+		_ = person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", DefaultCountry, "123")
 	}
 }
 
 // TestAddAddressRaw test adding a an address to a person object
 func TestAddAddressRaw(t *testing.T) {
+
+	// Too short
 	person := NewPerson()
-	person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
+	err := person.AddAddressRaw("10")
+	if err == nil {
+		t.Fatal("should have failed, address too short")
+	}
+
+	// Valid address
+	person = NewPerson()
+	_ = person.AddAddressRaw("10 Hickory Lane, Kansas, " + DefaultCountry)
 	if len(person.Addresses) == 0 {
 		t.Fatal("expected an address in this person object")
 	}
-	if person.Addresses[0].Raw != "10 Hickory Lane, Kansas, USA" {
-		t.Fatalf("expected value to be 10 Hickory Lane, Kansas, USA, got %s", person.Addresses[0].Raw)
+	if person.Addresses[0].Raw != "10 Hickory Lane, Kansas, "+DefaultCountry {
+		t.Fatalf("expected value to be 10 Hickory Lane, Kansas, %s, got %s", DefaultCountry, person.Addresses[0].Raw)
 	}
 }
 
 //ExamplePerson_AddAddressRaw example using AddAddressRaw()
 func ExamplePerson_AddAddressRaw() {
 	person := NewPerson()
-	person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
+	_ = person.AddAddressRaw("10 Hickory Lane, Kansas, " + DefaultCountry)
 	fmt.Println(person.Addresses[0].Raw)
-	// Output:10 Hickory Lane, Kansas, USA
+	// Output:10 Hickory Lane, Kansas, US
 }
 
 // BenchmarkAddAddressRaw benchmarks the AddAddressRaw method
 func BenchmarkAddAddressRaw(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddAddressRaw("10 Hickory Lane, Kansas, USA")
+		_ = person.AddAddressRaw("10 Hickory Lane, Kansas, " + DefaultCountry)
 	}
 }
 
 // TestAddJob test adding a job to a person object
 func TestAddJob(t *testing.T) {
+
+	// Missing title
 	person := NewPerson()
-	person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+	err := person.AddJob("", "daily post", "news", "2010-01-01", "2011-01-01")
+	if err == nil {
+		t.Fatal("should have failed, missing title")
+	}
+
+	// Missing organization
+	person = NewPerson()
+	err = person.AddJob("reporter", "", "news", "2010-01-01", "2011-01-01")
+	if err == nil {
+		t.Fatal("should have failed, missing organization")
+	}
+
+	// Valid job
+	person = NewPerson()
+	_ = person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
 	if len(person.Jobs) == 0 {
 		t.Fatal("expected a job in this person object")
 	}
@@ -1074,7 +1267,7 @@ func TestAddJob(t *testing.T) {
 //ExamplePerson_AddJob example using AddJob()
 func ExamplePerson_AddJob() {
 	person := NewPerson()
-	person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+	_ = person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
 	fmt.Println(person.Jobs[0].Title + " at " + person.Jobs[0].Organization + " in " + person.Jobs[0].Industry)
 	// Output:reporter at daily post in news
 }
@@ -1083,14 +1276,23 @@ func ExamplePerson_AddJob() {
 func BenchmarkAddJob(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
+		_ = person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
 	}
 }
 
 // TestAddEducation test adding a an education to a person object
 func TestAddEducation(t *testing.T) {
+
+	// Missing school
 	person := NewPerson()
-	person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+	err := person.AddEducation("masters", "", "2010-01-01", "2011-01-01")
+	if err == nil {
+		t.Fatal("should have failed, missing school")
+	}
+
+	// Valid education
+	person = NewPerson()
+	_ = person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
 	if len(person.Educations) == 0 {
 		t.Fatal("expected an education in this person object")
 	}
@@ -1111,7 +1313,7 @@ func TestAddEducation(t *testing.T) {
 //ExamplePerson_AddEducation example using AddEducation()
 func ExamplePerson_AddEducation() {
 	person := NewPerson()
-	person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+	_ = person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
 	fmt.Println(person.Educations[0].Degree + " from " + person.Educations[0].School)
 	// Output:masters from fau
 }
@@ -1120,18 +1322,34 @@ func ExamplePerson_AddEducation() {
 func BenchmarkAddEducation(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
+		_ = person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
 	}
 }
 
 // TestAddUserID test adding a user id to a person object
 func TestAddUserID(t *testing.T) {
+
+	// Bad user id and service provider
 	person := NewPerson()
-	person.AddUserID("clarkkent")
+	err := person.AddUserID("c", "x")
+	if err == nil {
+		t.Fatal("should have failed, user id too short")
+	}
+
+	// Unknown service provider
+	person = NewPerson()
+	err = person.AddUserID("clarkkent", "notFound")
+	if err == nil {
+		t.Fatal("should have failed, user id too short")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddUserID("clarkkent", "twitter")
 	if len(person.UserIDs) == 0 {
 		t.Fatal("expected a user id in this person object")
 	}
-	if person.UserIDs[0].Content != "clarkkent" {
+	if person.UserIDs[0].Content != "clarkkent@twitter" {
 		t.Fatalf("expected value to be clarkkent, got %s", person.UserIDs[0].Content)
 	}
 }
@@ -1139,23 +1357,30 @@ func TestAddUserID(t *testing.T) {
 //ExamplePerson_AddUserID example using AddUserID()
 func ExamplePerson_AddUserID() {
 	person := NewPerson()
-	person.AddUserID("clarkkent")
+	_ = person.AddUserID("clarkkent", "twitter")
 	fmt.Println(person.UserIDs[0].Content)
-	// Output:clarkkent
+	// Output:clarkkent@twitter
 }
 
 // BenchmarkAddUserID benchmarks the AddUserID method
 func BenchmarkAddUserID(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddUserID("clarkkent")
+		_ = person.AddUserID("clarkkent", "twitter")
 	}
 }
 
 // TestAddURL test adding a url to a person object
 func TestAddURL(t *testing.T) {
 	person := NewPerson()
-	person.AddURL("https://twitter.com/clarkkent")
+	err := person.AddURL("http")
+	if err == nil {
+		t.Fatal("should have returned an error, invalid url")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddURL("https://twitter.com/clarkkent")
 	if len(person.URLs) == 0 {
 		t.Fatal("expected a url in this person object")
 	}
@@ -1167,7 +1392,7 @@ func TestAddURL(t *testing.T) {
 //ExamplePerson_AddURL example using AddURL()
 func ExamplePerson_AddURL() {
 	person := NewPerson()
-	person.AddURL("https://twitter.com/clarkkent")
+	_ = person.AddURL("https://twitter.com/clarkkent")
 	fmt.Println(person.URLs[0].URL)
 	// Output:https://twitter.com/clarkkent
 }
@@ -1176,7 +1401,7 @@ func ExamplePerson_AddURL() {
 func BenchmarkAddURL(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		person.AddURL("https://twitter.com/clarkkent")
+		_ = person.AddURL("https://twitter.com/clarkkent")
 	}
 }
 
@@ -1310,7 +1535,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	}
 
 	// Raw name (good)
-	person.AddNameRaw("john smith")
+	_ = person.AddNameRaw("john smith")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true", person.Names[0].Raw)
 	}
@@ -1319,7 +1544,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Just first (missing last)
-	person.AddName("john", "", "", "", "")
+	_ = person.AddName("john", "", "", "", "")
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
@@ -1328,7 +1553,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Just last (missing first)
-	person.AddName("", "", "smith", "", "")
+	_ = person.AddName("", "", "smith", "", "")
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
@@ -1337,7 +1562,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test both first and last name
-	person.AddName("john", "", "smith", "", "")
+	_ = person.AddName("john", "", "smith", "", "")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1346,7 +1571,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test email address
-	person.AddEmail("clarkkent@gmail.com")
+	_ = person.AddEmail("clarkkent@gmail.com")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1355,7 +1580,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test phone with country code
-	person.AddPhone(9785550145, 1)
+	_ = person.AddPhone(9785550145, 1)
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1364,7 +1589,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test phone without country code
-	person.AddPhone(9785550145, 0)
+	_ = person.AddPhone(9785550145, 0)
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
@@ -1373,7 +1598,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test phone RAW
-	person.AddPhoneRaw("9785550145")
+	_ = person.AddPhoneRaw("19785550145")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1382,7 +1607,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test user id
-	person.AddUserID("clarkkent123")
+	_ = person.AddUserID("clarkkent123", "twitter")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1391,7 +1616,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test usernames
-	person.AddUsername("clarkkent")
+	_ = person.AddUsername("clarkkent")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1400,7 +1625,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test urls
-	person.AddURL("https://twitter.com/clarkkent")
+	_ = person.AddURL("https://twitter.com/clarkkent")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -1409,30 +1634,28 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Partial address
-	person.AddAddress("10", "", "", "", "", "", "")
+	_ = person.AddAddress("10", "", "", "", "", "", "")
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
 
 	// Partial address
-	person.AddAddress("10", "Hickory Lane", "", "", "", "", "")
+	_ = person.AddAddress("10", "Hickory Lane", "", "", "", "", "")
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
 
 	// Partial address
-	person.AddAddress("10", "Hickory Lane", "", "Smallville", "", "", "")
+	_ = person.AddAddress("10", "Hickory Lane", "", "Smallville", "", "", "")
 	if SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return false")
 	}
 
 	// Full address
-	person.AddAddress("10", "Hickory Lane", "", "Smallville", "KS", "", "")
+	_ = person.AddAddress("10", "Hickory Lane", "", "Smallville", "KS", "", "")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
-
-	//person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", "US", "123")
 }
 
 //ExampleSearchMeetsMinimumCriteria example using SearchMeetsMinimumCriteria()
@@ -1471,7 +1694,10 @@ func TestSearchByPerson(t *testing.T) {
 	}
 
 	// Create a new client object to handle your queries (supply an API Key)
-	client, _ := NewClient("your-api-key")
+	client, err := NewClient("your-api-key")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Set your match requirements if you have any. You don't pay for results that
 	// don't satisfy your match requirements (but your returned results will be empty)
@@ -1481,15 +1707,24 @@ func TestSearchByPerson(t *testing.T) {
 	searchObject := NewPerson()
 
 	// Let's find out who this random guy is. We'll search by a username.
-	searchObject.AddUsername("@jeffbezos")
+	err = searchObject.AddUsername("@jeffbezos")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// And we'll add a full name
-	searchObject.AddName("jeff", "preston", "bezos", "", "")
+	err = searchObject.AddName("jeff", "preston", "bezos", "", "")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Some field types have a "raw" option that you can use if you're unsure
 	// how to break it down. Pipl will attempt to parse it for you.
 	// Generally you should use one or the other (AddX() or AddXRaw())
-	searchObject.AddNameRaw("jeff preston bezos")
+	err = searchObject.AddNameRaw("jeff preston bezos")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Launch the search (if you don't meet the minimum search criteria, an error
 	// should be returned to you here stating such).
