@@ -5,16 +5,6 @@ import (
 	"strings"
 )
 
-// ErrInsufficientSearch is an error type that may be returned by
-// SearchByPerson which denotes that the search object provided does not meet
-// the minimum requirements.
-type ErrInsufficientSearch struct{}
-
-// Error is the response for an ErrInsufficientSearch error
-func (err *ErrInsufficientSearch) Error() string {
-	return "the search object submitted does not contain sufficient terms. Must have a complete entry for one of the following: Name, email, phone, username, userID, url"
-}
-
 // Summarize returns a string summary of the attributes of a person object
 func (p Person) Summarize() (response string, err error) {
 	builder := strings.Builder{}

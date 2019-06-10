@@ -5,6 +5,7 @@ package pipl
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -193,44 +194,71 @@ func SearchMeetsMinimumCriteria(p *Person) bool {
 // results in the form of a Response struct. If successful, the response struct
 // will contains the results, and err will be nil. If an error occurs, the struct pointer
 // will be nil and you should check err for additional information.
-func (client *Client) SearchByPerson(searchObject *Person) (response *Response, err error) {
-	if !SearchMeetsMinimumCriteria(searchObject) {
-		return nil, &ErrInsufficientSearch{}
-	}
-	postData := url.Values{}
-	postData.Add("key", client.SearchParameters.APIKey)
+func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err error) {
 
-	if client.SearchParameters.ShowSources != ShowSourcesNone {
-		postData.Add("show_sources", string(client.SearchParameters.ShowSources))
+	// Do we meet the minimum requirements for searching?
+	if !SearchMeetsMinimumCriteria(searchPerson) {
+		err = fmt.Errorf("the search request submitted does not contain enough sufficient terms. " +
+			"You must have one of the following: full name, email, phone, username, userID, url, or full street address")
+		return
 	}
-	if client.SearchParameters.MatchRequirements != MatchRequirementsNone {
-		postData.Add("match_requirements", string(client.SearchParameters.MatchRequirements))
+
+	// Start the post data
+	postData := url.Values{}
+
+	// Add the API key
+	postData.Add("key", c.SearchParameters.APIKey)
+
+	// Should we show sources?
+	if c.SearchParameters.ShowSources != ShowSourcesNone {
+		postData.Add("show_sources", string(c.SearchParameters.ShowSources))
 	}
-	if client.SearchParameters.SourceCategoryRequirements != SourceCategoryRequirementsNone {
-		postData.Add("source_category_requirements", string(client.SearchParameters.SourceCategoryRequirements))
+
+	// Add match requirements?
+	if c.SearchParameters.MatchRequirements != MatchRequirementsNone {
+		postData.Add("match_requirements", string(c.SearchParameters.MatchRequirements))
 	}
+
+	// Add source category requirements?
+	if c.SearchParameters.SourceCategoryRequirements != SourceCategoryRequirementsNone {
+		postData.Add("source_category_requirements", string(c.SearchParameters.SourceCategoryRequirements))
+	}
+
+	// Parse the search object
 	var personJSON []byte
-	personJSON, err = json.Marshal(searchObject)
+	personJSON, err = json.Marshal(searchPerson)
 	if err != nil {
 		return
 	}
+
+	// Add the person to the request
 	postData.Add("person", string(personJSON))
+
+	// Start the post request
 	var request *http.Request
 	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
 	if err != nil {
 		return
 	}
+
+	// Change the header
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Fire the request
 	var resp *http.Response
-	resp, err = client.HTTPClient.Do(request)
+	resp, err = c.HTTPClient.Do(request)
 	if err != nil {
 		return
 	}
+
+	//Parse the body of the request
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
+
+	// Try to parse the response
 	response = new(Response)
 	err = json.Unmarshal(body, response)
 	return
@@ -238,26 +266,48 @@ func (client *Client) SearchByPerson(searchObject *Person) (response *Response, 
 
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
-func (client *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
+func (c *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
+
+	// So we have a search pointer?
+	if len(searchPointer) < 20 {
+		err = fmt.Errorf("invalid search pointer: %s", searchPointer)
+		return
+	}
+
+	// Start the post data
 	postData := url.Values{}
-	postData.Add("key", client.SearchParameters.APIKey)
+
+	// Add the API key
+	postData.Add("key", c.SearchParameters.APIKey)
+
+	// Add the search pointer
 	postData.Add("search_pointer", searchPointer)
+
+	// Start the post request
 	var request *http.Request
 	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
 	if err != nil {
 		return
 	}
+
+	// Change the content type
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Fire the http request
 	var response *http.Response
-	response, err = client.HTTPClient.Do(request)
+	response, err = c.HTTPClient.Do(request)
 	if err != nil {
 		return
 	}
+
+	// Read the body
 	var body []byte
 	body, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
+
+	// Parse the response
 	piplResponse := new(Response)
 	err = json.Unmarshal(body, piplResponse)
 	if err != nil {
