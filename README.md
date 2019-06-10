@@ -27,7 +27,7 @@ $ go get -u github.com/mrz1836/go-pipl
 You can view the generated [documentation here](https://godoc.org/github.com/mrz1836/go-pipl).
 
 ## Examples & Tests
-All unit tests and [examples](https://github.com/mrz1836/go-pipl/blob/master/pipl_test.go) run via [Travis CI](https://travis-ci.com/mrz1836/go-pipl) and uses [Go version 1.12.x](https://golang.org/doc/go1.12). View the [deployment configuration file](https://github.com/mrz1836/go-pipl/blob/master/.travis.yml).
+All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.com/mrz1836/go-pipl) and uses [Go version 1.12.x](https://golang.org/doc/go1.12). View the [deployment configuration file](.travis.yml).
 
 Run all tests (including integration tests)
 ```bash
