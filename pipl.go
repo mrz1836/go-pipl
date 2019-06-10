@@ -244,7 +244,8 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 		return
 	}
 
-	// Change the header
+	// Change the header (user agent is in case they block default Go user agents)
+	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	// Fire the request
@@ -326,7 +327,8 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 		return
 	}
 
-	// Change the content type
+	// Change the header (user agent is in case they block default Go user agents)
+	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	// Fire the http request
