@@ -1,6 +1,3 @@
-// Package pipl provides a way to interact programmatically with the Pipl API in Golang.
-// For more detailed information on the Pipl search API and what we're actually
-// wrapping, check out their official API reference: https://docs.pipl.com/reference/#overview
 package pipl
 
 // GUID is a unique format (but is just a string internally, since there's currently
