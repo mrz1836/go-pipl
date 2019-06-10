@@ -1,5 +1,5 @@
 # go-pipl
-**go-pipl** Simple golang wrapper to help find people using the Pipl API.  This project follows Go best practices and you can view the standards and specifications at the [end of this readme](https://github.com/mrz1836/go-pipl#adheres-to-effective-go-standards).
+**go-pipl** is a simple golang wrapper to help find people using the pipl.com API.
 
 | | | | | | | |
 |-|-|-|-|-|-|-|
@@ -7,14 +7,14 @@
 
 ## Table of Contents
 - [Installation](#installation)
-- [Documentation](https://github.com/mrz1836/go-pipl#documentation)
-- [Examples & Tests](https://github.com/mrz1836/go-pipl#examples--tests)
-- [Benchmarks](https://github.com/mrz1836/go-pipl#benchmarks)
-- [Code Standards](https://github.com/mrz1836/go-pipl#code-standards)
-- [Usage](https://github.com/mrz1836/go-pipl#usage)
-- [Maintainers](https://github.com/mrz1836/go-pipl#maintainers)
-- [Contributing](https://github.com/mrz1836/go-pipl#contributing)
-- [License](https://github.com/mrz1836/go-pipl#license)
+- [Documentation](#documentation)
+- [Examples & Tests](#examples--tests)
+- [Benchmarks](#benchmarks)
+- [Code Standards](#code-standards)
+- [Usage](#usage)
+- [Maintainers](#maintainers)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
