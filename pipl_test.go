@@ -24,7 +24,7 @@ func loadGoodResponseData() (response *Response, rawJSON string, err error) {
 
 	// Open our jsonFile
 	var jsonFile *os.File
-	jsonFile, err = os.Open("test-good-response.json")
+	jsonFile, err = os.Open("response_success.json")
 	if err != nil {
 		return
 	}
