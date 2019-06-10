@@ -128,8 +128,8 @@ func NewClient(APIKey string) (client *Client) {
 	client.HTTPClient = new(http.Client)
 	client.SearchParameters = new(SearchParameters)
 	client.SearchParameters.APIKey = APIKey
-	//client.SearchParameters.HideSponsored = false
-	client.SearchParameters.HideSponsored = true
+	client.SearchParameters.HideSponsored = false
+	//client.SearchParameters.HideSponsored = true
 	client.SearchParameters.InferPersons = false
 	client.SearchParameters.LiveFeeds = true
 	client.SearchParameters.MatchRequirements = MatchRequirementsNone
@@ -194,7 +194,9 @@ func SearchMeetsMinimumCriteria(p *Person) bool {
 // SearchByPerson takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If successful, the response struct
 // will contains the results, and err will be nil. If an error occurs, the struct pointer
-// will be nil and you should check err for additional information.
+// will be nil and you should check err for additional information. This method will only
+// return one full person, and a preview of possible people if < 100% match. Use the SearchByPersonExtended()
+// method to get all the details when searching.
 func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err error) {
 
 	// Do we meet the minimum requirements for searching?
@@ -317,5 +319,35 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 	// Set the person from the response
 	person = &piplResponse.Person
+	return
+}
+
+// SearchByPersonExtended takes a person object (filled with search terms) and returns the
+// results in the form of a Response struct. If possible people are found, they are also
+// looked up using the SearchByPointer()
+func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Response, err error) {
+
+	// Lookup the person(s)
+	response, err = c.SearchByPerson(searchPerson)
+	if err != nil {
+		return
+	}
+
+	// When multiple PossiblePersons are returned, we get a "preview" of each of
+	// each of them (< 100% match confidence)
+	if response.PersonsCount > 1 {
+		for _, person := range response.PossiblePersons {
+			// In order to get the full info on each, we need to a follow up query
+			// to pull a full person profile by search pointer
+			searchPointer := person.SearchPointer
+			var pointerResults *Person
+			pointerResults, err = c.SearchByPointer(searchPointer)
+			if err != nil {
+				return
+			}
+			response.PossiblePersonsDetails = append(response.PossiblePersonsDetails, *pointerResults)
+		}
+	}
+
 	return
 }

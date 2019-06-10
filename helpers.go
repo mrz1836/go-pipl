@@ -1,12 +1,7 @@
 package pipl
 
-import (
-	"fmt"
-	"strings"
-)
-
 // Summarize returns a string summary of the attributes of a person object
-func (p Person) Summarize() (response string, err error) {
+/*func (p Person) Summarize() (response string, err error) {
 	builder := strings.Builder{}
 	_, err = builder.WriteString(fmt.Sprintf("Match Confidence: %.f%%\n", p.Match*100))
 	if err != nil {
@@ -198,7 +193,7 @@ func (p Person) Summarize() (response string, err error) {
 	// Set the response
 	response = builder.String()
 	return
-}
+}*/
 
 // NewPerson makes a new blank person object to be filled with terms
 func NewPerson() *Person {

@@ -1297,8 +1297,8 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 //======================================================================================================================
 // Full Pipl Integration Tests (-test.short to skip)
 
-// TestLiveSearchByPerson tests a live search using a real API key
-func TestLiveSearchByPerson(t *testing.T) {
+// TestSearchByPerson tests a live search using a real API key (if set)
+func TestSearchByPerson(t *testing.T) {
 	// Skip tis test in short mode (not needed)
 	if testing.Short() {
 		t.Skip("skipping testing in short mode")
@@ -1332,33 +1332,8 @@ func TestLiveSearchByPerson(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// When multiple PossiblePersons are returned, we get a "preview" of each of
-	// each of them (< 100% match confidence)
-	if results.PersonsCount > 1 {
-		for _, person := range results.PossiblePersons {
-			// In order to get the full info on each, we need to a follow up query
-			// to pull a full person profile by search pointer
-			searchPtr := person.SearchPointer
-			ptrResults, err := client.SearchByPointer(searchPtr)
-			if err != nil {
-				t.Fatal(err)
-			}
-			ptrSummary, err := ptrResults.Summarize()
-			if err != nil {
-				t.Fatal(err)
-			}
-			t.Log(ptrSummary)
-		}
-	} else if results.PersonsCount == 1 {
-		// When a single result is returned from our search, we get a full
-		// profile by default (100% match confidence)
-		personSummary, err := results.Person.Summarize()
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Log(personSummary)
-	} else {
-		t.Log("no results found")
+	// Do we match?
+	if results.Person.Names[0].First != "Jeff" {
+		t.Fatal("uh oh! Jeff wasn't found!")
 	}
-	t.Log("test complete")
 }
