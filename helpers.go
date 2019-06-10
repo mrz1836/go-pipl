@@ -1,5 +1,7 @@
 package pipl
 
+import "fmt"
+
 // Summarize returns a string summary of the attributes of a person object
 /*func (p Person) Summarize() (response string, err error) {
 	builder := strings.Builder{}
@@ -463,4 +465,28 @@ func (p *Person) HasAddress() bool {
 		}
 	}
 	return false
+}
+
+// ProcessThumbnails checks for any images and adds thumbnail urls to the existing image
+// Requires the client for now since the client has the current configuration
+func (p *Person) ProcessThumbnails(c *Client) {
+
+	// No images to process or no client
+	if len(p.Images) == 0 || c == nil {
+		return
+	}
+
+	// Loop all images
+	for index, image := range p.Images {
+		if image.ThumbnailToken != "" {
+			p.Images[index].ThumbnailURL = fmt.Sprintf("%s?height=%d&width=%d&favicon=%t&zoom_face=%t&tokens=%s",
+				c.ThumbnailSettings.URL,
+				c.ThumbnailSettings.Height,
+				c.ThumbnailSettings.Width,
+				c.ThumbnailSettings.Favicon,
+				c.ThumbnailSettings.ZoomFace,
+				image.ThumbnailToken,
+			)
+		}
+	}
 }
