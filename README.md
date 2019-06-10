@@ -72,13 +72,8 @@ func main() {
     // Create a client with your api key
     client := pipl.NewClient("your-api-key")
 
-    // Set your match requirements
-    client.SearchParameters.MatchRequirements = "name and phone"
-
-    // Create a new person
+    // Create a new person for searching
     search := pipl.NewPerson()
-
-    // Search by username
     search.AddUsername("@jeffbezos")
 
     // Submit the search
