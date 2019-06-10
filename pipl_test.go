@@ -19,12 +19,12 @@ var testThumbnailToken = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3
 //======================================================================================================================
 // Response Parsing and Expected Values
 
-// loadGoodResponseData loads a good forged response JSON (6/8/2019)
-func loadGoodResponseData() (response *Response, rawJSON string, err error) {
+// loadResponseData loads a good forged response JSON (6/8/2019)
+func loadResponseData(filename string) (response *Response, rawJSON string, err error) {
 
 	// Open our jsonFile
 	var jsonFile *os.File
-	jsonFile, err = os.Open("response_success.json")
+	jsonFile, err = os.Open(filename)
 	if err != nil {
 		return
 	}
@@ -53,7 +53,7 @@ func loadGoodResponseData() (response *Response, rawJSON string, err error) {
 func Test_GoodResponse(t *testing.T) {
 
 	// Load the response data
-	response, _, err := loadGoodResponseData()
+	response, _, err := loadResponseData("response_success.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -545,6 +545,81 @@ func Test_GoodResponse(t *testing.T) {
 	}
 
 	// todo: add url #2 and #3
+}
+
+// Test_PersonNotFoundResponse test a person not found response JSON
+func Test_PersonNotFoundResponse(t *testing.T) {
+	// Load the response data
+	response, _, err := loadResponseData("response_not_found.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.PersonsCount > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.AvailableSources > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.HTTPStatusCode != 200 {
+		t.Fatal("expected to be 200")
+	}
+
+	if response.Error != "" {
+		t.Fatal("expected to be empty")
+	}
+}
+
+// Test_BadKeyResponse test a bad api key response JSON
+func Test_BadKeyResponse(t *testing.T) {
+	// Load the response data
+	response, _, err := loadResponseData("response_bad_key.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.PersonsCount > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.AvailableSources > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.HTTPStatusCode != 403 {
+		t.Fatal("expected to be 403")
+	}
+
+	if response.Error != "Unrecognized API key" {
+		t.Fatal("expected to be: Unrecognized API key")
+	}
+}
+
+// Test_PackageErrorResponse test a bad package response JSON
+func Test_PackageErrorResponse(t *testing.T) {
+	// Load the response data
+	response, _, err := loadResponseData("response_package_error.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.PersonsCount > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.AvailableSources > 0 {
+		t.Fatal("expected to be 0")
+	}
+
+	if response.HTTPStatusCode != 400 {
+		t.Fatal("expected to be 400")
+	}
+
+	if response.Error != "Your data package does not contain email" {
+		t.Fatal("expected to be: Your data package does not contain email")
+	}
 }
 
 //======================================================================================================================
