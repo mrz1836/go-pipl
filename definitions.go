@@ -92,6 +92,69 @@ type UserID struct {
 	ValidSince string `json:"@valid_since,omitempty"`
 }
 
+// AllowedServiceProviders is all the providers
+// https://docs.pipl.com/reference#section-list-of-known-services
+// Note: all lowercase, case sensitive
+var AllowedServiceProviders = []string{
+	"aboutme",
+	"badoo",
+	"bebo",
+	"classmates",
+	"cpf",
+	"cyworld",
+	"delicious",
+	"deviantart",
+	"digg",
+	"douban",
+	"ebay",
+	"facebook",
+	"flavorsme",
+	"flickr",
+	"flixster",
+	"foursquare",
+	"freelancer",
+	"friendster",
+	"gaia",
+	"github",
+	"goodreads",
+	"google",
+	"gravatar",
+	"habbo",
+	"hi5",
+	"hyves",
+	"imgur",
+	"instagram",
+	"lastfm",
+	"linkedin",
+	"livejournal",
+	"meetup",
+	"myheritage",
+	"mylife",
+	"myspace",
+	"myyearbook",
+	"netlog",
+	"ning",
+	"odnoklassniki",
+	"orkut",
+	"pinterest",
+	"quora",
+	"qzone",
+	"renren",
+	"sonico",
+	"soundcloud",
+	"stumbleupon",
+	"tagged",
+	"tumblr",
+	"twitter",
+	"viadeo",
+	"vkontakte",
+	"weeworld",
+	"xanga",
+	"xing",
+	"yelp",
+	"youtube",
+}
+
 // DateRange specifies a range of time by a start and end date
 type DateRange struct {
 	Current    bool   `json:"@current,omitempty"`
@@ -165,6 +228,28 @@ type Ethnicity struct {
 	Inferred   bool   `json:"@inferred,omitempty"`
 	LastSeen   string `json:"@last_seen,omitempty"`
 	ValidSince string `json:"@valid_since,omitempty"`
+}
+
+// AllowedEthnicities is all the types
+// https://docs.pipl.com/reference#ethinicity
+// Note: all lowercase, case sensitive
+var AllowedEthnicities = []string{
+	"alaska_native",
+	"american_indian",
+	"black",
+	"chamorro",
+	"chinese",
+	"filipino",
+	"guamanian",
+	"japanese",
+	"korean",
+	"native_hawaiian",
+	"other",
+	"other_asian",
+	"other_pacific_islander",
+	"samoan",
+	"vietnamese",
+	"white",
 }
 
 // Language contains information about a possible language known by the given person.
