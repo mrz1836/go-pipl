@@ -12,21 +12,6 @@ import (
 	"strings"
 )
 
-// SourceLevel is used internally to represent the possible values
-// for show_sources in queries to be submitted: {"all", "matching"/"true", "false"}
-type SourceLevel string
-
-// MatchRequirements specifies the conditions for a successful person match in our search.
-// This is useful for saving money with the Pipl API, as you only need to pay for the
-// data you wanted back. If your search results didn't satisfy the match requirements, then
-// no data is returned and you don't pay.
-type MatchRequirements string
-
-// SourceCategoryRequirements specifies the data categories that must be included in
-// results for a successful match. If there is no data from the requested categories,
-// then the results returned are empty and you're not charged.
-type SourceCategoryRequirements string
-
 // Package global constants
 const (
 	// SearchAPIEndpoint is where we POST queries to
@@ -75,11 +60,27 @@ const (
 	SourceCategoryRequirementsProfessionalAndBusiness SourceCategoryRequirements = "professional_and_business"
 )
 
+// SourceLevel is used internally to represent the possible values
+// for show_sources in queries to be submitted: {"all", "matching"/"true", "false"}
+type SourceLevel string
+
+// MatchRequirements specifies the conditions for a successful person match in our search.
+// This is useful for saving money with the Pipl API, as you only need to pay for the
+// data you wanted back. If your search results didn't satisfy the match requirements, then
+// no data is returned and you don't pay.
+type MatchRequirements string
+
+// SourceCategoryRequirements specifies the data categories that must be included in
+// results for a successful match. If there is no data from the requested categories,
+// then the results returned are empty and you're not charged.
+type SourceCategoryRequirements string
+
 // Client holds client configuration settings
 type Client struct {
 	// HTTPClient carries out the POST operations
 	HTTPClient *http.Client
-	// Parameters contains the search parameters that are submitted with your query,
+
+	// SearchParameters contains the search parameters that are submitted with your query,
 	// which may affect the data returned
 	SearchParameters *SearchParameters
 }
