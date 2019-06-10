@@ -267,6 +267,39 @@ func (c *Client) SearchByPerson(searchPerson *Person) (response *Response, err e
 	return
 }
 
+// SearchByPersonExtended takes a person object (filled with search terms) and returns the
+// results in the form of a Response struct. If possible people are found, they are also
+// looked up using the SearchByPointer()
+func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Response, err error) {
+
+	// Lookup the person(s)
+	response, err = c.SearchByPerson(searchPerson)
+	if err != nil {
+		return
+	}
+
+	// When multiple PossiblePersons are returned, we get a "preview" of each of
+	// each of them (< 100% match confidence)
+	if response.PersonsCount > 1 {
+		for index, person := range response.PossiblePersons {
+
+			// In order to get the full info on each, we need to a follow up query
+			// to pull a full person profile by search pointer
+			searchPointer := person.SearchPointer
+			var pointerResults *Person
+			pointerResults, err = c.SearchByPointer(searchPointer)
+			if err != nil {
+				return
+			}
+
+			// Replace the preview with the full details
+			response.PossiblePersons[index] = *pointerResults
+		}
+	}
+
+	return
+}
+
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
 func (c *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
@@ -319,38 +352,5 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 	// Set the person from the response
 	person = &piplResponse.Person
-	return
-}
-
-// SearchByPersonExtended takes a person object (filled with search terms) and returns the
-// results in the form of a Response struct. If possible people are found, they are also
-// looked up using the SearchByPointer()
-func (c *Client) SearchByPersonExtended(searchPerson *Person) (response *Response, err error) {
-
-	// Lookup the person(s)
-	response, err = c.SearchByPerson(searchPerson)
-	if err != nil {
-		return
-	}
-
-	// When multiple PossiblePersons are returned, we get a "preview" of each of
-	// each of them (< 100% match confidence)
-	if response.PersonsCount > 1 {
-		for index, person := range response.PossiblePersons {
-
-			// In order to get the full info on each, we need to a follow up query
-			// to pull a full person profile by search pointer
-			searchPointer := person.SearchPointer
-			var pointerResults *Person
-			pointerResults, err = c.SearchByPointer(searchPointer)
-			if err != nil {
-				return
-			}
-
-			// Replace the preview with the full details
-			response.PossiblePersons[index] = *pointerResults
-		}
-	}
-
 	return
 }
