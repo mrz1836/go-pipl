@@ -7,6 +7,8 @@ type GUID string
 
 // Name fields collectively define a possible name for a given person.
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#name
 type Name struct {
 	Current    bool   `json:"@current,omitempty"`
 	Display    string `json:"display,omitempty"`
@@ -24,6 +26,8 @@ type Name struct {
 
 // Address fields collectively define a possible address for a given person
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#address
 type Address struct {
 	Apartment  string `json:"apartment,omitempty"`
 	City       string `json:"city,omitempty"`
@@ -44,6 +48,8 @@ type Address struct {
 
 // Phone fields collectively define a possible phone number for a given person
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#phone
 type Phone struct {
 	CountryCode          int    `json:"country_code,omitempty"`
 	Current              bool   `json:"@current,omitempty"`
@@ -60,6 +66,8 @@ type Phone struct {
 
 // Email fields collectively define a possible email address for a given person
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#email
 type Email struct {
 	Address       string `json:"address,omitempty"`
 	AddressMD5    string `json:"address_md5,omitempty"`
@@ -74,6 +82,8 @@ type Email struct {
 
 // Username fields collectively define a possible username used by a given person.
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#username
 type Username struct {
 	Content    string `json:"content,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -84,6 +94,8 @@ type Username struct {
 
 // UserID fields collectively define a possible UserID used by a given person.
 // If a search did not return information for a given field, it will be empty.
+//
+// Source: https://docs.pipl.com/reference#user-id
 type UserID struct {
 	Content    string `json:"content,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -93,7 +105,9 @@ type UserID struct {
 }
 
 // AllowedServiceProviders is all the providers
-// https://docs.pipl.com/reference#section-list-of-known-services
+//
+// Source: https://docs.pipl.com/reference#section-list-of-known-services
+//
 // Note: all lowercase, case sensitive
 var AllowedServiceProviders = []string{
 	"aboutme",
@@ -156,6 +170,8 @@ var AllowedServiceProviders = []string{
 }
 
 // DateRange specifies a range of time by a start and end date
+//
+// Source: https://docs.pipl.com/reference#date-range
 type DateRange struct {
 	Current    bool   `json:"@current,omitempty"`
 	End        string `json:"end,omitempty"`
@@ -166,6 +182,8 @@ type DateRange struct {
 }
 
 // DateOfBirth specifies a possible DOB for a person.
+//
+// Source: https://docs.pipl.com/reference#date-of-birth
 type DateOfBirth struct {
 	Current    bool      `json:"@current,omitempty"`
 	DateRange  DateRange `json:"date_range,omitempty"`
@@ -176,6 +194,8 @@ type DateOfBirth struct {
 }
 
 // Image specifies a link to an image closely associated with the given person.
+//
+// Source: https://docs.pipl.com/reference#image
 type Image struct {
 	Current        bool   `json:"@current,omitempty"`
 	Inferred       bool   `json:"@inferred,omitempty"`
@@ -187,6 +207,8 @@ type Image struct {
 }
 
 // Job specifies information about a possible occupation held by the given person.
+//
+// Source: https://docs.pipl.com/reference#job
 type Job struct {
 	Current      bool      `json:"@current,omitempty"`
 	DateRange    DateRange `json:"date_range,omitempty"`
@@ -200,6 +222,8 @@ type Job struct {
 }
 
 // Education specifies a possible
+//
+// Source: https://docs.pipl.com/reference#education
 type Education struct {
 	Current    bool      `json:"@current,omitempty"`
 	DateRange  DateRange `json:"date_range,omitempty"`
@@ -213,6 +237,8 @@ type Education struct {
 
 // Gender contains a  possible gender of the given person.
 // Gender is one of: "male", "female" (There is no default value for this field)
+//
+// Source: https://docs.pipl.com/reference#gender
 type Gender struct {
 	Content    string `json:"content,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -222,6 +248,8 @@ type Gender struct {
 }
 
 // Ethnicity contains a possible ethnicity of given person.
+//
+// Source: https://docs.pipl.com/reference#ethinicity
 type Ethnicity struct {
 	Content    string `json:"content,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -231,7 +259,9 @@ type Ethnicity struct {
 }
 
 // AllowedEthnicities is all the types
-// https://docs.pipl.com/reference#ethinicity
+//
+// Source: https://docs.pipl.com/reference#ethinicity
+//
 // Note: all lowercase, case sensitive
 var AllowedEthnicities = []string{
 	"alaska_native",
@@ -253,6 +283,8 @@ var AllowedEthnicities = []string{
 }
 
 // Language contains information about a possible language known by the given person.
+//
+// Source: https://docs.pipl.com/reference#language
 type Language struct {
 	Current    bool   `json:"@current,omitempty"`
 	Display    string `json:"display,omitempty"`
@@ -265,6 +297,8 @@ type Language struct {
 
 // OriginCountry contains information about a possible origin country of the
 // given person.
+//
+// Source: https://docs.pipl.com/reference#origin-country
 type OriginCountry struct {
 	Country    string `json:"country,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -278,6 +312,8 @@ type OriginCountry struct {
 // Type  and Subtype contain information about the nature of the relationship to
 // the person being searched. For example, Type = "Family", Subtype = "Father".
 // Type can be one of: "work", "family", "friend" (default), "other"
+//
+// Source: https://docs.pipl.com/reference#relationship
 type Relationship struct {
 	Addresses       []Address       `json:"addresses,omitempty"`
 	Current         bool            `json:"@current,omitempty"`
@@ -303,6 +339,8 @@ type Relationship struct {
 }
 
 // URL contains information about a URL that is closely associated with a given person.
+//
+// Source: https://docs.pipl.com/reference#url
 type URL struct {
 	Category   string `json:"@category,omitempty"`
 	Current    bool   `json:"@current,omitempty"`
@@ -316,6 +354,8 @@ type URL struct {
 }
 
 // Tag contains content classification information
+//
+// Source: https://docs.pipl.com/reference#tag
 type Tag struct {
 	Classification string `json:"@classification,omitempty"`
 	Content        string `json:"content,omitempty"`
@@ -326,6 +366,8 @@ type Tag struct {
 // The Match field represents the confidence of a particular person match, as a
 // float: 0 <= Match <= 1. More potential matches returned in a search decreases
 // the overall confidence of all matches.
+//
+// Source: https://docs.pipl.com/reference#person
 type Person struct {
 	Addresses       []Address       `json:"addresses,omitempty"`
 	DateOfBirth     *DateOfBirth    `json:"dob,omitempty"`
@@ -352,6 +394,8 @@ type Person struct {
 // Source contains all the information for a given person, gathered from a
 // single source. The source structure contains information about the name,
 // domain, category, and source URL (amongst other fields).
+//
+// Source: https://docs.pipl.com/reference#source
 type Source struct {
 	Addresses       []Address       `json:"addresses"`
 	Category        string          `json:"@category"`
@@ -381,6 +425,8 @@ type Source struct {
 }
 
 // FieldCount contains the count of various attributes returned from a search
+//
+// Source: https://docs.pipl.com/reference#overview-2
 type FieldCount struct {
 	Addresses       int `json:"addresses"`
 	DOBs            int `json:"dobs"`
@@ -404,6 +450,8 @@ type FieldCount struct {
 
 // AvailableData aggregates the counts for found attributes that are relevant to
 // your search, divided into free and paid sources.
+//
+// Source: https://docs.pipl.com/reference#available-data
 type AvailableData struct {
 	Basic   FieldCount `json:"basic"`
 	Premium FieldCount `json:"premium"`
@@ -413,6 +461,8 @@ type AvailableData struct {
 // the Pipl API. If an error occurs, the Error field will have more information.
 // A search may be successful, but have some warnings. These are held in the
 // Warnings field.
+//
+// Source: https://docs.pipl.com/reference#overview-2
 type Response struct {
 	AvailableData     AvailableData `json:"available_data"`
 	AvailableSources  int           `json:"@available_sources"`
