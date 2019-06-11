@@ -55,6 +55,10 @@ You can view the generated [documentation here](https://godoc.org/github.com/mrz
 ## Examples & Tests
 All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.com/mrz1836/go-pipl) and uses [Go version 1.12.x](https://golang.org/doc/go1.12). View the [deployment configuration file](.travis.yml).
 
+- [helper examples & tests](helper_test.go)
+- [pipl examples &  tests](pipl_test.go)
+- [response tests](response_test.go)
+
 Run all tests (including integration tests)
 ```bash
 $ cd ../go-pipl
@@ -78,7 +82,8 @@ $ go test -bench . -benchmem
 Read more about this Go project's [code standards](CODE_STANDARDS.md).
 
 ## Usage
-- View the [examples](pipl_test.go)
+- View the [pipl examples](pipl_test.go)
+- View the [helper examples](helper_test.go)
 - View the [benchmarks](pipl_test.go)
 - View the [tests](pipl_test.go)
 
