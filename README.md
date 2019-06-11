@@ -82,10 +82,9 @@ $ go test -bench . -benchmem
 Read more about this Go project's [code standards](CODE_STANDARDS.md).
 
 ## Usage
-- View the [pipl examples](pipl_test.go)
-- View the [helper examples](helper_test.go)
-- View the [benchmarks](pipl_test.go)
-- View the [tests](pipl_test.go)
+- View the [pipl examples & benchmarks](pipl_test.go)
+- View the [helper examples & benchmarks](helper_test.go)
+- View the [response tests](response_test.go)
 
 Basic implementation:
 ```golang
