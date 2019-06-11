@@ -92,13 +92,13 @@ func main() {
     client, _ := pipl.NewClient("your-api-key")
 
     // Create a new person for searching
-    search := pipl.NewPerson()
-    search.AddUsername("@jeffbezos")
+    person := pipl.NewPerson()
+    person.AddUsername("@jeffbezos")
 
     // Submit the search
-    response, _ := client.SearchByPerson(search)
+    response, _ := client.Search(person)
 
-    // Use the response
+    // Use the pipl response
     fmt.Println(response.Person.Names[0].Display)
     // Output: Jeff Preston Bezos
 }
