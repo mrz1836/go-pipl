@@ -1734,7 +1734,7 @@ func TestSearchByPerson(t *testing.T) {
 	}
 
 	// Do we match?
-	if results.Person.Names[0].First != "Jeff" {
+	if results.Person.Names[0].First != "Jeffrey" {
 		t.Fatal("uh oh! Jeff wasn't found!")
 	}
 }
