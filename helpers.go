@@ -11,8 +11,11 @@ func NewPerson() *Person {
 }
 
 // AddName adds a name to the search object. For well defined names.
-// https://docs.pipl.com/reference#name
+//
+// Source: https://docs.pipl.com/reference#name
+//
 // Note: Values are assumed to be sanitized already
+//
 // Plan: All Plans
 func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string) (err error) {
 
