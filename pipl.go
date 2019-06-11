@@ -6,10 +6,17 @@ package pipl
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+
+	"github.com/gojek/heimdall"
+	"github.com/gojek/heimdall/httpclient"
 )
 
 // Package global constants
@@ -76,6 +83,21 @@ const (
 
 	// DefaultDisplayLanguage is the default display language
 	DefaultDisplayLanguage string = "en_US"
+
+	// ConnectionExponentFactor backoff exponent factor
+	ConnectionExponentFactor float64 = 2.0
+
+	// ConnectionInitialTimeout initial timeout
+	ConnectionInitialTimeout time.Duration = 2 * time.Millisecond
+
+	// ConnectionMaximumJitterInterval jitter interval
+	ConnectionMaximumJitterInterval time.Duration = 2 * time.Millisecond
+
+	// ConnectionMaxTimeout max timeout
+	ConnectionMaxTimeout time.Duration = 1000 * time.Millisecond
+
+	// ConnectionRetryCount retry count
+	ConnectionRetryCount int = 3
 )
 
 // SourceLevel is used internally to represent the possible values
@@ -96,7 +118,7 @@ type SourceCategoryRequirements string
 // Client holds client configuration settings
 type Client struct {
 	// HTTPClient carries out the POST operations
-	HTTPClient *http.Client
+	HTTPClient heimdall.Client
 
 	// SearchParameters contains the search parameters that are submitted with your query,
 	// which may affect the data returned
@@ -107,6 +129,8 @@ type Client struct {
 }
 
 // SearchParameters holds options that can affect data returned by a search.
+//
+// Source: https://docs.pipl.com/reference#configuration-parameters
 type SearchParameters struct {
 	// APIKey is required
 	APIKey string
@@ -164,6 +188,25 @@ type ThumbnailSettings struct {
 	ZoomFace bool
 }
 
+// Client connection variables
+var (
+	// _Dialer net dialer for ClientDefaultTransport
+	_Dialer = &net.Dialer{
+		KeepAlive: 30 * time.Second,
+		Timeout:   5 * time.Second,
+	}
+
+	// ClientDefaultTransport is the default transport struct for the HTTP client
+	ClientDefaultTransport = &http.Transport{
+		DialContext:           _Dialer.DialContext,
+		ExpectContinueTimeout: 3 * time.Second,
+		IdleConnTimeout:       30 * time.Second,
+		MaxIdleConns:          128,
+		Proxy:                 http.ProxyFromEnvironment,
+		TLSHandshakeTimeout:   5 * time.Second,
+	}
+)
+
 // NewClient creates a new search client to submit queries with.
 // Parameters values are set to the defaults defined by Pipl.
 //
@@ -178,7 +221,25 @@ func NewClient(APIKey string) (c *Client, err error) {
 
 	// Create a client
 	c = new(Client)
-	c.HTTPClient = new(http.Client)
+
+	// Create exponential backoff
+	backOff := heimdall.NewExponentialBackoff(
+		ConnectionInitialTimeout,
+		ConnectionMaxTimeout,
+		ConnectionExponentFactor,
+		ConnectionMaximumJitterInterval,
+	)
+
+	// Create the http client
+	//c.HTTPClient = new(http.Client) (@mrz this was the original HTTP client)
+	c.HTTPClient = httpclient.NewClient(
+		httpclient.WithHTTPTimeout(1*time.Second),
+		httpclient.WithRetrier(heimdall.NewRetrier(backOff)),
+		httpclient.WithRetryCount(ConnectionRetryCount),
+		httpclient.WithHTTPClient(&http.Client{
+			Transport: ClientDefaultTransport,
+		}),
+	)
 
 	// Create default search parameters
 	c.SearchParameters = new(SearchParameters)
@@ -274,6 +335,9 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 	// Add the API key
 	postData.Add("key", c.SearchParameters.APIKey)
 
+	// Do not return formatted
+	postData.Add("pretty", "false")
+
 	// Should we show sources?
 	if c.SearchParameters.ShowSources != ShowSourcesNone {
 		postData.Add("show_sources", string(c.SearchParameters.ShowSources))
@@ -291,8 +355,7 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 
 	// Parse the search object
 	var personJSON []byte
-	personJSON, err = json.Marshal(searchPerson)
-	if err != nil {
+	if personJSON, err = json.Marshal(searchPerson); err != nil {
 		return
 	}
 
@@ -309,8 +372,7 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Response, err error) {
 
 	// Lookup the person(s)
-	response, err = c.Search(searchPerson)
-	if err != nil {
+	if response, err = c.Search(searchPerson); err != nil {
 		return
 	}
 
@@ -323,8 +385,7 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 			// to pull a full person profile by search pointer
 			searchPointer := person.SearchPointer
 			var pointerResults *Person
-			pointerResults, err = c.SearchByPointer(searchPointer)
-			if err != nil {
+			if pointerResults, err = c.SearchByPointer(searchPointer); err != nil {
 				return
 			}
 
@@ -357,8 +418,7 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 	// Fire the request
 	var piplResponse *Response
-	piplResponse, err = c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
-	if err != nil {
+	if piplResponse, err = c.PiplRequest(SearchAPIEndpoint, "POST", &postData); err != nil {
 		return
 	}
 
@@ -369,37 +429,60 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
 // of the Search or SearchByPointer methods
-func (c *Client) PiplRequest(endpoint string, method string, postData *url.Values) (piplResponse *Response, err error) {
+func (c *Client) PiplRequest(endpoint string, method string, params *url.Values) (piplResponse *Response, err error) {
 
-	// Start the post request
+	// Set reader
+	var bodyReader io.Reader
+
+	// Switch on POST vs GET
+	switch method {
+	case "POST":
+		{
+			encodedParams := params.Encode()
+			bodyReader = strings.NewReader(encodedParams)
+		}
+	case "GET":
+		{
+			endpoint += "?" + params.Encode()
+		}
+	}
+
+	// Start the request
 	var request *http.Request
-	request, err = http.NewRequest(method, endpoint, strings.NewReader(postData.Encode()))
-	if err != nil {
+	if request, err = http.NewRequest(method, endpoint, bodyReader); err != nil {
 		return
 	}
 
 	// Change the header (user agent is in case they block default Go user agents)
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Set the content type on POST
+	if method == "POST" {
+		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
 
 	// Fire the http request
 	var response *http.Response
-	response, err = c.HTTPClient.Do(request)
-	if err != nil {
+	if response, err = c.HTTPClient.Do(request); err != nil {
 		return
 	}
 
+	// Close the response body
+	defer func() {
+		if err := response.Body.Close(); err != nil {
+			log.Printf("error closing response body: %s", err.Error())
+		}
+	}()
+
 	// Read the body
 	var body []byte
-	body, err = ioutil.ReadAll(response.Body)
-	if err != nil {
+	if body, err = ioutil.ReadAll(response.Body); err != nil {
 		return
 	}
 
 	// Parse the response
 	piplResponse = new(Response)
-	err = json.Unmarshal(body, piplResponse)
-	if err != nil {
+	if err = json.Unmarshal(body, piplResponse); err != nil {
 		return
 	}
 
