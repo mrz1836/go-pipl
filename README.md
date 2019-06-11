@@ -27,8 +27,9 @@ $ go get -u github.com/mrz1836/go-pipl
 You can view the generated [documentation here](https://godoc.org/github.com/mrz1836/go-pipl).
 
 ### Features
-- Complete configuration coverage for the pipl.com API
+- Complete coverage for the pipl.com API
 - Pipl client is completely configurable
+- Using [hiemdall](https://github.com/gojek/heimdall) http client with exponential backoff & more
 - Minimum criteria detection before submitting a pipl query
 - Search by pipl pointer reference
 - Search for a single person via any of the following:
