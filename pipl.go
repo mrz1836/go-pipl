@@ -9,95 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/gojek/heimdall"
 	"github.com/gojek/heimdall/httpclient"
-)
-
-// Package global constants
-const (
-	// SearchAPIEndpoint is where we POST queries to
-	SearchAPIEndpoint string = "https://api.pipl.com/search/"
-
-	// ThumbnailEndpoint is where the image thumbnails are located
-	ThumbnailEndpoint string = "https://thumb.pipl.com/image"
-
-	// ShowSourcesNone specifies that we don't need source info back with search results
-	ShowSourcesNone SourceLevel = "false"
-
-	// ShowSourcesAll specifies that we want all source info back with our search results
-	ShowSourcesAll SourceLevel = "all"
-
-	// ShowSourcesMatching specifies that we want source info that corresponds to data that satisfies our match requirements
-	ShowSourcesMatching SourceLevel = "true"
-
-	// MatchRequirementsNone specifies that we don't have any match requirements for this search
-	MatchRequirementsNone MatchRequirements = ""
-
-	// MatchRequirementsEmail specifies that we want to match on this field
-	MatchRequirementsEmail MatchRequirements = "email"
-
-	// MatchRequirementsPhone specifies that we want to match on this field
-	MatchRequirementsPhone MatchRequirements = "phone"
-
-	// MatchRequirementsEmailAndPhone specifies that we want to match on this field
-	MatchRequirementsEmailAndPhone MatchRequirements = "email and phone"
-
-	// MatchRequirementsEmailAndName specifies that we want to match on this field
-	MatchRequirementsEmailAndName MatchRequirements = "email and name"
-
-	// MatchRequirementsEmailOrPhone specifies that we want to match on this field
-	MatchRequirementsEmailOrPhone MatchRequirements = "email or phone"
-
-	// todo: finish adding match criteria - also make this flexible and easier to use
-	// https://docs.pipl.com/reference#match-criteria
-
-	// MinimumProbability is the score for probability
-	MinimumProbability = 0.9
-
-	// MinimumMatch is the minimum for a match
-	MinimumMatch = 0.0
-
-	// SourceCategoryRequirementsNone specifies that we don't require any specific sources in our results.
-	SourceCategoryRequirementsNone SourceCategoryRequirements = ""
-
-	// SourceCategoryRequirementsProfessionalAndBusiness is used for: match_requirements=(emails and jobs)
-	SourceCategoryRequirementsProfessionalAndBusiness SourceCategoryRequirements = "professional_and_business"
-
-	// ThumbnailHeight is the default height
-	ThumbnailHeight int = 250
-
-	// ThumbnailWidth is the default width
-	ThumbnailWidth int = 250
-
-	// DefaultCountry is the default country for address
-	DefaultCountry string = "US"
-
-	// DefaultLanguage is the default language
-	DefaultLanguage string = "en"
-
-	// DefaultDisplayLanguage is the default display language
-	DefaultDisplayLanguage string = "en_US"
-
-	// ConnectionExponentFactor backoff exponent factor
-	ConnectionExponentFactor float64 = 2.0
-
-	// ConnectionInitialTimeout initial timeout
-	ConnectionInitialTimeout time.Duration = 2 * time.Millisecond
-
-	// ConnectionMaximumJitterInterval jitter interval
-	ConnectionMaximumJitterInterval time.Duration = 2 * time.Millisecond
-
-	// ConnectionMaxTimeout max timeout
-	ConnectionMaxTimeout time.Duration = 1000 * time.Millisecond
-
-	// ConnectionRetryCount retry count
-	ConnectionRetryCount int = 3
 )
 
 // SourceLevel is used internally to represent the possible values
@@ -188,25 +105,6 @@ type ThumbnailSettings struct {
 	ZoomFace bool
 }
 
-// Client connection variables
-var (
-	// _Dialer net dialer for ClientDefaultTransport
-	_Dialer = &net.Dialer{
-		KeepAlive: 30 * time.Second,
-		Timeout:   5 * time.Second,
-	}
-
-	// ClientDefaultTransport is the default transport struct for the HTTP client
-	ClientDefaultTransport = &http.Transport{
-		DialContext:           _Dialer.DialContext,
-		ExpectContinueTimeout: 3 * time.Second,
-		IdleConnTimeout:       30 * time.Second,
-		MaxIdleConns:          128,
-		Proxy:                 http.ProxyFromEnvironment,
-		TLSHandshakeTimeout:   5 * time.Second,
-	}
-)
-
 // NewClient creates a new search client to submit queries with.
 // Parameters values are set to the defaults defined by Pipl.
 //
@@ -233,7 +131,7 @@ func NewClient(APIKey string) (c *Client, err error) {
 	// Create the http client
 	//c.HTTPClient = new(http.Client) (@mrz this was the original HTTP client)
 	c.HTTPClient = httpclient.NewClient(
-		httpclient.WithHTTPTimeout(1*time.Second),
+		httpclient.WithHTTPTimeout(ConnectionWithHTTPTimeout),
 		httpclient.WithRetrier(heimdall.NewRetrier(backOff)),
 		httpclient.WithRetryCount(ConnectionRetryCount),
 		httpclient.WithHTTPClient(&http.Client{
@@ -273,40 +171,40 @@ func NewClient(APIKey string) (c *Client, err error) {
 //		(down to a house number). We can’t search for a job title or location
 //		alone. We’re not a directory and can't provide bulk lists of people,
 //		rather we specialize in identity resolution of single individuals."
-func SearchMeetsMinimumCriteria(p *Person) bool {
+func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
 
 	// If an email is found, that meets minimum criteria
-	if p.HasEmail() {
+	if searchPerson.HasEmail() {
 		return true
 	}
 
 	// If a phone is found, that meets minimum criteria
-	if p.HasPhone() {
+	if searchPerson.HasPhone() {
 		return true
 	}
 
 	// If a userID is found, that meets minimum criteria
-	if p.HasUserID() {
+	if searchPerson.HasUserID() {
 		return true
 	}
 
 	// If a username is found, that meets minimum criteria
-	if p.HasUsername() {
+	if searchPerson.HasUsername() {
 		return true
 	}
 
 	// If a URL is found, that meets minimum criteria
-	if p.HasURL() {
+	if searchPerson.HasURL() {
 		return true
 	}
 
 	// If a full name is found, that meets minimum criteria
-	if p.HasName() {
+	if searchPerson.HasName() {
 		return true
 	}
 
 	// If an address is found, that meets minimum criteria
-	if p.HasAddress() {
+	if searchPerson.HasAddress() {
 		return true
 	}
 
@@ -429,7 +327,7 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
 // of the Search or SearchByPointer methods
-func (c *Client) PiplRequest(endpoint string, method string, params *url.Values) (piplResponse *Response, err error) {
+func (c *Client) PiplRequest(endpoint string, method string, params *url.Values) (response *Response, err error) {
 
 	// Set reader
 	var bodyReader io.Reader
@@ -462,27 +360,27 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 	}
 
 	// Fire the http request
-	var response *http.Response
-	if response, err = c.HTTPClient.Do(request); err != nil {
+	var resp *http.Response
+	if resp, err = c.HTTPClient.Do(request); err != nil {
 		return
 	}
 
 	// Close the response body
 	defer func() {
-		if err := response.Body.Close(); err != nil {
+		if err := resp.Body.Close(); err != nil {
 			log.Printf("error closing response body: %s", err.Error())
 		}
 	}()
 
 	// Read the body
 	var body []byte
-	if body, err = ioutil.ReadAll(response.Body); err != nil {
+	if body, err = ioutil.ReadAll(resp.Body); err != nil {
 		return
 	}
 
 	// Parse the response
-	piplResponse = new(Response)
-	if err = json.Unmarshal(body, piplResponse); err != nil {
+	response = new(Response)
+	if err = json.Unmarshal(body, response); err != nil {
 		return
 	}
 
@@ -490,12 +388,12 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 	if c.ThumbnailSettings.Enabled {
 
 		// Process the current person
-		piplResponse.Person.ProcessThumbnails(c)
+		response.Person.ProcessThumbnails(c)
 
 		// Do we have possible persons?
-		if len(piplResponse.PossiblePersons) > 0 {
-			for index := range piplResponse.PossiblePersons {
-				piplResponse.PossiblePersons[index].ProcessThumbnails(c)
+		if len(response.PossiblePersons) > 0 {
+			for index := range response.PossiblePersons {
+				response.PossiblePersons[index].ProcessThumbnails(c)
 			}
 		}
 	}
