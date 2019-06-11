@@ -38,8 +38,11 @@ func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string)
 
 // AddNameRaw can be used when you're unsure how to handle breaking down the name in
 // question into its constituent parts. Basically, let Pipl handle parsing it.
-// https://docs.pipl.com/reference#name
+//
+// Source: https://docs.pipl.com/reference#name
+//
 // Note: Values are assumed to be sanitized already
+//
 // Plan: All Plans
 func (p *Person) AddNameRaw(fullName string) (err error) {
 
@@ -57,8 +60,11 @@ func (p *Person) AddNameRaw(fullName string) (err error) {
 }
 
 // AddEmail appends an email address to the specified search object
-// https://docs.pipl.com/reference#email
+//
+// Source: https://docs.pipl.com/reference#email
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Business Plan
 func (p *Person) AddEmail(emailAddress string) (err error) {
 
@@ -76,8 +82,11 @@ func (p *Person) AddEmail(emailAddress string) (err error) {
 }
 
 // AddUsername appends a username to the specified search object
-// https://docs.pipl.com/reference#username
+//
+// Source: https://docs.pipl.com/reference#username
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Social Plan
 func (p *Person) AddUsername(username string) (err error) {
 
@@ -95,10 +104,12 @@ func (p *Person) AddUsername(username string) (err error) {
 }
 
 // AddUserID appends a user ID to the specified search object
-// https://docs.pipl.com/reference#user-id
+//
+// Source: https://docs.pipl.com/reference#user-id
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Social Plan
-// Format: user-id, service
 func (p *Person) AddUserID(userID, serviceProvider string) (err error) {
 
 	// Must be greater than 2 characters
@@ -127,8 +138,11 @@ func (p *Person) AddUserID(userID, serviceProvider string) (err error) {
 }
 
 // AddURL appends a URL to the specified search object (website, social, etc)
-// https://docs.pipl.com/reference#url
+//
+// Source: https://docs.pipl.com/reference#url
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Social Plan
 func (p *Person) AddURL(url string) (err error) {
 	// Must be greater than 5 characters
@@ -145,8 +159,11 @@ func (p *Person) AddURL(url string) (err error) {
 }
 
 // AddPhone appends a phone to the specified search object
-// https://docs.pipl.com/reference#phone
+//
+// Source: https://docs.pipl.com/reference#phone
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Landline phones are available in all plans, mobile phones
 // 		 in the BUSINESS plan only.
 func (p *Person) AddPhone(phoneNumber, countryCode int) (err error) {
@@ -173,8 +190,11 @@ func (p *Person) AddPhone(phoneNumber, countryCode int) (err error) {
 }
 
 // AddPhoneRaw appends a phone to the specified search object
-// https://docs.pipl.com/reference#phone
+//
+// Source:https://docs.pipl.com/reference#phone
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Landline phones are available in all plans, mobile phones
 // 		 in the BUSINESS plan only.
 func (p *Person) AddPhoneRaw(phoneNumber string) (err error) {
@@ -193,8 +213,11 @@ func (p *Person) AddPhoneRaw(phoneNumber string) (err error) {
 }
 
 // AddAddress appends an address to the specified search object
-// https://docs.pipl.com/reference#address
+//
+// Source: https://docs.pipl.com/reference#address
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) AddAddress(house, street, apartment, city, state, country, poBox string) (err error) {
 
@@ -230,8 +253,11 @@ func (p *Person) AddAddress(house, street, apartment, city, state, country, poBo
 
 // AddAddressRaw can be used when many of the address parts are missing, or
 // you're unsure how to split it up. Let Pipl handle parsing.
-// https://docs.pipl.com/reference#address
+//
+// Source: https://docs.pipl.com/reference#address
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) AddAddressRaw(fullAddress string) (err error) {
 
@@ -249,8 +275,11 @@ func (p *Person) AddAddressRaw(fullAddress string) (err error) {
 }
 
 // AddJob appends a job entry to the specified search object
-// https://docs.pipl.com/reference#job
+//
+// Source: https://docs.pipl.com/reference#job
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Business Plan
 func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) (err error) {
 
@@ -280,8 +309,11 @@ func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRange
 }
 
 // AddEducation appends an education entry to the specified search object
-// https://docs.pipl.com/reference#education
+//
+// Source: https://docs.pipl.com/reference#education
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Business Plan
 func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) (err error) {
 
@@ -311,8 +343,11 @@ func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd strin
 // Language is a 2 character language code (e.g. "en")
 // Region is a country code (e.g "US") Alpha-2 ISO 3166 country code
 // Language objects are not used by the API for search.
-// https://docs.pipl.com/reference#language
+//
+// Source: https://docs.pipl.com/reference#language
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) AddLanguage(languageCode, regionCode string) (err error) {
 
@@ -345,8 +380,11 @@ func (p *Person) AddLanguage(languageCode, regionCode string) (err error) {
 
 // AddEthnicity appends an ethnicity to the specified search object
 // Ethnicity data is not yet available. (6/8/19)
-// https://docs.pipl.com/reference#ethinicity
+//
+// Source: https://docs.pipl.com/reference#ethinicity
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) AddEthnicity(ethnicity string) (err error) {
 
@@ -371,8 +409,11 @@ func (p *Person) AddEthnicity(ethnicity string) (err error) {
 
 // AddOriginCountry appends an origin country to the specified search object
 // Alpha-2 ISO 3166 country code
-// https://docs.pipl.com/reference#origin-country
+//
+// Source: https://docs.pipl.com/reference#origin-country
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) AddOriginCountry(countryCode string) (err error) {
 
@@ -392,8 +433,11 @@ func (p *Person) AddOriginCountry(countryCode string) (err error) {
 }
 
 // AddRelationship appends a relationship entry to the specified search object
-// https://docs.pipl.com/reference#relationship
+//
+// Source: https://docs.pipl.com/reference#relationship
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: Social Plan
 func (p *Person) AddRelationship(relationship Relationship) (err error) {
 	// todo: missing validations
@@ -404,8 +448,11 @@ func (p *Person) AddRelationship(relationship Relationship) (err error) {
 }
 
 // SetGender sets the gender of the specified search object
-// https://docs.pipl.com/reference#gender
+//
+// Source: https://docs.pipl.com/reference#gender
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) SetGender(gender string) (err error) {
 
@@ -424,8 +471,11 @@ func (p *Person) SetGender(gender string) (err error) {
 // SetDateOfBirth sets the DOB of the specified search object
 // DOB string format: "YYYY-MM-DD"
 // Set both Start and End to the same date if known
-// https://docs.pipl.com/reference#date-of-birth
+//
+// Source: https://docs.pipl.com/reference#date-of-birth
+//
 // Note: Values are assumed to be sanitized/validated already
+//
 // Plan: All Plans
 func (p *Person) SetDateOfBirth(startDate, endDate string) (err error) {
 

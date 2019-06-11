@@ -142,7 +142,8 @@ type SearchParameters struct {
 
 // ThumbnailSettings is for the thumbnail url settings to be automatically returned
 // if any images are found and meet the criteria
-// http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
+//
+// Example: http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
 type ThumbnailSettings struct {
 	// Enabled (detects images, automatically adds thumbnail urls)
 	Enabled bool
@@ -165,8 +166,8 @@ type ThumbnailSettings struct {
 
 // NewClient creates a new search client to submit queries with.
 // Parameters values are set to the defaults defined by Pipl.
-// For more information:
-// https://docs.pipl.com/reference#configuration-parameters
+//
+// For more information: https://docs.pipl.com/reference#configuration-parameters
 func NewClient(APIKey string) (c *Client, err error) {
 
 	// Test for the key
@@ -300,44 +301,6 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 
 	// Fire the request
 	return c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
-
-	/*// Start the post request
-	var request *http.Request
-	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
-	if err != nil {
-		return
-	}
-
-	// Change the header (user agent is in case they block default Go user agents)
-	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	// Fire the request
-	var resp *http.Response
-	resp, err = c.HTTPClient.Do(request)
-	if err != nil {
-		return
-	}
-
-	//Parse the body of the request
-	var body []byte
-	body, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	// Try to parse the response
-	response = new(Response)
-	err = json.Unmarshal(body, response)
-	if err != nil {
-		return
-	}
-
-	// Thumbnail generation enabled?
-	if c.ThumbnailSettings.Enabled {
-		response.Person.ProcessThumbnails(c)
-	}
-	return*/
 }
 
 // SearchAllPossiblePeople takes a person object (filled with search terms) and returns the
@@ -402,47 +365,6 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 	// Set the person from the response
 	person = &piplResponse.Person
 	return
-
-	/*// Start the post request
-	var request *http.Request
-	request, err = http.NewRequest("POST", SearchAPIEndpoint, strings.NewReader(postData.Encode()))
-	if err != nil {
-		return
-	}
-
-	// Change the header (user agent is in case they block default Go user agents)
-	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	// Fire the http request
-	var response *http.Response
-	response, err = c.HTTPClient.Do(request)
-	if err != nil {
-		return
-	}
-
-	// Read the body
-	var body []byte
-	body, err = ioutil.ReadAll(response.Body)
-	if err != nil {
-		return
-	}
-
-	// Parse the response
-	piplResponse := new(Response)
-	err = json.Unmarshal(body, piplResponse)
-	if err != nil {
-		return
-	}
-
-	// Set the person from the response
-	person = &piplResponse.Person
-
-	// Thumbnail generation enabled?
-	if c.ThumbnailSettings.Enabled {
-		person.ProcessThumbnails(c)
-	}
-	return*/
 }
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
@@ -489,7 +411,7 @@ func (c *Client) PiplRequest(endpoint string, method string, postData *url.Value
 
 		// Do we have possible persons?
 		if len(piplResponse.PossiblePersons) > 0 {
-			for index, _ := range piplResponse.PossiblePersons {
+			for index := range piplResponse.PossiblePersons {
 				piplResponse.PossiblePersons[index].ProcessThumbnails(c)
 			}
 		}
