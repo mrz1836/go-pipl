@@ -35,6 +35,7 @@ You can view the generated [documentation here](https://godoc.org/github.com/mrz
 ### Features
 - Complete coverage for the pipl.com API
 - Pipl client is completely configurable
+- Customize API Key and User Agent per request
 - Using [heimdall http client](https://github.com/gojek/heimdall) with exponential backoff & more
 - Minimum criteria detection before submitting a pipl query
 - Search by pipl pointer reference

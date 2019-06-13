@@ -43,6 +43,9 @@ type Client struct {
 
 	// ThumbnailSettings is for the thumbnail url settings
 	ThumbnailSettings *ThumbnailSettings
+
+	// LastRequest is the raw information from the last request
+	LastRequest *LastRequest
 }
 
 // SearchParameters holds options that can affect data returned by a search.
@@ -51,6 +54,9 @@ type Client struct {
 type SearchParameters struct {
 	// APIKey is required
 	APIKey string
+
+	// UserAgent (optional for changing user agents)
+	UserAgent string
 
 	// MinimumProbability is the minimum acceptable probability for inferred data
 	MinimumProbability float32
@@ -105,6 +111,18 @@ type ThumbnailSettings struct {
 	ZoomFace bool
 }
 
+// LastRequest is used to track what was submitted to pipl on the piplRequest()
+type LastRequest struct {
+	// Method is either POST or GET
+	Method string
+
+	// PostData is the post data submitted if POST request
+	PostData string
+
+	// URL is the url used for the request
+	URL string
+}
+
 // NewClient creates a new search client to submit queries with.
 // Parameters values are set to the defaults defined by Pipl.
 //
@@ -150,6 +168,7 @@ func NewClient(APIKey string) (c *Client, err error) {
 	c.SearchParameters.MinimumProbability = MinimumProbability
 	c.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
 	c.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
+	c.SearchParameters.UserAgent = DefaultUserAgent
 
 	// Create default thumbnail parameters (thumbnail url functionality)
 	c.ThumbnailSettings = new(ThumbnailSettings)
@@ -157,6 +176,9 @@ func NewClient(APIKey string) (c *Client, err error) {
 	c.ThumbnailSettings.Height = ThumbnailHeight
 	c.ThumbnailSettings.URL = ThumbnailEndpoint
 	c.ThumbnailSettings.Width = ThumbnailWidth
+
+	// Create a last request struct
+	c.LastRequest = new(LastRequest)
 
 	// Return the client
 	return
@@ -338,12 +360,17 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 		{
 			encodedParams := params.Encode()
 			bodyReader = strings.NewReader(encodedParams)
+			c.LastRequest.PostData = encodedParams
 		}
 	case "GET":
 		{
 			endpoint += "?" + params.Encode()
 		}
 	}
+
+	// Store for debugging purposes
+	c.LastRequest.Method = method
+	c.LastRequest.URL = endpoint
 
 	// Start the request
 	var request *http.Request
@@ -352,7 +379,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 	}
 
 	// Change the header (user agent is in case they block default Go user agents)
-	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36")
+	request.Header.Set("User-Agent", c.SearchParameters.UserAgent)
 
 	// Set the content type on POST
 	if method == "POST" {

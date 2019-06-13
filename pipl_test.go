@@ -2,6 +2,7 @@ package pipl
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -206,14 +207,19 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 // Full Pipl Integration Tests (-test.short to skip)
 
 // TestSearchByPerson tests a live search using a real API key (if set)
+// Tests a real pipl request
+// Tests the debugging data returned from a request
 func TestSearchByPerson(t *testing.T) {
 	// Skip tis test in short mode (not needed)
 	if testing.Short() {
 		t.Skip("skipping testing in short mode")
 	}
 
+	// Set the testing API key from ENV
+	APIKey := os.Getenv("PIPL_CONTACT_API_KEY")
+
 	// Create a new client object to handle your queries (supply an API Key)
-	client, err := NewClient("your-api-key")
+	client, err := NewClient(APIKey)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,8 +258,23 @@ func TestSearchByPerson(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Test the debugging data
+	if client.LastRequest.URL != "https://api.pipl.com/search/" {
+		t.Fatal("url was not the same as expected", client.LastRequest.URL)
+	}
+	if client.LastRequest.Method != "POST" {
+		t.Fatal("method was not the same as expected", client.LastRequest.Method)
+	}
+	if client.LastRequest.PostData != "key="+APIKey+"&match_requirements=name+and+phone&person=%7B%22names%22%3A%5B%7B%22first%22%3A%22jeff%22%2C%22last%22%3A%22bezos%22%2C%22middle%22%3A%22preston%22%7D%2C%7B%22raw%22%3A%22jeff+preston+bezos%22%7D%5D%2C%22usernames%22%3A%5B%7B%22content%22%3A%22jeffbezos%40twitter%22%7D%5D%7D&pretty=false&show_sources=all" {
+		t.Fatal("post data was not the same as expected", client.LastRequest.PostData)
+	}
+
 	// Do we match?
-	if results.Person.Names[0].First != "Jeffrey" {
+	if results == nil {
+		t.Fatal("uh oh! no results returned!")
+	}
+
+	if len(results.Person.Names) == 0 || results.Person.Names[0].First != "Jeffrey" {
 		t.Fatal("uh oh! Jeff wasn't found!")
 	}
 }

@@ -106,6 +106,9 @@ const (
 
 	// ConnectionDialerKeepAlive keep alive
 	ConnectionDialerKeepAlive time.Duration = 30 * time.Second
+
+	// DefaultUserAgent is the default user agent for all pipl requests
+	DefaultUserAgent string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36"
 )
 
 // HTTP and Dialer connection variables
