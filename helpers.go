@@ -88,7 +88,7 @@ func (p *Person) AddEmail(emailAddress string) (err error) {
 // Note: Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
-func (p *Person) AddUsername(username string) (err error) {
+func (p *Person) AddUsername(username string, serviceProvider string) (err error) {
 
 	// Must be greater than 3 characters
 	if len(username) <= 3 {
@@ -96,9 +96,21 @@ func (p *Person) AddUsername(username string) (err error) {
 		return
 	}
 
+	// Must be greater than 2 characters
+	if len(serviceProvider) <= 2 {
+		err = fmt.Errorf("service_provider is too short: %s", serviceProvider)
+		return
+	}
+
+	// Accepted provider?
+	if !isAcceptedValue(strings.ToLower(serviceProvider), &AllowedServiceProviders) {
+		err = fmt.Errorf("service_provider is not accepted: %s", serviceProvider)
+		return
+	}
+
 	// Add username
 	newUsername := new(Username)
-	newUsername.Content = username
+	newUsername.Content = username + "@" + serviceProvider
 	p.Usernames = append(p.Usernames, *newUsername)
 	return
 }
@@ -120,7 +132,7 @@ func (p *Person) AddUserID(userID, serviceProvider string) (err error) {
 
 	// Must be greater than 2 characters
 	if len(serviceProvider) <= 2 {
-		err = fmt.Errorf("service_provider is too short: %s", userID)
+		err = fmt.Errorf("service_provider is too short: %s", serviceProvider)
 		return
 	}
 

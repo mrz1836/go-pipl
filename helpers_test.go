@@ -154,19 +154,27 @@ func BenchmarkAddEmail(b *testing.B) {
 
 // TestAddUsername test adding an username to a person object
 func TestAddUsername(t *testing.T) {
+	// Bad user id and service provider
 	person := NewPerson()
-	err := person.AddUsername("cc")
+	err := person.AddUsername("c", "x")
 	if err == nil {
 		t.Fatal("should have failed, username too short")
 	}
 
-	// Reset / test valid user name
+	// Unknown service provider
 	person = NewPerson()
-	_ = person.AddUsername("clarkkent")
+	err = person.AddUsername("clarkkent", "notFound")
+	if err == nil {
+		t.Fatal("should have failed, service provider not found")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddUsername("clarkkent", "twitter")
 	if len(person.Usernames) == 0 {
 		t.Fatal("expected a username in this person object")
 	}
-	if person.Usernames[0].Content != "clarkkent" {
+	if person.Usernames[0].Content != "clarkkent@twitter" {
 		t.Fatalf("expected value to be clarkkent, got %s", person.Usernames[0].Content)
 	}
 }
@@ -174,16 +182,60 @@ func TestAddUsername(t *testing.T) {
 //ExamplePerson_AddUsername example using AddUsername()
 func ExamplePerson_AddUsername() {
 	person := NewPerson()
-	_ = person.AddUsername("clarkkent")
+	_ = person.AddUsername("clarkkent", "twitter")
 	fmt.Println(person.Usernames[0].Content)
-	// Output:clarkkent
+	// Output:clarkkent@twitter
 }
 
 // BenchmarkAddUsername benchmarks the AddUsername method
 func BenchmarkAddUsername(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
-		_ = person.AddUsername("clarkkent")
+		_ = person.AddUsername("clarkkent", "twitter")
+	}
+}
+
+// TestAddUserID test adding a user id to a person object
+func TestAddUserID(t *testing.T) {
+
+	// Bad user id and service provider
+	person := NewPerson()
+	err := person.AddUserID("c", "x")
+	if err == nil {
+		t.Fatal("should have failed, user id too short")
+	}
+
+	// Unknown service provider
+	person = NewPerson()
+	err = person.AddUserID("clarkkent", "notFound")
+	if err == nil {
+		t.Fatal("should have failed, service provider not known")
+	}
+
+	// Reset
+	person = NewPerson()
+	_ = person.AddUserID("clarkkent", "twitter")
+	if len(person.UserIDs) == 0 {
+		t.Fatal("expected a user id in this person object")
+	}
+	if person.UserIDs[0].Content != "clarkkent@twitter" {
+		t.Fatalf("expected value to be clarkkent, got %s", person.UserIDs[0].Content)
+	}
+}
+
+//ExamplePerson_AddUserID example using AddUserID()
+func ExamplePerson_AddUserID() {
+	person := NewPerson()
+	_ = person.AddUserID("clarkkent", "twitter")
+	fmt.Println(person.UserIDs[0].Content)
+	// Output:clarkkent@twitter
+}
+
+// BenchmarkAddUserID benchmarks the AddUserID method
+func BenchmarkAddUserID(b *testing.B) {
+	person := NewPerson()
+	for i := 0; i < b.N; i++ {
+		_ = person.AddUserID("clarkkent", "twitter")
 	}
 }
 
@@ -705,50 +757,6 @@ func BenchmarkAddEducation(b *testing.B) {
 	person := NewPerson()
 	for i := 0; i < b.N; i++ {
 		_ = person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
-	}
-}
-
-// TestAddUserID test adding a user id to a person object
-func TestAddUserID(t *testing.T) {
-
-	// Bad user id and service provider
-	person := NewPerson()
-	err := person.AddUserID("c", "x")
-	if err == nil {
-		t.Fatal("should have failed, user id too short")
-	}
-
-	// Unknown service provider
-	person = NewPerson()
-	err = person.AddUserID("clarkkent", "notFound")
-	if err == nil {
-		t.Fatal("should have failed, user id too short")
-	}
-
-	// Reset
-	person = NewPerson()
-	_ = person.AddUserID("clarkkent", "twitter")
-	if len(person.UserIDs) == 0 {
-		t.Fatal("expected a user id in this person object")
-	}
-	if person.UserIDs[0].Content != "clarkkent@twitter" {
-		t.Fatalf("expected value to be clarkkent, got %s", person.UserIDs[0].Content)
-	}
-}
-
-//ExamplePerson_AddUserID example using AddUserID()
-func ExamplePerson_AddUserID() {
-	person := NewPerson()
-	_ = person.AddUserID("clarkkent", "twitter")
-	fmt.Println(person.UserIDs[0].Content)
-	// Output:clarkkent@twitter
-}
-
-// BenchmarkAddUserID benchmarks the AddUserID method
-func BenchmarkAddUserID(b *testing.B) {
-	person := NewPerson()
-	for i := 0; i < b.N; i++ {
-		_ = person.AddUserID("clarkkent", "twitter")
 	}
 }
 

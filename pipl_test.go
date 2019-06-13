@@ -135,7 +135,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person = new(Person)
 
 	// Test usernames
-	_ = person.AddUsername("clarkkent")
+	_ = person.AddUsername("clarkkent", "twitter")
 	if !SearchMeetsMinimumCriteria(person) {
 		t.Fatal("method should return true")
 	}
@@ -226,7 +226,7 @@ func TestSearchByPerson(t *testing.T) {
 	searchObject := NewPerson()
 
 	// Let's find out who this random guy is. We'll search by a username.
-	err = searchObject.AddUsername("@jeffbezos")
+	err = searchObject.AddUsername("jeffbezos", "twitter")
 	if err != nil {
 		t.Fatal(err)
 	}
