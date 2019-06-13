@@ -104,7 +104,7 @@ func main() {
 
     // Create a new person for searching
     person := pipl.NewPerson()
-    person.AddUsername("@jeffbezos")
+    person.AddUsername("jeffbezos", "twitter")
 
     // Submit the search
     response, _ := client.Search(person)
