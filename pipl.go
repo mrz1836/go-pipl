@@ -304,13 +304,13 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 			// In order to get the full info on each, we need to a follow up query
 			// to pull a full person profile by search pointer
 			searchPointer := person.SearchPointer
-			var pointerResults *Person
-			if pointerResults, err = c.SearchByPointer(searchPointer); err != nil {
+			var searchResponse *Response
+			if searchResponse, err = c.SearchByPointer(searchPointer); err != nil {
 				return
 			}
 
 			// Replace the preview with the full details
-			response.PossiblePersons[index] = *pointerResults
+			response.PossiblePersons[index] = searchResponse.Person
 		}
 	}
 
@@ -319,7 +319,7 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
-func (c *Client) SearchByPointer(searchPointer string) (person *Person, err error) {
+func (c *Client) SearchByPointer(searchPointer string) (response *Response, err error) {
 
 	// So we have a search pointer?
 	if len(searchPointer) < 20 {
@@ -337,14 +337,7 @@ func (c *Client) SearchByPointer(searchPointer string) (person *Person, err erro
 	postData.Add("search_pointer", searchPointer)
 
 	// Fire the request
-	var piplResponse *Response
-	if piplResponse, err = c.PiplRequest(SearchAPIEndpoint, "POST", &postData); err != nil {
-		return
-	}
-
-	// Set the person from the response
-	person = &piplResponse.Person
-	return
+	return c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
 }
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
