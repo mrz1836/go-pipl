@@ -1,9 +1,12 @@
 # go-pipl
 **go-pipl** is a simple golang wrapper to help find people using the pipl.com API.
 
-| | | | | | | |
-|-|-|-|-|-|-|-|
-| ![License](https://img.shields.io/github/license/mrz1836/go-pipl.svg?style=flat&p=1) | [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat&p=1)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)  | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/01708ca3079e4933bafb3b39fe2aaa9d)](https://www.codacy.com/app/mrz1818/go-pipl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mrz1836/go-pipl&amp;utm_campaign=Badge_Grade) |  [![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)   |  [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat)](https://github.com/RichardLitt/standard-readme) | [![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases) | [![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://godoc.org/github.com/mrz1836/go-pipl) |
+[![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)
+[![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat&p=1)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/01708ca3079e4933bafb3b39fe2aaa9d)](https://www.codacy.com/app/mrz1818/go-pipl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mrz1836/go-pipl&amp;utm_campaign=Badge_Grade)
+[![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases)
+[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
+[![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://godoc.org/github.com/mrz1836/go-pipl)
 
 ## Table of Contents
 - [Installation](#installation)
