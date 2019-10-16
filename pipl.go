@@ -356,7 +356,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 			c.LastRequest.PostData = encodedParams
 		}
 	case "GET":
-		{
+		if params != nil {
 			endpoint += "?" + params.Encode()
 		}
 	}
@@ -387,8 +387,8 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 
 	// Close the response body
 	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Printf("error closing response body: %s", err.Error())
+		if bodyErr := resp.Body.Close(); bodyErr != nil {
+			log.Printf("error closing response body: %s", bodyErr.Error())
 		}
 	}()
 
