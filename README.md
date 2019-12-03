@@ -21,15 +21,9 @@
 
 ## Installation
 
-**go-pipl** requires a [supported release of Go](https://golang.org/doc/devel/release.html#policy) and [dep](https://github.com/golang/dep).
+**go-pipl** requires a [supported release of Go](https://golang.org/doc/devel/release.html#policy).
 ```bash
 $ go get -u github.com/mrz1836/go-pipl
-```
-
-Updating dependencies in **go-pipl**:
-```bash
-$ cd ../go-pipl
-$ dep ensure -update -v
 ```
 
 ## Documentation
