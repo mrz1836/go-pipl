@@ -617,11 +617,11 @@ func (p *Person) ProcessThumbnails(c *Client) {
 	for index, image := range p.Images {
 		if image.ThumbnailToken != "" {
 			p.Images[index].ThumbnailURL = fmt.Sprintf("%s?height=%d&width=%d&favicon=%t&zoom_face=%t&tokens=%s",
-				c.ThumbnailSettings.URL,
-				c.ThumbnailSettings.Height,
-				c.ThumbnailSettings.Width,
-				c.ThumbnailSettings.Favicon,
-				c.ThumbnailSettings.ZoomFace,
+				c.Parameters.Thumbnail.URL,
+				c.Parameters.Thumbnail.Height,
+				c.Parameters.Thumbnail.Width,
+				c.Parameters.Thumbnail.Favicon,
+				c.Parameters.Thumbnail.ZoomFace,
 				image.ThumbnailToken,
 			)
 		}

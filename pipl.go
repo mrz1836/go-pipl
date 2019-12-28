@@ -8,13 +8,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/gojek/heimdall"
-	"github.com/gojek/heimdall/httpclient"
 )
 
 // SourceLevel is used internally to represent the possible values
@@ -32,31 +28,12 @@ type MatchRequirements string
 // then the results returned are empty and you're not charged.
 type SourceCategoryRequirements string
 
-// Client holds client configuration settings
-type Client struct {
-	// HTTPClient carries out the POST operations
-	HTTPClient heimdall.Client
-
-	// SearchParameters contains the search parameters that are submitted with your query,
-	// which may affect the data returned
-	SearchParameters *SearchParameters
-
-	// ThumbnailSettings is for the thumbnail url settings
-	ThumbnailSettings *ThumbnailSettings
-
-	// LastRequest is the raw information from the last request
-	LastRequest *LastRequest
-}
-
 // SearchParameters holds options that can affect data returned by a search.
 //
 // Source: https://docs.pipl.com/reference#configuration-parameters
 type SearchParameters struct {
-	// APIKey is required
-	APIKey string
-
-	// UserAgent (optional for changing user agents)
-	UserAgent string
+	// apiKey is required
+	apiKey string
 
 	// MinimumProbability is the minimum acceptable probability for inferred data
 	MinimumProbability float32
@@ -111,74 +88,39 @@ type ThumbnailSettings struct {
 	ZoomFace bool
 }
 
-// LastRequest is used to track what was submitted to pipl on the piplRequest()
-type LastRequest struct {
-	// Method is either POST or GET
-	Method string
-
-	// PostData is the post data submitted if POST request
-	PostData string
-
-	// URL is the url used for the request
-	URL string
-}
-
-// NewClient creates a new search client to submit queries with.
+// NewClient creates a new search client to submit queries with
 // Parameters values are set to the defaults defined by Pipl.
 //
 // For more information: https://docs.pipl.com/reference#configuration-parameters
-func NewClient(APIKey string) (c *Client, err error) {
+func NewClient(apiKey string, clientOptions *Options) (c *Client, err error) {
 
 	// Test for the key
-	if len(APIKey) == 0 {
-		err = fmt.Errorf("api key must be set, %s", APIKey)
+	if len(apiKey) == 0 {
+		err = fmt.Errorf("api key must be set, %s", "api_key")
 		return
 	}
 
-	// Create a client
-	c = new(Client)
-
-	// Create exponential backoff
-	backOff := heimdall.NewExponentialBackoff(
-		ConnectionInitialTimeout,
-		ConnectionMaxTimeout,
-		ConnectionExponentFactor,
-		ConnectionMaximumJitterInterval,
-	)
-
-	// Create the http client
-	//c.HTTPClient = new(http.Client) (@mrz this was the original HTTP client)
-	c.HTTPClient = httpclient.NewClient(
-		httpclient.WithHTTPTimeout(ConnectionWithHTTPTimeout),
-		httpclient.WithRetrier(heimdall.NewRetrier(backOff)),
-		httpclient.WithRetryCount(ConnectionRetryCount),
-		httpclient.WithHTTPClient(&http.Client{
-			Transport: ClientDefaultTransport,
-		}),
-	)
+	// Create a client using the given options
+	c = createClient(clientOptions)
 
 	// Create default search parameters
-	c.SearchParameters = new(SearchParameters)
-	c.SearchParameters.APIKey = APIKey
-	c.SearchParameters.HideSponsored = true
-	c.SearchParameters.InferPersons = false
-	c.SearchParameters.LiveFeeds = true
-	c.SearchParameters.MatchRequirements = MatchRequirementsNone
-	c.SearchParameters.MinimumMatch = MinimumMatch
-	c.SearchParameters.MinimumProbability = MinimumProbability
-	c.SearchParameters.ShowSources = ShowSourcesAll //ShowSourcesNone
-	c.SearchParameters.SourceCategoryRequirements = SourceCategoryRequirementsNone
-	c.SearchParameters.UserAgent = DefaultUserAgent
+	c.Parameters.Search = new(SearchParameters)
+	c.Parameters.Search.apiKey = apiKey
+	c.Parameters.Search.HideSponsored = true
+	c.Parameters.Search.InferPersons = false
+	c.Parameters.Search.LiveFeeds = true
+	c.Parameters.Search.MatchRequirements = MatchRequirementsNone
+	c.Parameters.Search.MinimumMatch = MinimumMatch
+	c.Parameters.Search.MinimumProbability = MinimumProbability
+	c.Parameters.Search.ShowSources = ShowSourcesAll //ShowSourcesNone
+	c.Parameters.Search.SourceCategoryRequirements = SourceCategoryRequirementsNone
 
 	// Create default thumbnail parameters (thumbnail url functionality)
-	c.ThumbnailSettings = new(ThumbnailSettings)
-	c.ThumbnailSettings.Enabled = false
-	c.ThumbnailSettings.Height = ThumbnailHeight
-	c.ThumbnailSettings.URL = ThumbnailEndpoint
-	c.ThumbnailSettings.Width = ThumbnailWidth
-
-	// Create a last request struct
-	c.LastRequest = new(LastRequest)
+	c.Parameters.Thumbnail = new(ThumbnailSettings)
+	c.Parameters.Thumbnail.Enabled = false
+	c.Parameters.Thumbnail.Height = ThumbnailHeight
+	c.Parameters.Thumbnail.URL = thumbnailEndpoint
+	c.Parameters.Thumbnail.Width = ThumbnailWidth
 
 	// Return the client
 	return
@@ -253,24 +195,24 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 	postData := url.Values{}
 
 	// Add the API key
-	postData.Add("key", c.SearchParameters.APIKey)
+	postData.Add("key", c.Parameters.Search.apiKey)
 
 	// Do not return formatted
 	postData.Add("pretty", "false")
 
 	// Should we show sources?
-	if c.SearchParameters.ShowSources != ShowSourcesNone {
-		postData.Add("show_sources", string(c.SearchParameters.ShowSources))
+	if c.Parameters.Search.ShowSources != ShowSourcesNone {
+		postData.Add("show_sources", string(c.Parameters.Search.ShowSources))
 	}
 
 	// Add match requirements?
-	if c.SearchParameters.MatchRequirements != MatchRequirementsNone {
-		postData.Add("match_requirements", string(c.SearchParameters.MatchRequirements))
+	if c.Parameters.Search.MatchRequirements != MatchRequirementsNone {
+		postData.Add("match_requirements", string(c.Parameters.Search.MatchRequirements))
 	}
 
 	// Add source category requirements?
-	if c.SearchParameters.SourceCategoryRequirements != SourceCategoryRequirementsNone {
-		postData.Add("source_category_requirements", string(c.SearchParameters.SourceCategoryRequirements))
+	if c.Parameters.Search.SourceCategoryRequirements != SourceCategoryRequirementsNone {
+		postData.Add("source_category_requirements", string(c.Parameters.Search.SourceCategoryRequirements))
 	}
 
 	// Parse the search object
@@ -283,7 +225,7 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 	postData.Add("person", string(personJSON))
 
 	// Fire the request
-	return c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
+	return c.PiplRequest(searchAPIEndpoint, http.MethodPost, &postData)
 }
 
 // SearchAllPossiblePeople takes a person object (filled with search terms) and returns the
@@ -331,13 +273,13 @@ func (c *Client) SearchByPointer(searchPointer string) (response *Response, err 
 	postData := url.Values{}
 
 	// Add the API key
-	postData.Add("key", c.SearchParameters.APIKey)
+	postData.Add("key", c.Parameters.Search.apiKey)
 
 	// Add the search pointer
 	postData.Add("search_pointer", searchPointer)
 
 	// Fire the request
-	return c.PiplRequest(SearchAPIEndpoint, "POST", &postData)
+	return c.PiplRequest(searchAPIEndpoint, http.MethodPost, &postData)
 }
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
@@ -347,15 +289,15 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 	// Set reader
 	var bodyReader io.Reader
 
-	// Switch on POST vs GET
+	// Switch on method
 	switch method {
-	case "POST":
+	case http.MethodPost:
 		{
 			encodedParams := params.Encode()
 			bodyReader = strings.NewReader(encodedParams)
 			c.LastRequest.PostData = encodedParams
 		}
-	case "GET":
+	case http.MethodGet:
 		if params != nil {
 			endpoint += "?" + params.Encode()
 		}
@@ -371,25 +313,23 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 		return
 	}
 
-	// Change the header (user agent is in case they block default Go user agents)
-	request.Header.Set("User-Agent", c.SearchParameters.UserAgent)
+	// Set the headers
+	request.Header.Set("User-Agent", c.Parameters.UserAgent)
 
-	// Set the content type on POST
-	if method == "POST" {
+	// Set the content type on method
+	if method == http.MethodPost {
 		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	}
 
 	// Fire the http request
 	var resp *http.Response
-	if resp, err = c.HTTPClient.Do(request); err != nil {
+	if resp, err = c.httpClient.Do(request); err != nil {
 		return
 	}
 
 	// Close the response body
 	defer func() {
-		if bodyErr := resp.Body.Close(); bodyErr != nil {
-			log.Printf("error closing response body: %s", bodyErr.Error())
-		}
+		_ = resp.Body.Close()
 	}()
 
 	// Read the body
@@ -405,7 +345,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 	}
 
 	// Thumbnail generation enabled?
-	if c.ThumbnailSettings.Enabled {
+	if c.Parameters.Thumbnail.Enabled {
 
 		// Process the current person
 		response.Person.ProcessThumbnails(c)

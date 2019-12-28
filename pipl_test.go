@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 )
 
 // Testing variables
@@ -12,18 +13,18 @@ var testThumbnailToken = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3
 
 // TestNewClient test new client
 func TestNewClient(t *testing.T) {
-	client, err := NewClient("1234567890")
+	client, err := NewClient("1234567890", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if client.SearchParameters.APIKey != "1234567890" {
-		t.Fatalf("expected value 1234567890, got %s", client.SearchParameters.APIKey)
+	if client.Parameters.Search.apiKey != "1234567890" {
+		t.Fatalf("expected value 1234567890, got %s", client.Parameters.Search.apiKey)
 	}
-	if client.SearchParameters.MinimumMatch != MinimumMatch {
-		t.Fatalf("expected value %f, got %f", MinimumMatch, client.SearchParameters.MinimumMatch)
+	if client.Parameters.Search.MinimumMatch != MinimumMatch {
+		t.Fatalf("expected value %f, got %f", MinimumMatch, client.Parameters.Search.MinimumMatch)
 	}
-	if client.SearchParameters.MinimumProbability != MinimumProbability {
-		t.Fatalf("expected value %f, got %f", MinimumProbability, client.SearchParameters.MinimumProbability)
+	if client.Parameters.Search.MinimumProbability != MinimumProbability {
+		t.Fatalf("expected value %f, got %f", MinimumProbability, client.Parameters.Search.MinimumProbability)
 	}
 
 	// todo: test changing these values in the SearchParameters
@@ -31,15 +32,73 @@ func TestNewClient(t *testing.T) {
 
 //ExampleNewClient example using NewClient()
 func ExampleNewClient() {
-	client, _ := NewClient("1234567890")
-	fmt.Println(client.SearchParameters.APIKey)
+	client, _ := NewClient("1234567890", nil)
+	fmt.Println(client.Parameters.Search.apiKey)
 	// Output:1234567890
 }
 
 // BenchmarkNewClient benchmarks the NewClient method
 func BenchmarkNewClient(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _ = NewClient("1234567890")
+		_, _ = NewClient("1234567890", nil)
+	}
+}
+
+// TestDefaultOptions tests setting ClientDefaultOptions()
+func TestDefaultOptions(t *testing.T) {
+
+	options := ClientDefaultOptions()
+
+	if options.UserAgent != defaultUserAgent {
+		t.Fatalf("expected value: %s got: %s", defaultUserAgent, options.UserAgent)
+	}
+
+	if options.BackOffExponentFactor != 2.0 {
+		t.Fatalf("expected value: %f got: %f", 2.0, options.BackOffExponentFactor)
+	}
+
+	if options.BackOffInitialTimeout != 2*time.Millisecond {
+		t.Fatalf("expected value: %v got: %v", 2*time.Millisecond, options.BackOffInitialTimeout)
+	}
+
+	if options.BackOffMaximumJitterInterval != 2*time.Millisecond {
+		t.Fatalf("expected value: %v got: %v", 2*time.Millisecond, options.BackOffMaximumJitterInterval)
+	}
+
+	if options.BackOffMaxTimeout != 10*time.Millisecond {
+		t.Fatalf("expected value: %v got: %v", 10*time.Millisecond, options.BackOffMaxTimeout)
+	}
+
+	if options.DialerKeepAlive != 20*time.Second {
+		t.Fatalf("expected value: %v got: %v", 20*time.Second, options.DialerKeepAlive)
+	}
+
+	if options.DialerTimeout != 5*time.Second {
+		t.Fatalf("expected value: %v got: %v", 5*time.Second, options.DialerTimeout)
+	}
+
+	if options.RequestRetryCount != 2 {
+		t.Fatalf("expected value: %v got: %v", 2, options.RequestRetryCount)
+	}
+
+	if options.RequestTimeout != 10*time.Second {
+		t.Fatalf("expected value: %v got: %v", 10*time.Second, options.RequestTimeout)
+	}
+
+	if options.TransportExpectContinueTimeout != 3*time.Second {
+		t.Fatalf("expected value: %v got: %v", 3*time.Second, options.TransportExpectContinueTimeout)
+	}
+
+	if options.TransportIdleTimeout != 20*time.Second {
+		t.Fatalf("expected value: %v got: %v", 20*time.Second, options.TransportIdleTimeout)
+	}
+
+	if options.TransportMaxIdleConnections != 10 {
+		t.Fatalf("expected value: %v got: %v", 10, options.TransportMaxIdleConnections)
+	}
+
+	if options.TransportTLSHandshakeTimeout != 5*time.Second {
+		t.Fatalf("expected value: %v got: %v", 5*time.Second, options.TransportTLSHandshakeTimeout)
 	}
 }
 
@@ -219,14 +278,14 @@ func TestSearchByPerson(t *testing.T) {
 	APIKey := os.Getenv("PIPL_CONTACT_API_KEY")
 
 	// Create a new client object to handle your queries (supply an API Key)
-	client, err := NewClient(APIKey)
+	client, err := NewClient(APIKey, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Set your match requirements if you have any. You don't pay for results that
 	// don't satisfy your match requirements (but your returned results will be empty)
-	client.SearchParameters.MatchRequirements = "name and phone"
+	client.Parameters.Search.MatchRequirements = "name and phone"
 
 	// Create a blank person to fill out with search terms
 	searchObject := NewPerson()

@@ -799,7 +799,7 @@ func BenchmarkAddURL(b *testing.B) {
 func TestPerson_ProcessThumbnails(t *testing.T) {
 
 	// Create the client
-	client, err := NewClient("1234567890")
+	client, err := NewClient("1234567890", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -830,13 +830,13 @@ func TestPerson_ProcessThumbnails(t *testing.T) {
 	}
 
 	// Does it have the right favicon
-	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("favicon=%t", client.ThumbnailSettings.Favicon)) {
-		t.Fatal("expected value is not the same", client.ThumbnailSettings.Favicon)
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("favicon=%t", client.Parameters.Thumbnail.Favicon)) {
+		t.Fatal("expected value is not the same", client.Parameters.Thumbnail.Favicon)
 	}
 
 	// Does it have the right zoom face
-	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("zoom_face=%t", client.ThumbnailSettings.ZoomFace)) {
-		t.Fatal("expected value is not the same", client.ThumbnailSettings.ZoomFace)
+	if !strings.Contains(person.Images[0].ThumbnailURL, fmt.Sprintf("zoom_face=%t", client.Parameters.Thumbnail.ZoomFace)) {
+		t.Fatal("expected value is not the same", client.Parameters.Thumbnail.ZoomFace)
 	}
 
 	// Does it have the right token
@@ -847,7 +847,7 @@ func TestPerson_ProcessThumbnails(t *testing.T) {
 
 //ExamplePerson_ProcessThumbnails example using ProcessThumbnails()
 func ExamplePerson_ProcessThumbnails() {
-	client, _ := NewClient("1234567890")
+	client, _ := NewClient("1234567890", nil)
 	person := NewPerson()
 
 	image := new(Image)
@@ -862,7 +862,7 @@ func ExamplePerson_ProcessThumbnails() {
 
 // BenchmarkProcessThumbnails benchmarks the ProcessThumbnails method
 func BenchmarkProcessThumbnails(b *testing.B) {
-	client, _ := NewClient("1234567890")
+	client, _ := NewClient("1234567890", nil)
 	person := NewPerson()
 
 	image := new(Image)

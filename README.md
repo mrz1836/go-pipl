@@ -1,5 +1,5 @@
 # go-pipl
-**go-pipl** is a simple golang wrapper to help find people using the pipl.com API.
+**go-pipl** is a simple golang wrapper to help find people using the [pipl.com API](https://pipl.com/api/).
 
 [![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
@@ -30,9 +30,8 @@ $ go get -u github.com/mrz1836/go-pipl
 You can view the generated [documentation here](https://godoc.org/github.com/mrz1836/go-pipl).
 
 ### Features
-- Complete coverage for the pipl.com API
-- Pipl client is completely configurable
-- Customize API Key and User Agent per request
+- Complete coverage for the [pipl.com API](https://pipl.com/api/)
+- [Client](client.go) is completely configurable
 - Using [heimdall http client](https://github.com/gojek/heimdall) with exponential backoff & more
 - Minimum criteria detection before submitting a pipl query
 - Search by pipl pointer reference
@@ -98,7 +97,7 @@ import (
 func main() {
 
     // Create a client with your api key
-    client, _ := pipl.NewClient("your-api-key")
+    client, _ := pipl.NewClient("your-api-key", nil)
 
     // Create a new person for searching
     person := pipl.NewPerson()
@@ -115,7 +114,7 @@ func main() {
 
 ## Maintainers
 
-[@MrZ1836](https://github.com/mrz1836)
+[@MrZ](https://github.com/mrz1836)
 
 ## Contributing
 

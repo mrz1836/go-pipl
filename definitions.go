@@ -1,5 +1,71 @@
 package pipl
 
+// Package global constants and configuration
+const (
+	// searchAPIEndpoint is where we POST queries to
+	searchAPIEndpoint string = "https://api.pipl.com/search/"
+
+	// thumbnailEndpoint is where the image thumbnails are located
+	thumbnailEndpoint string = "https://thumb.pipl.com/image"
+
+	// ShowSourcesNone specifies that we don't need source info back with search results
+	ShowSourcesNone SourceLevel = "false"
+
+	// ShowSourcesAll specifies that we want all source info back with our search results
+	ShowSourcesAll SourceLevel = "all"
+
+	// ShowSourcesMatching specifies that we want source info that corresponds to data that satisfies our match requirements
+	ShowSourcesMatching SourceLevel = "true"
+
+	// MatchRequirementsNone specifies that we don't have any match requirements for this search
+	MatchRequirementsNone MatchRequirements = ""
+
+	// MatchRequirementsEmail specifies that we want to match on this field
+	MatchRequirementsEmail MatchRequirements = "email"
+
+	// MatchRequirementsPhone specifies that we want to match on this field
+	MatchRequirementsPhone MatchRequirements = "phone"
+
+	// MatchRequirementsEmailAndPhone specifies that we want to match on this field
+	MatchRequirementsEmailAndPhone MatchRequirements = "email and phone"
+
+	// MatchRequirementsEmailAndName specifies that we want to match on this field
+	MatchRequirementsEmailAndName MatchRequirements = "email and name"
+
+	// MatchRequirementsEmailOrPhone specifies that we want to match on this field
+	MatchRequirementsEmailOrPhone MatchRequirements = "email or phone"
+
+	// todo: finish adding match criteria - also make this flexible and easier to use
+	// https://docs.pipl.com/reference#match-criteria
+
+	// MinimumProbability is the score for probability
+	MinimumProbability = 0.9
+
+	// MinimumMatch is the minimum for a match
+	MinimumMatch = 0.0
+
+	// SourceCategoryRequirementsNone specifies that we don't require any specific sources in our results.
+	SourceCategoryRequirementsNone SourceCategoryRequirements = ""
+
+	// SourceCategoryRequirementsProfessionalAndBusiness is used for: match_requirements=(emails and jobs)
+	SourceCategoryRequirementsProfessionalAndBusiness SourceCategoryRequirements = "professional_and_business"
+
+	// ThumbnailHeight is the default height
+	ThumbnailHeight int = 250
+
+	// ThumbnailWidth is the default width
+	ThumbnailWidth int = 250
+
+	// DefaultCountry is the default country for address
+	DefaultCountry string = "US"
+
+	// DefaultLanguage is the default language
+	DefaultLanguage string = "en"
+
+	// DefaultDisplayLanguage is the default display language
+	DefaultDisplayLanguage string = "en_US"
+)
+
 // GUID is a unique format (but is just a string internally, since there's currently
 // nothing all that fancy done with GUIDs). Additional guid-handling code may be
 // added at a later date if needed.
