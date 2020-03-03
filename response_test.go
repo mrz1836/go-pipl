@@ -52,7 +52,7 @@ func Test_GoodResponse(t *testing.T) {
 	var testEmail = "clark.kent@example.com"
 	var personID GUID = "f4a7d898-6fc1-4a24-b043-43eb292a6fd5"
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test status code
 	if response.HTTPStatusCode != 200 {
@@ -79,7 +79,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: 0, got: %s", response.SearchID)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test query parameters (hash of email)
 	if response.Query.Emails[0].Address != testEmail {
@@ -92,7 +92,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", emailDigest, response.Query.Emails[0].AddressMD5)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test available data
 	if response.AvailableData.Premium.Relationships != 6 {
@@ -147,7 +147,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: 1, got: %d", response.AvailableData.Premium.OriginCountries)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (base)
 	if response.Person.ID != personID {
@@ -160,7 +160,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "1906090343183157724859920008073008866", response.Person.SearchPointer)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (names)
 	if len(response.Person.Names) != response.AvailableData.Premium.Names {
@@ -197,7 +197,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "The red blue blur", response.Person.Names[2].Display)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (emails)
 	if len(response.Person.Emails) != response.AvailableData.Premium.Emails {
@@ -268,7 +268,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", emailDigest, response.Person.Emails[3].AddressMD5)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (usernames)
 	if len(response.Person.Usernames) != response.AvailableData.Premium.Usernames {
@@ -285,7 +285,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "@ckent", response.Person.Usernames[1].Content)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (phones)
 	if len(response.Person.Phones) != response.AvailableData.Premium.Phones {
@@ -309,7 +309,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "+1 978-555-0145", response.Person.Phones[0].DisplayInternational)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (gender)
 	// Only ONE!
@@ -318,7 +318,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected superman to be male")
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (dob)
 	// Only ONE!
@@ -333,7 +333,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "1987-05-13", response.Person.DateOfBirth.DateRange.End)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (languages)
 	if len(response.Person.Languages) != response.AvailableData.Premium.Languages {
@@ -351,7 +351,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", DefaultDisplayLanguage, response.Person.Languages[0].Display)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (ethnicities)
 	if len(response.Person.Ethnicities) != response.AvailableData.Premium.Ethnicities {
@@ -369,7 +369,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "white", response.Person.Ethnicities[2].Content)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (origin_countries)
 	if len(response.Person.OriginCountries) != response.AvailableData.Premium.OriginCountries {
@@ -381,7 +381,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", DefaultCountry, response.Person.OriginCountries[0].Country)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (addresses)
 	if len(response.Person.Addresses) != response.AvailableData.Premium.Addresses {
@@ -419,7 +419,7 @@ func Test_GoodResponse(t *testing.T) {
 
 	// todo: add address #2
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (jobs)
 	if len(response.Person.Jobs) != response.AvailableData.Premium.Jobs {
@@ -448,7 +448,7 @@ func Test_GoodResponse(t *testing.T) {
 
 	// todo: add job #2 and #3
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (educations)
 	if len(response.Person.Educations) != response.AvailableData.Premium.Educations {
@@ -474,14 +474,14 @@ func Test_GoodResponse(t *testing.T) {
 
 	// todo: add education #2
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (relationships)
 	if len(response.Person.Relationships) != response.AvailableData.Premium.Relationships {
 		t.Fatalf("expected: %d, got: %d", response.AvailableData.Premium.Relationships, len(response.Person.Relationships))
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (user_ids)
 	if len(response.Person.UserIDs) != response.AvailableData.Premium.UserIDs {
@@ -493,7 +493,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "11231@facebook", response.Person.UserIDs[0].Content)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (images)
 	if len(response.Person.Images) != response.AvailableData.Premium.Images {
@@ -510,7 +510,7 @@ func Test_GoodResponse(t *testing.T) {
 		t.Fatalf("expected: %s, got: %s", "http://vignette3.wikia.nocookie.net/smallville/images/5/55/S10E18-Booster21.jpg", response.Person.Images[1].URL)
 	}
 
-	//==================================================================================================================
+	// ==================================================================================================================
 
 	// Test person struct and data (urls) or (social profiles)
 	if len(response.Person.URLs) != response.AvailableData.Premium.SocialProfiles {

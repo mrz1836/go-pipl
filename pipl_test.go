@@ -30,7 +30,7 @@ func TestNewClient(t *testing.T) {
 	// todo: test changing these values in the SearchParameters
 }
 
-//ExampleNewClient example using NewClient()
+// ExampleNewClient example using NewClient()
 func ExampleNewClient() {
 	client, _ := NewClient("1234567890", nil)
 	fmt.Println(client.Parameters.Search.apiKey)
@@ -237,7 +237,7 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	}
 }
 
-//ExampleSearchMeetsMinimumCriteria example using SearchMeetsMinimumCriteria()
+// ExampleSearchMeetsMinimumCriteria example using SearchMeetsMinimumCriteria()
 func ExampleSearchMeetsMinimumCriteria() {
 	person := new(Person)
 	if SearchMeetsMinimumCriteria(person) {
@@ -262,7 +262,7 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 
 // todo: test SearchAllPossiblePeople()
 
-//======================================================================================================================
+// ======================================================================================================================
 // Full Pipl Integration Tests (-test.short to skip)
 
 // TestSearchByPerson tests a live search using a real API key (if set)

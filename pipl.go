@@ -112,7 +112,7 @@ func NewClient(apiKey string, clientOptions *Options) (c *Client, err error) {
 	c.Parameters.Search.MatchRequirements = MatchRequirementsNone
 	c.Parameters.Search.MinimumMatch = MinimumMatch
 	c.Parameters.Search.MinimumProbability = MinimumProbability
-	c.Parameters.Search.ShowSources = ShowSourcesAll //ShowSourcesNone
+	c.Parameters.Search.ShowSources = ShowSourcesAll // ShowSourcesNone
 	c.Parameters.Search.SourceCategoryRequirements = SourceCategoryRequirementsNone
 
 	// Create default thumbnail parameters (thumbnail url functionality)

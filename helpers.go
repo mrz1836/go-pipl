@@ -187,7 +187,7 @@ func (p *Person) AddPhone(phoneNumber, countryCode int) (err error) {
 	}
 
 	// Country code is required
-	//International call country code. See ITU-T Recommendation E.164
+	// International call country code. See ITU-T Recommendation E.164
 	if countryCode == 0 {
 		err = fmt.Errorf("missing country code: %d", phoneNumber)
 		return
@@ -630,7 +630,7 @@ func (p *Person) ProcessThumbnails(c *Client) {
 
 // isAcceptedValue tests a value against allowed values
 func isAcceptedValue(testValue string, allowedValues *[]string) (success bool) {
-	//Check that the value is an allowed value (case sensitive)
+	// Check that the value is an allowed value (case sensitive)
 	for _, value := range *allowedValues {
 		if testValue == value {
 			success = true

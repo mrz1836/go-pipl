@@ -55,7 +55,7 @@ func TestAddName(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddName example using AddName()
+// ExamplePerson_AddName example using AddName()
 func ExamplePerson_AddName() {
 	person := NewPerson()
 	_ = person.AddName("clark", "ryan", "kent", "mr", "jr")
@@ -92,7 +92,7 @@ func TestAddNameRaw(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddNameRaw example using AddNameRaw()
+// ExamplePerson_AddNameRaw example using AddNameRaw()
 func ExamplePerson_AddNameRaw() {
 	person := NewPerson()
 	_ = person.AddNameRaw("clark kent")
@@ -136,7 +136,7 @@ func TestAddEmail(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddEmail example using AddEmail()
+// ExamplePerson_AddEmail example using AddEmail()
 func ExamplePerson_AddEmail() {
 	person := NewPerson()
 	_ = person.AddEmail("clarkkent@gmail.com")
@@ -179,7 +179,7 @@ func TestAddUsername(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddUsername example using AddUsername()
+// ExamplePerson_AddUsername example using AddUsername()
 func ExamplePerson_AddUsername() {
 	person := NewPerson()
 	_ = person.AddUsername("clarkkent", "twitter")
@@ -223,7 +223,7 @@ func TestAddUserID(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddUserID example using AddUserID()
+// ExamplePerson_AddUserID example using AddUserID()
 func ExamplePerson_AddUserID() {
 	person := NewPerson()
 	_ = person.AddUserID("clarkkent", "twitter")
@@ -277,7 +277,7 @@ func TestAddPhone(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddPhone example using AddPhone()
+// ExamplePerson_AddPhone example using AddPhone()
 func ExamplePerson_AddPhone() {
 	person := NewPerson()
 	_ = person.AddPhone(9785550145, 1)
@@ -314,7 +314,7 @@ func TestAddPhoneRaw(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddPhoneRaw example using AddPhoneRaw()
+// ExamplePerson_AddPhoneRaw example using AddPhoneRaw()
 func ExamplePerson_AddPhoneRaw() {
 	person := NewPerson()
 	_ = person.AddPhoneRaw("9785550145")
@@ -359,7 +359,7 @@ func TestSetGender(t *testing.T) {
 	}
 }
 
-//ExamplePerson_SetGender example using SetGender()
+// ExamplePerson_SetGender example using SetGender()
 func ExamplePerson_SetGender() {
 	person := NewPerson()
 	_ = person.SetGender("male")
@@ -417,7 +417,7 @@ func TestSetDateOfBirth(t *testing.T) {
 	}
 }
 
-//ExamplePerson_SetDateOfBirth example using SetDateOfBirth()
+// ExamplePerson_SetDateOfBirth example using SetDateOfBirth()
 func ExamplePerson_SetDateOfBirth() {
 	person := NewPerson()
 	_ = person.SetDateOfBirth("1987-01-01", "1987-01-01")
@@ -466,7 +466,7 @@ func TestAddLanguage(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddLanguage example using AddLanguage()
+// ExamplePerson_AddLanguage example using AddLanguage()
 func ExamplePerson_AddLanguage() {
 	person := NewPerson()
 	_ = person.AddLanguage(DefaultLanguage, DefaultCountry)
@@ -509,7 +509,7 @@ func TestAddEthnicity(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddEthnicity example using AddEthnicity()
+// ExamplePerson_AddEthnicity example using AddEthnicity()
 func ExamplePerson_AddEthnicity() {
 	person := NewPerson()
 	_ = person.AddEthnicity("white")
@@ -543,7 +543,7 @@ func TestAddOriginCountry(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddOriginCountry example using AddOriginCountry()
+// ExamplePerson_AddOriginCountry example using AddOriginCountry()
 func ExamplePerson_AddOriginCountry() {
 	person := NewPerson()
 	_ = person.AddOriginCountry(DefaultCountry)
@@ -605,7 +605,7 @@ func TestAddAddress(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddAddress example using AddAddress()
+// ExamplePerson_AddAddress example using AddAddress()
 func ExamplePerson_AddAddress() {
 	person := NewPerson()
 	_ = person.AddAddress("10", "Hickory Lane", "1", "Smallville", "KS", DefaultCountry, "123")
@@ -642,7 +642,7 @@ func TestAddAddressRaw(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddAddressRaw example using AddAddressRaw()
+// ExamplePerson_AddAddressRaw example using AddAddressRaw()
 func ExamplePerson_AddAddressRaw() {
 	person := NewPerson()
 	_ = person.AddAddressRaw("10 Hickory Lane, Kansas, " + DefaultCountry)
@@ -698,7 +698,7 @@ func TestAddJob(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddJob example using AddJob()
+// ExamplePerson_AddJob example using AddJob()
 func ExamplePerson_AddJob() {
 	person := NewPerson()
 	_ = person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
@@ -744,7 +744,7 @@ func TestAddEducation(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddEducation example using AddEducation()
+// ExamplePerson_AddEducation example using AddEducation()
 func ExamplePerson_AddEducation() {
 	person := NewPerson()
 	_ = person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
@@ -779,7 +779,7 @@ func TestAddURL(t *testing.T) {
 	}
 }
 
-//ExamplePerson_AddURL example using AddURL()
+// ExamplePerson_AddURL example using AddURL()
 func ExamplePerson_AddURL() {
 	person := NewPerson()
 	_ = person.AddURL("https://twitter.com/clarkkent")
@@ -845,7 +845,7 @@ func TestPerson_ProcessThumbnails(t *testing.T) {
 	}
 }
 
-//ExamplePerson_ProcessThumbnails example using ProcessThumbnails()
+// ExamplePerson_ProcessThumbnails example using ProcessThumbnails()
 func ExamplePerson_ProcessThumbnails() {
 	client, _ := NewClient("1234567890", nil)
 	person := NewPerson()
