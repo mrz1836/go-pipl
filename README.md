@@ -51,7 +51,7 @@ You can view the generated [documentation here](https://godoc.org/github.com/mrz
 - Test and example coverage for all methods
 
 ## Examples & Tests
-All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.org/mrz1836/go-pipl) and uses [Go version 1.13.x](https://golang.org/doc/go1.13). View the [deployment configuration file](.travis.yml).
+All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.org/mrz1836/go-pipl) and uses [Go version 1.14.x](https://golang.org/doc/go1.14). View the [deployment configuration file](.travis.yml).
 
 - [helper examples & tests](helper_test.go)
 - [pipl examples &  tests](pipl_test.go)
