@@ -4,10 +4,8 @@
 [![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
 [![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/01708ca3079e4933bafb3b39fe2aaa9d)](https://www.codacy.com/app/mrz1818/go-pipl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mrz1836/go-pipl&amp;utm_campaign=Badge_Grade)
 [![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases)
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
-[![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://godoc.org/github.com/mrz1836/go-pipl)
+[![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
 
 ## Table of Contents
 - [Installation](#installation)
@@ -27,9 +25,6 @@
 $ go get -u github.com/mrz1836/go-pipl
 ```
 
-## Documentation
-You can view the generated [documentation here](https://godoc.org/github.com/mrz1836/go-pipl).
-
 ### Features
 - Complete coverage for the [pipl.com API](https://pipl.com/api/)
 - [Client](client.go) is completely configurable
@@ -46,34 +41,76 @@ You can view the generated [documentation here](https://godoc.org/github.com/mrz
     - Returns the original full person record
     - Searches all possible persons and gets full details
     - Combines all persons into one single response
-- Thumbnail configuration for `person.Images`
+- Thumbnail configuration setting for `person.Images`
     - Adds `image.ThumbnailURL` with the complete url for a live thumbnail
 - Test and example coverage for all methods
+
+## Documentation
+You can view the generated [documentation here](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc).
+
+<details>
+<summary><strong><code>Library Deployment</code></strong></summary>
+
+[goreleaser](https://github.com/goreleaser/goreleaser) for easy binary or library deployment to Github and can be installed via: `brew install goreleaser`.
+
+The [.goreleaser.yml](.goreleaser.yml) file is used to configure [goreleaser](https://github.com/goreleaser/goreleaser).
+
+Use `make release-snap` to create a snapshot version of the release, and finally `make release` to ship to production.
+</details>
+
+<details>
+<summary><strong><code>Makefile Commands</code></strong></summary>
+
+View all `makefile` commands
+```bash
+$ make help
+```
+
+List of all current commands:
+```text
+all                            Runs test, install, clean, docs
+bench                          Run all benchmarks in the Go application
+clean                          Remove previous builds and any test cache data
+clean-mods                     Remove all the Go mod cache
+coverage                       Shows the test coverage
+godocs                         Sync the latest tag with GoDocs
+help                           Show all make commands available
+lint                           Run the Go lint application
+release                        Full production release (creates release in Github)
+release-test                   Full production test release (everything except deploy)
+release-snap                   Test the full release (build binaries)
+tag                            Generate a new tag and push (IE: make tag version=0.0.0)
+tag-remove                     Remove a tag if found (IE: make tag-remove version=0.0.0)
+tag-update                     Update an existing tag to current commit (IE: make tag-update version=0.0.0)
+test                           Runs vet, lint and ALL tests
+test-short                     Runs vet, lint and tests (excludes integration tests)
+update                         Update all project dependencies
+update-releaser                Update the goreleaser application
+vet                            Run the Go vet application
+```
+</details>
 
 ## Examples & Tests
 All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.org/mrz1836/go-pipl) and uses [Go version 1.14.x](https://golang.org/doc/go1.14). View the [deployment configuration file](.travis.yml).
 
-- [helper examples & tests](helper_test.go)
+- [helper examples & tests](helpers_test.go)
 - [pipl examples &  tests](pipl_test.go)
 - [response tests](response_test.go)
 
 Run all tests (including integration tests)
 ```bash
-$ cd ../go-pipl
-$ go test ./... -v
+$ make test
 ```
 
 Run tests (excluding integration tests)
 ```bash
-$ cd ../go-pipl
-$ go test ./... -v -test.short
+$ make test-short
 ```
 
 ## Benchmarks
 Run the Go [benchmarks](pipl_test.go):
 ```bash
-$ cd ../go-pipl
-$ go test -bench . -benchmem
+$ make bench
 ```
 
 ## Code Standards
@@ -81,7 +118,7 @@ Read more about this Go project's [code standards](CODE_STANDARDS.md).
 
 ## Usage
 - View the [pipl examples & benchmarks](pipl_test.go)
-- View the [helper examples & benchmarks](helper_test.go)
+- View the [helper examples & benchmarks](helpers_test.go)
 - View the [response tests](response_test.go)
 
 Basic implementation:
@@ -115,7 +152,9 @@ func main() {
 
 ## Maintainers
 
-[@MrZ](https://github.com/mrz1836)
+| [<img src="https://github.com/mrz1836.png" height="50" alt="MrZ" />](https://github.com/mrz1836) |
+|:---:|
+| [MrZ](https://github.com/mrz1836) |
 
 ## Contributing
 
