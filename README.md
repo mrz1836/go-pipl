@@ -25,6 +25,9 @@
 $ go get -u github.com/mrz1836/go-pipl
 ```
 
+## Documentation
+You can view the generated [documentation here](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc).
+
 ### Features
 - Complete coverage for the [pipl.com API](https://pipl.com/api/)
 - [Client](client.go) is completely configurable
@@ -45,8 +48,6 @@ $ go get -u github.com/mrz1836/go-pipl
     - Adds `image.ThumbnailURL` with the complete url for a live thumbnail
 - Test and example coverage for all methods
 
-## Documentation
-You can view the generated [documentation here](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc).
 
 <details>
 <summary><strong><code>Library Deployment</code></strong></summary>
