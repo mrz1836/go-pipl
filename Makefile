@@ -16,7 +16,7 @@ VERSION_SHORT=$(shell git describe --tags --always --abbrev=0)
 
 .PHONY: test lint clean release
 
-all: lint test vet
+all: lint test-short vet
 
 bench:  ## Run all benchmarks in the Go application
 	go test -bench ./... -benchmem -v
