@@ -14,7 +14,7 @@ func loadResponseData(filename string) (response *Response, rawJSON string, err 
 
 	// Open our jsonFile
 	var jsonFile *os.File
-	jsonFile, err = os.Open(filename)
+	jsonFile, err = os.Open("responses/" + filename)
 	if err != nil {
 		return
 	}
