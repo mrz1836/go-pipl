@@ -4,6 +4,7 @@
 [![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
 [![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
+[![codecov](https://codecov.io/gh/mrz1836/go-pipl/branch/master/graph/badge.svg)](https://codecov.io/gh/mrz1836/go-pipl)
 [![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases)
 [![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
 
@@ -123,14 +124,15 @@ Read more about this Go project's [code standards](CODE_STANDARDS.md).
 - View the [response tests](response_test.go)
 
 Basic implementation:
-```golang
+```go
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"github.com/mrz1836/go-pipl"
+    "fmt"
+    "log"
+    "os"
+    
+    "github.com/mrz1836/go-pipl"
 )
 
 func main() {
@@ -140,7 +142,7 @@ func main() {
 
     // Create a new person for searching
     person := pipl.NewPerson()
-    person.AddUsername("jeffbezos", "twitter")
+    _ = person.AddUsername("jeffbezos", "twitter")
 
     // Submit the search
     response, _ := client.Search(person)
