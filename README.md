@@ -2,7 +2,7 @@
 **go-pipl** is a simple golang wrapper to help find people using the [pipl.com API](https://pipl.com/api/).
 
 [![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
-[![Build Status](https://travis-ci.org/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.org/mrz1836/go-pipl)
+[![Build Status](https://travis-ci.com/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.com/mrz1836/go-pipl)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
 [![codecov](https://codecov.io/gh/mrz1836/go-pipl/branch/master/graph/badge.svg)](https://codecov.io/gh/mrz1836/go-pipl)
 [![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases)
