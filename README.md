@@ -1,5 +1,5 @@
 # go-pipl
-**go-pipl** is a simple golang wrapper to help find people using the [pipl.com API](https://pipl.com/api/).
+> The unofficial golang wrapper for the [pipl.com API](https://pipl.com/api/).
 
 [![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
 [![Build Status](https://travis-ci.com/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.com/mrz1836/go-pipl)
