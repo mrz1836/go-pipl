@@ -22,8 +22,8 @@
 ## Installation
 
 **go-pipl** requires a [supported release of Go](https://golang.org/doc/devel/release.html#policy).
-```bash
-$ go get -u github.com/mrz1836/go-pipl
+```shell script
+go get -u github.com/mrz1836/go-pipl
 ```
 
 ## Documentation
@@ -64,8 +64,8 @@ Use `make release-snap` to create a snapshot version of the release, and finally
 <summary><strong><code>Makefile Commands</code></strong></summary>
 
 View all `makefile` commands
-```bash
-$ make help
+```shell script
+make help
 ```
 
 List of all current commands:
@@ -100,19 +100,19 @@ All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-c
 - [response tests](response_test.go)
 
 Run all tests (including integration tests)
-```bash
-$ make test
+```shell script
+make test
 ```
 
 Run tests (excluding integration tests)
-```bash
-$ make test-short
+```shell script
+make test-short
 ```
 
 ## Benchmarks
 Run the Go [benchmarks](pipl_test.go):
-```bash
-$ make bench
+```shell script
+make bench
 ```
 
 ## Code Standards
