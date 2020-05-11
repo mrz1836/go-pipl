@@ -1,12 +1,15 @@
 # go-pipl
 > The unofficial golang wrapper for the [pipl.com API](https://pipl.com/api/).
 
-[![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
+[![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?logo=githubstyle=flat)](https://github.com/mrz1836/go-pipl/releases)
 [![Build Status](https://travis-ci.com/mrz1836/go-pipl.svg?branch=master)](https://travis-ci.com/mrz1836/go-pipl)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
 [![codecov](https://codecov.io/gh/mrz1836/go-pipl/branch/master/graph/badge.svg)](https://codecov.io/gh/mrz1836/go-pipl)
-[![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?style=flat)](https://github.com/mrz1836/go-pipl/releases)
-[![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
+[![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl)](https://golang.org/)
+[![Sponsor](https://img.shields.io/badge/sponsor-MrZ-181717.svg?logo=github&style=flat&v=3)](https://github.com/sponsors/mrz1836)
+[![Donate](https://img.shields.io/badge/donate-bitcoin-ff9900.svg?logo=bitcoin&style=flat)](https://mrz1818.com/?tab=tips&af=go-pipl)
+
+<br/>
 
 ## Table of Contents
 - [Installation](#installation)
@@ -19,6 +22,8 @@
 - [Contributing](#contributing)
 - [License](#license)
 
+<br/>
+
 ## Installation
 
 **go-pipl** requires a [supported release of Go](https://golang.org/doc/devel/release.html#policy).
@@ -26,8 +31,12 @@
 go get -u github.com/mrz1836/go-pipl
 ```
 
+<br/>
+
 ## Documentation
-You can view the generated [documentation here](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc).
+View the generated [documentation](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
+
+[![GoDoc](https://godoc.org/github.com/mrz1836/go-pipl?status.svg&style=flat)](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
 
 ### Features
 - Complete coverage for the [pipl.com API](https://pipl.com/api/)
@@ -93,6 +102,8 @@ vet                            Run the Go vet application
 ```
 </details>
 
+<br/>
+
 ## Examples & Tests
 All unit tests and [examples](pipl_test.go) run via [Travis CI](https://travis-ci.org/mrz1836/go-pipl) and uses [Go version 1.14.x](https://golang.org/doc/go1.14). View the [deployment configuration file](.travis.yml).
 
@@ -110,14 +121,20 @@ Run tests (excluding integration tests)
 make test-short
 ```
 
+<br/>
+
 ## Benchmarks
 Run the Go [benchmarks](pipl_test.go):
 ```shell script
 make bench
 ```
 
+<br/>
+
 ## Code Standards
 Read more about this Go project's [code standards](CODE_STANDARDS.md).
+
+<br/>
 
 ## Usage
 - View the [pipl examples & benchmarks](pipl_test.go)
@@ -153,22 +170,29 @@ func main() {
     // Output: Jeff Preston Bezos
 }
 ```
+ 
+<br/>
 
 ## Maintainers
-
 | [<img src="https://github.com/mrz1836.png" height="50" alt="MrZ" />](https://github.com/mrz1836) |
 |:---:|
 | [MrZ](https://github.com/mrz1836) |
+ 
+<br/>
 
 ## Contributing
-
-This project was based off the original code [go pipl](https://github.com/xpcmdshell/pipl) project by [xpcmdshell](https://github.com/xpcmdshell)
-
 View the [contributing guidelines](CONTRIBUTING.md) and follow the [code of conduct](CODE_OF_CONDUCT.md).
 
-Support the development of this project 🙏
+### How can I help?
+All kinds of contributions are welcome :raised_hands:! 
+The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:. 
+You can also support this project by [becoming a sponsor on GitHub](https://github.com/sponsors/mrz1836) :clap: 
+or by making a [**bitcoin donation**](https://mrz1818.com/?tab=tips&af=go-pipl) to ensure this journey continues indefinitely! :rocket:
 
-[![Donate](https://img.shields.io/badge/donate-bitcoin-brightgreen.svg)](https://mrz1818.com/?tab=tips&af=go-pipl)
+### Credits
+This project was based off the original code [go pipl](https://github.com/xpcmdshell/pipl) project by [xpcmdshell](https://github.com/xpcmdshell)
+
+<br/>
 
 ## License
 
