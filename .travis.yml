@@ -22,7 +22,7 @@ notifications:
 
 # Run all scripts
 script:
- - make test-travis
+ - make test-travis-short
 
 # After build success
 after_success:
