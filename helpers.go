@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+const genderMale = "male"
+const genderFemale = "female"
+
 // NewPerson makes a new blank person object to be filled with terms
 func NewPerson() *Person {
 	return new(Person)
@@ -248,7 +251,9 @@ func (p *Person) AddAddress(house, street, apartment, city, state, country, poBo
 	// Force the country to Default (for searching only USA)
 	// Alpha-2 ISO 3166 country code
 	// https://docs.pipl.com/reference#address
-	country = DefaultCountry
+	if country != DefaultCountry {
+		country = DefaultCountry
+	}
 
 	// Set the address
 	newAddress := new(Address)
@@ -469,7 +474,7 @@ func (p *Person) AddRelationship(relationship Relationship) (err error) {
 func (p *Person) SetGender(gender string) (err error) {
 
 	// Invalid gender
-	if gender != "male" && gender != "female" {
+	if gender != genderMale && gender != genderFemale {
 		err = fmt.Errorf("invalid gender: %s", gender)
 	}
 
@@ -481,6 +486,7 @@ func (p *Person) SetGender(gender string) (err error) {
 }
 
 // SetDateOfBirth sets the DOB of the specified search object
+// DOB string format: "YYYY-MM-DD"
 // DOB string format: "YYYY-MM-DD"
 // Set both Start and End to the same date if known
 //

@@ -4,6 +4,7 @@
 package pipl
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -30,28 +31,15 @@ type SourceCategoryRequirements string
 
 // SearchParameters holds options that can affect data returned by a search.
 //
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
+//
 // Source: https://docs.pipl.com/reference#configuration-parameters
 type SearchParameters struct {
 	// apiKey is required
 	apiKey string
 
-	// MinimumProbability is the minimum acceptable probability for inferred data
-	MinimumProbability float32
-
-	// InferPersons specifies whether or not the Pipl should return results inferred by statistical analysis
-	InferPersons bool
-
-	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
-	MinimumMatch float32
-
 	// ShowSources specifies the level of sources info to return with search results, one of {ShowSourcesMatching, ShowSourcesAll, ShowSourcesNone}
 	ShowSources SourceLevel
-
-	// HideSponsored specifies whether to omit sponsored data from search results
-	HideSponsored bool
-
-	// LiveFeeds specifies whether to use live data sources
-	LiveFeeds bool
 
 	// MatchRequirements specifies the criteria for a successful Person match.
 	// Results that don't fit your match requirements are discarded. If the remaining
@@ -62,15 +50,30 @@ type SearchParameters struct {
 	// results for a successful match. If there is no data from the requested categories,
 	// then the results returned are empty and you're not charged.
 	SourceCategoryRequirements SourceCategoryRequirements
+
+	// MinimumProbability is the minimum acceptable probability for inferred data
+	MinimumProbability float32
+
+	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
+	MinimumMatch float32
+
+	// InferPersons specifies whether or not the Pipl should return results inferred by statistical analysis
+	InferPersons bool
+
+	// HideSponsored specifies whether to omit sponsored data from search results
+	HideSponsored bool
+
+	// LiveFeeds specifies whether to use live data sources
+	LiveFeeds bool
 }
 
 // ThumbnailSettings is for the thumbnail url settings to be automatically returned
 // if any images are found and meet the criteria
 //
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
+//
 // Example: http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
 type ThumbnailSettings struct {
-	// Enabled (detects images, automatically adds thumbnail urls)
-	Enabled bool
 
 	// URL is the thumbnail url
 	URL string
@@ -80,6 +83,9 @@ type ThumbnailSettings struct {
 
 	// Width of the image
 	Width int
+
+	// Enabled (detects images, automatically adds thumbnail urls)
+	Enabled bool
 
 	// Favicon if the icon should be shown or not
 	Favicon bool
@@ -309,7 +315,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 
 	// Start the request
 	var request *http.Request
-	if request, err = http.NewRequest(method, endpoint, bodyReader); err != nil {
+	if request, err = http.NewRequestWithContext(context.Background(), method, endpoint, bodyReader); err != nil {
 		return
 	}
 

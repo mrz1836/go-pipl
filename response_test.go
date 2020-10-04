@@ -10,7 +10,7 @@ import (
 )
 
 // loadResponseData loads a good forged response JSON (6/8/2019)
-func loadResponseData(filename string) (response *Response, rawJSON string, err error) {
+func loadResponseData(filename string) (response *Response, err error) {
 
 	// Open our jsonFile
 	var jsonFile *os.File
@@ -32,7 +32,7 @@ func loadResponseData(filename string) (response *Response, rawJSON string, err 
 	}
 
 	// Set the JSON (for debugging)
-	rawJSON = string(byteValue)
+	// rawJSON = string(byteValue)
 
 	// Set the response
 	err = json.Unmarshal(byteValue, &response)
@@ -43,7 +43,7 @@ func loadResponseData(filename string) (response *Response, rawJSON string, err 
 func Test_GoodResponse(t *testing.T) {
 
 	// Load the response data
-	response, _, err := loadResponseData("response_success.json")
+	response, err := loadResponseData("response_success.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -540,7 +540,7 @@ func Test_GoodResponse(t *testing.T) {
 // Test_PersonNotFoundResponse test a person not found response JSON
 func Test_PersonNotFoundResponse(t *testing.T) {
 	// Load the response data
-	response, _, err := loadResponseData("response_not_found.json")
+	response, err := loadResponseData("response_not_found.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -565,7 +565,7 @@ func Test_PersonNotFoundResponse(t *testing.T) {
 // Test_BadKeyResponse test a bad api key response JSON
 func Test_BadKeyResponse(t *testing.T) {
 	// Load the response data
-	response, _, err := loadResponseData("response_bad_key.json")
+	response, err := loadResponseData("response_bad_key.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -590,7 +590,7 @@ func Test_BadKeyResponse(t *testing.T) {
 // Test_PackageErrorResponse test a bad package response JSON
 func Test_PackageErrorResponse(t *testing.T) {
 	// Load the response data
-	response, _, err := loadResponseData("response_package_error.json")
+	response, err := loadResponseData("response_package_error.json")
 	if err != nil {
 		t.Fatal(err)
 	}
