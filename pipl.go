@@ -65,6 +65,9 @@ type SearchParameters struct {
 
 	// LiveFeeds specifies whether to use live data sources
 	LiveFeeds bool
+
+	// Returns the best high ranking match to your search. API will return either a Person (when high scoring profile is found) or a No Match
+	TopMatch bool
 }
 
 // ThumbnailSettings is for the thumbnail url settings to be automatically returned
@@ -114,6 +117,7 @@ func NewClient(apiKey string, clientOptions *Options) (c *Client, err error) {
 	c.Parameters.Search.apiKey = apiKey
 	c.Parameters.Search.HideSponsored = true
 	c.Parameters.Search.InferPersons = false
+	c.Parameters.Search.TopMatch = false
 	c.Parameters.Search.LiveFeeds = true
 	c.Parameters.Search.MatchRequirements = MatchRequirementsNone
 	c.Parameters.Search.MinimumMatch = MinimumMatch
@@ -219,6 +223,11 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 	// Add source category requirements?
 	if c.Parameters.Search.SourceCategoryRequirements != SourceCategoryRequirementsNone {
 		postData.Add("source_category_requirements", string(c.Parameters.Search.SourceCategoryRequirements))
+	}
+
+	// Ask for the top match?
+	if c.Parameters.Search.TopMatch {
+		postData.Add("top_match", "true")
 	}
 
 	// Parse the search object
