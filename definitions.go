@@ -565,6 +565,7 @@ type Response struct {
 	Query             Person        `json:"query"`
 	SearchID          string        `json:"@search_id"`
 	Sources           []Source      `json:"sources"`
+	TopMatch          bool          `json:"top_match"`
 	VisibleSources    int           `json:"@visible_sources"`
 	Warnings          []string      `json:"warnings"`
 }
