@@ -181,7 +181,7 @@ func (p *Person) AddURL(url string) (err error) {
 //
 // Plan: Landline phones are available in all plans, mobile phones
 // 		 in the BUSINESS plan only.
-func (p *Person) AddPhone(phoneNumber, countryCode int) (err error) {
+func (p *Person) AddPhone(phoneNumber int64, countryCode int) (err error) {
 
 	// Phone is required (min length unknown)
 	if phoneNumber == 0 {
