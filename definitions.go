@@ -131,7 +131,7 @@ type Phone struct {
 	ValidSince           string `json:"@valid_since,omitempty"`
 	CountryCode          int    `json:"country_code,omitempty"`
 	Extension            int    `json:"extension,omitempty"`
-	Number               int    `json:"number,omitempty"`
+	Number               int64  `json:"number,omitempty"`
 	Current              bool   `json:"@current,omitempty"`
 	Inferred             bool   `json:"@inferred,omitempty"`
 }
