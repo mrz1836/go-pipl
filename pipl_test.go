@@ -269,7 +269,7 @@ func BenchmarkSearchMeetsMinimumCriteria(b *testing.B) {
 // Tests a real pipl request
 // Tests the debugging data returned from a request
 func TestSearchByPerson(t *testing.T) {
-	// Skip tis test in short mode (not needed)
+	// Skip this test in short mode (not needed)
 	if testing.Short() {
 		t.Skip("skipping testing in short mode")
 	}

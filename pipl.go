@@ -21,12 +21,12 @@ type SourceLevel string
 // MatchRequirements specifies the conditions for a successful person match in our search.
 // This is useful for saving money with the Pipl API, as you only need to pay for the
 // data you wanted back. If your search results didn't satisfy the match requirements, then
-// no data is returned and you don't pay.
+// no data is returned, and you don't pay.
 type MatchRequirements string
 
 // SourceCategoryRequirements specifies the data categories that must be included in
 // results for a successful match. If there is no data from the requested categories,
-// then the results returned are empty and you're not charged.
+// then the results returned are empty, and you're not charged.
 type SourceCategoryRequirements string
 
 // SearchParameters holds options that can affect data returned by a search.
@@ -48,7 +48,7 @@ type SearchParameters struct {
 
 	// SourceCategoryRequirements specifies the data categories that must be included in
 	// results for a successful match. If there is no data from the requested categories,
-	// then the results returned are empty and you're not charged.
+	// then the results returned are empty, and you're not charged.
 	SourceCategoryRequirements SourceCategoryRequirements
 
 	// MinimumProbability is the minimum acceptable probability for inferred data
@@ -57,7 +57,7 @@ type SearchParameters struct {
 	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
 	MinimumMatch float32
 
-	// InferPersons specifies whether or not the Pipl should return results inferred by statistical analysis
+	// InferPersons specifies whether the Pipl should return results inferred by statistical analysis
 	InferPersons bool
 
 	// HideSponsored specifies whether to omit sponsored data from search results
@@ -188,8 +188,8 @@ func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
 
 // Search takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If successful, the response struct
-// will contains the results, and err will be nil. If an error occurs, the struct pointer
-// will be nil and you should check err for additional information. This method will only
+// will contain the results, and err will be nil. If an error occurs, the struct pointer
+// will be nil, and you should check err for additional information. This method will only
 // return one full person, and a preview of possible people if < 100% match. Use the SearchAllPossiblePeople()
 // method to get all the details when searching.
 func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
@@ -253,12 +253,11 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 		return
 	}
 
-	// When multiple PossiblePersons are returned, we get a "preview" of each of
-	// each of them (< 100% match confidence)
+	// When multiple PossiblePersons are returned, we get a "preview" of each of them (< 100% match confidence)
 	if response.PersonsCount > 1 {
 		for index, person := range response.PossiblePersons {
 
-			// In order to get the full info on each, we need to a follow up query
+			// In order to get the full info on each, we need to a follow-up query
 			// to pull a full person profile by search pointer
 			searchPointer := person.SearchPointer
 			var searchResponse *Response

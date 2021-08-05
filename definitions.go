@@ -8,7 +8,7 @@ const (
 	// thumbnailEndpoint is where the image thumbnails are located
 	thumbnailEndpoint string = "https://thumb.pipl.com/image"
 
-	// ShowSourcesNone specifies that we don't need source info back with search results
+	// ShowSourcesNone specifies that we don't need the source info back with search results
 	ShowSourcesNone SourceLevel = "false"
 
 	// ShowSourcesAll specifies that we want all source info back with our search results
@@ -180,7 +180,7 @@ type UserID struct {
 //
 // Source: https://docs.pipl.com/reference#section-list-of-known-services
 //
-// Note: all lowercase, case sensitive
+// Note: all lowercase, case-sensitive
 var AllowedServiceProviders = []string{
 	"aboutme",
 	"badoo",
@@ -342,7 +342,7 @@ type Ethnicity struct {
 //
 // Source: https://docs.pipl.com/reference#ethinicity
 //
-// Note: all lowercase, case sensitive
+// Note: all lowercase, case-sensitive
 var AllowedEthnicities = []string{
 	"alaska_native",
 	"american_indian",
@@ -448,7 +448,7 @@ type Tag struct {
 }
 
 // Person contains all the information pertaining to a possible person match,
-// including potential multiples of basic fields (names, emails, jobs, etc).
+// including potential multiples of basic fields (names, emails, jobs, etc.).
 // The Match field represents the confidence of a particular person match, as a
 // float: 0 <= Match <= 1. More potential matches returned in a search decreases
 // the overall confidence of all matches.

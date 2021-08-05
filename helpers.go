@@ -13,7 +13,7 @@ func NewPerson() *Person {
 	return new(Person)
 }
 
-// AddName adds a name to the search object. For well defined names.
+// AddName adds a name to the search object. For well-defined names.
 //
 // Source: https://docs.pipl.com/reference#name
 //
@@ -574,7 +574,7 @@ func (p *Person) HasUsername() bool {
 	return false
 }
 
-// HasURL returns true if the person has a url
+// HasURL returns true if the person has an url
 func (p *Person) HasURL() bool {
 	if len(p.URLs) > 0 {
 		for _, u := range p.URLs {
@@ -636,7 +636,7 @@ func (p *Person) ProcessThumbnails(c *Client) {
 
 // isAcceptedValue tests a value against allowed values
 func isAcceptedValue(testValue string, allowedValues *[]string) (success bool) {
-	// Check that the value is an allowed value (case sensitive)
+	// Check that the value is an allowed value (case-sensitive)
 	for _, value := range *allowedValues {
 		if testValue == value {
 			success = true

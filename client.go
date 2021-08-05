@@ -57,7 +57,7 @@ type Parameters struct {
 	UserAgent string             // (optional for changing user agents)
 }
 
-// ClientDefaultOptions will return an Options struct with the default settings
+// ClientDefaultOptions will return an clientOptions struct with the default settings
 // Useful for starting with the default and then modifying as needed
 func ClientDefaultOptions() (clientOptions *Options) {
 	return &Options{

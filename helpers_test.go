@@ -152,7 +152,7 @@ func BenchmarkAddEmail(b *testing.B) {
 	}
 }
 
-// TestAddUsername test adding an username to a person object
+// TestAddUsername test adding a username to a person object
 func TestAddUsername(t *testing.T) {
 	// Bad user id and service provider
 	person := NewPerson()
@@ -482,7 +482,7 @@ func BenchmarkAddLanguage(b *testing.B) {
 	}
 }
 
-// TestAddEthnicity test adding a ethnicity to a person object
+// TestAddEthnicity test adding an ethnicity to a person object
 func TestAddEthnicity(t *testing.T) {
 
 	// Missing value
@@ -525,7 +525,7 @@ func BenchmarkAddEthnicity(b *testing.B) {
 	}
 }
 
-// TestAddOriginCountry test adding a an origin country to a person object
+// TestAddOriginCountry test adding an origin country to a person object
 func TestAddOriginCountry(t *testing.T) {
 	person := NewPerson()
 	err := person.AddOriginCountry("")
@@ -621,7 +621,7 @@ func BenchmarkAddAddress(b *testing.B) {
 	}
 }
 
-// TestAddAddressRaw test adding a an address to a person object
+// TestAddAddressRaw test adding an address to a person object
 func TestAddAddressRaw(t *testing.T) {
 
 	// Too short
@@ -714,7 +714,7 @@ func BenchmarkAddJob(b *testing.B) {
 	}
 }
 
-// TestAddEducation test adding a an education to a person object
+// TestAddEducation test adding an education to a person object
 func TestAddEducation(t *testing.T) {
 
 	// Missing school
@@ -760,7 +760,7 @@ func BenchmarkAddEducation(b *testing.B) {
 	}
 }
 
-// TestAddURL test adding a url to a person object
+// TestAddURL test adding an url to a person object
 func TestAddURL(t *testing.T) {
 	person := NewPerson()
 	err := person.AddURL("http")
