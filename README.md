@@ -183,8 +183,8 @@ func main() {
 
 ## Maintainers
 | [<img src="https://github.com/mrz1836.png" height="50" alt="MrZ" />](https://github.com/mrz1836) |
-|:---:|
-| [MrZ](https://github.com/mrz1836) |
+|:------------------------------------------------------------------------------------------------:|
+|                                [MrZ](https://github.com/mrz1836)                                 |
  
 <br/>
 
@@ -204,4 +204,4 @@ This project was based off the original code [go pipl](https://github.com/xpcmds
 
 ## License
 
-![License](https://img.shields.io/github/license/mrz1836/go-pipl.svg?style=flat)
+[![License](https://img.shields.io/github/license/mrz1836/go-pipl.svg?style=flat)](LICENSE)
