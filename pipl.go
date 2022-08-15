@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -140,11 +139,12 @@ func NewClient(apiKey string, clientOptions *Options) (c *Client, err error) {
 // basic verification that the verify that search object has enough terms to
 // meet the requirements for a search.
 // From Pipl documentation:
-// 		"The minimal requirement to run a search is to have at least one full
-//		name, email, phone, username, user_id, URL or a single valid US address
-//		(down to a house number). We can’t search for a job title or location
-//		alone. We’re not a directory and can't provide bulk lists of people,
-//		rather we specialize in identity resolution of single individuals."
+//
+//	"The minimal requirement to run a search is to have at least one full
+//	name, email, phone, username, user_id, URL or a single valid US address
+//	(down to a house number). We can’t search for a job title or location
+//	alone. We’re not a directory and can't provide bulk lists of people,
+//	rather we specialize in identity resolution of single individuals."
 func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
 
 	// If an email is found, that meets minimum criteria
@@ -192,7 +192,7 @@ func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
 // will be nil, and you should check err for additional information. This method will only
 // return one full person, and a preview of possible people if < 100% match. Use the SearchAllPossiblePeople()
 // method to get all the details when searching.
-func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
+func (c *Client) Search(ctx context.Context, searchPerson *Person) (response *Response, err error) {
 
 	// Do we meet the minimum requirements for searching?
 	if !SearchMeetsMinimumCriteria(searchPerson) {
@@ -240,16 +240,16 @@ func (c *Client) Search(searchPerson *Person) (response *Response, err error) {
 	postData.Add("person", string(personJSON))
 
 	// Fire the request
-	return c.PiplRequest(searchAPIEndpoint, http.MethodPost, &postData)
+	return c.PiplRequest(ctx, searchAPIEndpoint, http.MethodPost, &postData)
 }
 
 // SearchAllPossiblePeople takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If possible people are found, they are also
 // looked up using the SearchByPointer()
-func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Response, err error) {
+func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Person) (response *Response, err error) {
 
 	// Lookup the person(s)
-	if response, err = c.Search(searchPerson); err != nil {
+	if response, err = c.Search(ctx, searchPerson); err != nil {
 		return
 	}
 
@@ -261,7 +261,7 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 			// to pull a full person profile by search pointer
 			searchPointer := person.SearchPointer
 			var searchResponse *Response
-			if searchResponse, err = c.SearchByPointer(searchPointer); err != nil {
+			if searchResponse, err = c.SearchByPointer(ctx, searchPointer); err != nil {
 				return
 			}
 
@@ -275,7 +275,7 @@ func (c *Client) SearchAllPossiblePeople(searchPerson *Person) (response *Respon
 
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
-func (c *Client) SearchByPointer(searchPointer string) (response *Response, err error) {
+func (c *Client) SearchByPointer(ctx context.Context, searchPointer string) (response *Response, err error) {
 
 	// So we have a search pointer?
 	if len(searchPointer) < 20 {
@@ -293,12 +293,12 @@ func (c *Client) SearchByPointer(searchPointer string) (response *Response, err 
 	postData.Add("search_pointer", searchPointer)
 
 	// Fire the request
-	return c.PiplRequest(searchAPIEndpoint, http.MethodPost, &postData)
+	return c.PiplRequest(ctx, searchAPIEndpoint, http.MethodPost, &postData)
 }
 
 // PiplRequest is a generic pipl request wrapper that can be used without the constraints
 // of the Search or SearchByPointer methods
-func (c *Client) PiplRequest(endpoint string, method string, params *url.Values) (response *Response, err error) {
+func (c *Client) PiplRequest(ctx context.Context, endpoint, method string, params *url.Values) (response *Response, err error) {
 
 	// Set reader
 	var bodyReader io.Reader
@@ -323,7 +323,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 
 	// Start the request
 	var request *http.Request
-	if request, err = http.NewRequestWithContext(context.Background(), method, endpoint, bodyReader); err != nil {
+	if request, err = http.NewRequestWithContext(ctx, method, endpoint, bodyReader); err != nil {
 		return
 	}
 
@@ -348,7 +348,7 @@ func (c *Client) PiplRequest(endpoint string, method string, params *url.Values)
 
 	// Read the body
 	var body []byte
-	if body, err = ioutil.ReadAll(resp.Body); err != nil {
+	if body, err = io.ReadAll(resp.Body); err != nil {
 		return
 	}
 

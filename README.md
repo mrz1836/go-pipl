@@ -150,30 +150,32 @@ Read more about this Go project's [code standards](.github/CODE_STANDARDS.md).
 - View the [response tests](response_test.go)
 
 Basic implementation:
+
 ```go
 package main
 
 import (
-    "fmt"
-    
-    "github.com/mrz1836/go-pipl"
+  "context"
+  "fmt"
+
+  "github.com/mrz1836/go-pipl"
 )
 
 func main() {
 
-    // Create a client with your api key
-    client, _ := pipl.NewClient("your-api-key", nil)
+  // Create a client with your api key
+  client, _ := pipl.NewClient("your-api-key", nil)
 
-    // Create a new person for searching
-    person := pipl.NewPerson()
-    _ = person.AddUsername("jeffbezos", "twitter")
+  // Create a new person for searching
+  person := pipl.NewPerson()
+  _ = person.AddUsername("jeffbezos", "twitter")
 
-    // Submit the search
-    response, _ := client.Search(person)
+  // Submit the search
+  response, _ := client.Search(context.Background(), person)
 
-    // Use the pipl response
-    fmt.Println(response.Person.Names[0].Display)
-    // Output: Jeff Preston Bezos
+  // Use the pipl response
+  fmt.Println(response.Person.Names[0].Display)
+  // Output: Jeff Preston Bezos
 }
 ```
  

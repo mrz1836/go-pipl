@@ -1,6 +1,7 @@
 package pipl
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -103,7 +104,8 @@ func TestDefaultOptions(t *testing.T) {
 }
 
 // TestSearchMeetsMinimumCriteria test the minimum criteria for a search
-// 	This also tests: HasEmail, HasPhone, HasUserID, HasUsername, HasURL
+//
+//	This also tests: HasEmail, HasPhone, HasUserID, HasUsername, HasURL
 //	HasName, HasAddress
 func TestSearchMeetsMinimumCriteria(t *testing.T) {
 	person := new(Person)
@@ -312,7 +314,8 @@ func TestSearchByPerson(t *testing.T) {
 
 	// Launch the search (if you don't meet the minimum search criteria, an error
 	// should be returned to you here stating such).
-	results, err := client.Search(searchObject)
+	var results *Response
+	results, err = client.Search(context.Background(), searchObject)
 	if err != nil {
 		t.Fatal(err)
 	}

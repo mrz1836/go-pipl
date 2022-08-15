@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 )
@@ -26,7 +26,7 @@ func loadResponseData(filename string) (response *Response, err error) {
 
 	// Read our opened xmlFile as a byte array.
 	var byteValue []byte
-	byteValue, err = ioutil.ReadAll(jsonFile)
+	byteValue, err = io.ReadAll(jsonFile)
 	if err != nil {
 		return
 	}
