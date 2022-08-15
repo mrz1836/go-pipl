@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 // Testing variables
@@ -15,18 +17,10 @@ var testThumbnailToken = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3
 // TestNewClient test new client
 func TestNewClient(t *testing.T) {
 	client, err := NewClient("1234567890", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if client.Parameters.Search.apiKey != "1234567890" {
-		t.Fatalf("expected value 1234567890, got %s", client.Parameters.Search.apiKey)
-	}
-	if client.Parameters.Search.MinimumMatch != MinimumMatch {
-		t.Fatalf("expected value %f, got %f", MinimumMatch, client.Parameters.Search.MinimumMatch)
-	}
-	if client.Parameters.Search.MinimumProbability != MinimumProbability {
-		t.Fatalf("expected value %f, got %f", MinimumProbability, client.Parameters.Search.MinimumProbability)
-	}
+	require.NoError(t, err)
+	require.Equal(t, "1234567890", client.Parameters.Search.apiKey)
+	require.Equal(t, float32(MinimumMatch), client.Parameters.Search.MinimumMatch)
+	require.Equal(t, float32(MinimumProbability), client.Parameters.Search.MinimumProbability)
 
 	// todo: test changing these values in the SearchParameters
 }
@@ -49,58 +43,19 @@ func BenchmarkNewClient(b *testing.B) {
 func TestDefaultOptions(t *testing.T) {
 
 	options := ClientDefaultOptions()
-
-	if options.UserAgent != defaultUserAgent {
-		t.Fatalf("expected value: %s got: %s", defaultUserAgent, options.UserAgent)
-	}
-
-	if options.BackOffExponentFactor != 2.0 {
-		t.Fatalf("expected value: %f got: %f", 2.0, options.BackOffExponentFactor)
-	}
-
-	if options.BackOffInitialTimeout != 2*time.Millisecond {
-		t.Fatalf("expected value: %v got: %v", 2*time.Millisecond, options.BackOffInitialTimeout)
-	}
-
-	if options.BackOffMaximumJitterInterval != 2*time.Millisecond {
-		t.Fatalf("expected value: %v got: %v", 2*time.Millisecond, options.BackOffMaximumJitterInterval)
-	}
-
-	if options.BackOffMaxTimeout != 10*time.Millisecond {
-		t.Fatalf("expected value: %v got: %v", 10*time.Millisecond, options.BackOffMaxTimeout)
-	}
-
-	if options.DialerKeepAlive != 20*time.Second {
-		t.Fatalf("expected value: %v got: %v", 20*time.Second, options.DialerKeepAlive)
-	}
-
-	if options.DialerTimeout != 5*time.Second {
-		t.Fatalf("expected value: %v got: %v", 5*time.Second, options.DialerTimeout)
-	}
-
-	if options.RequestRetryCount != 2 {
-		t.Fatalf("expected value: %v got: %v", 2, options.RequestRetryCount)
-	}
-
-	if options.RequestTimeout != 10*time.Second {
-		t.Fatalf("expected value: %v got: %v", 10*time.Second, options.RequestTimeout)
-	}
-
-	if options.TransportExpectContinueTimeout != 3*time.Second {
-		t.Fatalf("expected value: %v got: %v", 3*time.Second, options.TransportExpectContinueTimeout)
-	}
-
-	if options.TransportIdleTimeout != 20*time.Second {
-		t.Fatalf("expected value: %v got: %v", 20*time.Second, options.TransportIdleTimeout)
-	}
-
-	if options.TransportMaxIdleConnections != 10 {
-		t.Fatalf("expected value: %v got: %v", 10, options.TransportMaxIdleConnections)
-	}
-
-	if options.TransportTLSHandshakeTimeout != 5*time.Second {
-		t.Fatalf("expected value: %v got: %v", 5*time.Second, options.TransportTLSHandshakeTimeout)
-	}
+	require.Equal(t, 10, options.TransportMaxIdleConnections)
+	require.Equal(t, 10*time.Millisecond, options.BackOffMaxTimeout)
+	require.Equal(t, 10*time.Second, options.RequestTimeout)
+	require.Equal(t, 2, options.RequestRetryCount)
+	require.Equal(t, 2*time.Millisecond, options.BackOffInitialTimeout)
+	require.Equal(t, 2*time.Millisecond, options.BackOffMaximumJitterInterval)
+	require.Equal(t, 2.0, options.BackOffExponentFactor)
+	require.Equal(t, 20*time.Second, options.DialerKeepAlive)
+	require.Equal(t, 20*time.Second, options.TransportIdleTimeout)
+	require.Equal(t, 3*time.Second, options.TransportExpectContinueTimeout)
+	require.Equal(t, 5*time.Second, options.DialerTimeout)
+	require.Equal(t, 5*time.Second, options.TransportTLSHandshakeTimeout)
+	require.Equal(t, defaultUserAgent, options.UserAgent)
 }
 
 // TestSearchMeetsMinimumCriteria test the minimum criteria for a search
@@ -108,135 +63,117 @@ func TestDefaultOptions(t *testing.T) {
 //	This also tests: HasEmail, HasPhone, HasUserID, HasUsername, HasURL
 //	HasName, HasAddress
 func TestSearchMeetsMinimumCriteria(t *testing.T) {
-	person := new(Person)
+	t.Parallel()
 
-	// Missing data, should fail
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
+	t.Run("missing data", func(t *testing.T) {
+		person := new(Person)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Raw name (good)
-	_ = person.AddNameRaw("john smith")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true", person.Names[0].Raw)
-	}
+	t.Run("raw name", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddNameRaw("john smith")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("missing last name", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddName("john", "", "", "", "")
+		require.NoError(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Just first (missing last)
-	_ = person.AddName("john", "", "", "", "")
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
+	t.Run("missing first name", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddName("", "", "smith", "", "")
+		require.NoError(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("first and last name", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddName("john", "", "smith", "", "")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Just last (missing first)
-	_ = person.AddName("", "", "smith", "", "")
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
+	t.Run("email address", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddEmail("clarkkent@gmail.com")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("valid phone number", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddPhone(9785550145, 1)
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Test both first and last name
-	_ = person.AddName("john", "", "smith", "", "")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
+	t.Run("missing phone code", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddPhone(9785550145, 0)
+		require.Error(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("valid raw phone number", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddPhoneRaw("19785550145")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Test email address
-	_ = person.AddEmail("clarkkent@gmail.com")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
+	t.Run("valid user id", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddUserID("clarkkent123", "twitter")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("valid username", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddUsername("clarkkent", "twitter")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Test phone with country code
-	_ = person.AddPhone(9785550145, 1)
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
+	t.Run("valid url", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddURL("https://twitter.com/clarkkent")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("partial address number", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddAddress("10", "", "", "", "", "", "")
+		require.Error(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Test phone without country code
-	_ = person.AddPhone(9785550145, 0)
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
+	t.Run("partial address street", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddAddress("10", "Hickory Lane", "", "", "", "", "")
+		require.Error(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Reset
-	person = new(Person)
+	t.Run("partial address city", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddAddress("10", "Hickory Lane", "", "Smallville", "", "", "")
+		require.NoError(t, err)
+		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+	})
 
-	// Test phone RAW
-	_ = person.AddPhoneRaw("19785550145")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
-
-	// Reset
-	person = new(Person)
-
-	// Test user id
-	_ = person.AddUserID("clarkkent123", "twitter")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
-
-	// Reset
-	person = new(Person)
-
-	// Test usernames
-	_ = person.AddUsername("clarkkent", "twitter")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
-
-	// Reset
-	person = new(Person)
-
-	// Test urls
-	_ = person.AddURL("https://twitter.com/clarkkent")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
-
-	// Reset
-	person = new(Person)
-
-	// Partial address
-	_ = person.AddAddress("10", "", "", "", "", "", "")
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
-
-	// Partial address
-	_ = person.AddAddress("10", "Hickory Lane", "", "", "", "", "")
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
-
-	// Partial address
-	_ = person.AddAddress("10", "Hickory Lane", "", "Smallville", "", "", "")
-	if SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return false")
-	}
-
-	// Full address
-	_ = person.AddAddress("10", "Hickory Lane", "", "Smallville", "KS", "", "")
-	if !SearchMeetsMinimumCriteria(person) {
-		t.Fatal("method should return true")
-	}
+	t.Run("full address", func(t *testing.T) {
+		person := new(Person)
+		err := person.AddAddress("10", "Hickory Lane", "", "Smallville", "KS", "", "")
+		require.NoError(t, err)
+		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+	})
 }
 
 // ExampleSearchMeetsMinimumCriteria example using SearchMeetsMinimumCriteria()
