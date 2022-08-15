@@ -113,7 +113,7 @@ vet                  Run the Go vet application
 
 ## Examples & Tests
 All unit tests and [examples](pipl_test.go) run via [Github Actions](https://github.com/mrz1836/go-pipl/actions) and
-uses [Go version 1.15.x](https://golang.org/doc/go1.15). View the [configuration file](.github/workflows/run-tests.yml).
+uses [Go version 1.16.x](https://golang.org/doc/go1.16). View the [configuration file](.github/workflows/run-tests.yml).
 
 - [helper examples & tests](helpers_test.go)
 - [pipl examples &  tests](pipl_test.go)
@@ -155,8 +155,6 @@ package main
 
 import (
     "fmt"
-    "log"
-    "os"
     
     "github.com/mrz1836/go-pipl"
 )
