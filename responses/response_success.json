@@ -286,10 +286,10 @@
     ],
     "images": [
       {
-        "url": "http://vignette1.wikia.nocookie.net/smallville/images/e/ea/Buddies_forever.jpg"
+        "url": "https://vignette1.wikia.nocookie.net/smallville/images/e/ea/Buddies_forever.jpg"
       },
       {
-        "url": "http://vignette3.wikia.nocookie.net/smallville/images/5/55/S10E18-Booster21.jpg"
+        "url": "https://vignette3.wikia.nocookie.net/smallville/images/5/55/S10E18-Booster21.jpg"
       }
     ],
     "urls": [
@@ -298,14 +298,14 @@
         "@domain": "linkedin.com",
         "@name": "LinkedIn",
         "@category": "professional_and_business",
-        "url": "http://linkedin.com/clark.kent"
+        "url": "https://linkedin.com/clark.kent"
       },
       {
         "@source_id": "5d836a4acc55922e49fc709c7a39e233",
         "@domain": "facebook.com",
         "@name": "Facebook",
         "@category": "personal_profiles",
-        "url": "http://facebook.com/superman"
+        "url": "https://facebook.com/superman"
       },
       {
         "@domain": "linkedin.com",
