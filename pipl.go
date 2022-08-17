@@ -1,190 +1,15 @@
-// Package pipl provides a way to interact programmatically with the Pipl API in Golang.
-// For more detailed information on the Pipl search API and what we're actually
+// Package pipl provides a way to interact programmatically with the PIPL API in Golang.
+// For more detailed information on the PIPL search API and what we're actually
 // wrapping, check out their official API reference: https://docs.pipl.com/reference/#overview
 package pipl
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
-	"strings"
 )
-
-// SourceLevel is used internally to represent the possible values
-// for show_sources in queries to be submitted: {"all", "matching"/"true", "false"}
-type SourceLevel string
-
-// MatchRequirements specifies the conditions for a successful person match in our search.
-// This is useful for saving money with the Pipl API, as you only need to pay for the
-// data you wanted back. If your search results didn't satisfy the match requirements, then
-// no data is returned, and you don't pay.
-type MatchRequirements string
-
-// SourceCategoryRequirements specifies the data categories that must be included in
-// results for a successful match. If there is no data from the requested categories,
-// then the results returned are empty, and you're not charged.
-type SourceCategoryRequirements string
-
-// SearchParameters holds options that can affect data returned by a search.
-//
-// DO NOT CHANGE ORDER - Optimized for memory (malign)
-//
-// Source: https://docs.pipl.com/reference#configuration-parameters
-type SearchParameters struct {
-	// apiKey is required
-	apiKey string
-
-	// ShowSources specifies the level of sources info to return with search results, one of {ShowSourcesMatching, ShowSourcesAll, ShowSourcesNone}
-	ShowSources SourceLevel
-
-	// MatchRequirements specifies the criteria for a successful Person match.
-	// Results that don't fit your match requirements are discarded. If the remaining
-	// search results would be empty, you are not charged for the query.
-	MatchRequirements MatchRequirements
-
-	// SourceCategoryRequirements specifies the data categories that must be included in
-	// results for a successful match. If there is no data from the requested categories,
-	// then the results returned are empty, and you're not charged.
-	SourceCategoryRequirements SourceCategoryRequirements
-
-	// MinimumProbability is the minimum acceptable probability for inferred data
-	MinimumProbability float32
-
-	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
-	MinimumMatch float32
-
-	// InferPersons specifies whether the Pipl should return results inferred by statistical analysis
-	InferPersons bool
-
-	// HideSponsored specifies whether to omit sponsored data from search results
-	HideSponsored bool
-
-	// LiveFeeds specifies whether to use live data sources
-	LiveFeeds bool
-
-	// Returns the best high ranking match to your search. API will return either a Person (when high scoring profile is found) or a No Match
-	TopMatch bool
-}
-
-// ThumbnailSettings is for the thumbnail url settings to be automatically returned
-// if any images are found and meet the criteria
-//
-// DO NOT CHANGE ORDER - Optimized for memory (malign)
-//
-// Example: http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
-type ThumbnailSettings struct {
-
-	// URL is the thumbnail url
-	URL string
-
-	// Height of the image
-	Height int
-
-	// Width of the image
-	Width int
-
-	// Enabled (detects images, automatically adds thumbnail urls)
-	Enabled bool
-
-	// Favicon if the icon should be shown or not
-	Favicon bool
-
-	// ZoomFace is whether to enable face zoom.
-	ZoomFace bool
-}
-
-// NewClient creates a new search client to submit queries with
-// Parameters values are set to the defaults defined by Pipl.
-//
-// For more information: https://docs.pipl.com/reference#configuration-parameters
-func NewClient(apiKey string, clientOptions *Options) (c *Client, err error) {
-
-	// Test for the key
-	if len(apiKey) == 0 {
-		err = fmt.Errorf("api key must be set, %s", "api_key")
-		return
-	}
-
-	// Create a client using the given options
-	c = createClient(clientOptions)
-
-	// Create default search parameters
-	c.Parameters.Search = new(SearchParameters)
-	c.Parameters.Search.apiKey = apiKey
-	c.Parameters.Search.HideSponsored = true
-	c.Parameters.Search.InferPersons = false
-	c.Parameters.Search.TopMatch = false
-	c.Parameters.Search.LiveFeeds = true
-	c.Parameters.Search.MatchRequirements = MatchRequirementsNone
-	c.Parameters.Search.MinimumMatch = MinimumMatch
-	c.Parameters.Search.MinimumProbability = MinimumProbability
-	c.Parameters.Search.ShowSources = ShowSourcesAll // ShowSourcesNone
-	c.Parameters.Search.SourceCategoryRequirements = SourceCategoryRequirementsNone
-
-	// Create default thumbnail parameters (thumbnail url functionality)
-	c.Parameters.Thumbnail = new(ThumbnailSettings)
-	c.Parameters.Thumbnail.Enabled = false
-	c.Parameters.Thumbnail.Height = ThumbnailHeight
-	c.Parameters.Thumbnail.URL = thumbnailEndpoint
-	c.Parameters.Thumbnail.Width = ThumbnailWidth
-
-	// Return the client
-	return
-}
-
-// SearchMeetsMinimumCriteria is used internally by Search to do some very
-// basic verification that the verify that search object has enough terms to
-// meet the requirements for a search.
-// From Pipl documentation:
-//
-//	"The minimal requirement to run a search is to have at least one full
-//	name, email, phone, username, user_id, URL or a single valid US address
-//	(down to a house number). We can’t search for a job title or location
-//	alone. We’re not a directory and can't provide bulk lists of people,
-//	rather we specialize in identity resolution of single individuals."
-func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
-
-	// If an email is found, that meets minimum criteria
-	if searchPerson.HasEmail() {
-		return true
-	}
-
-	// If a phone is found, that meets minimum criteria
-	if searchPerson.HasPhone() {
-		return true
-	}
-
-	// If a userID is found, that meets minimum criteria
-	if searchPerson.HasUserID() {
-		return true
-	}
-
-	// If a username is found, that meets minimum criteria
-	if searchPerson.HasUsername() {
-		return true
-	}
-
-	// If a URL is found, that meets minimum criteria
-	if searchPerson.HasURL() {
-		return true
-	}
-
-	// If a full name is found, that meets minimum criteria
-	if searchPerson.HasName() {
-		return true
-	}
-
-	// If an address is found, that meets minimum criteria
-	if searchPerson.HasAddress() {
-		return true
-	}
-
-	// Did not meet criteria, fail
-	return false
-}
 
 // Search takes a person object (filled with search terms) and returns the
 // results in the form of a Response struct. If successful, the response struct
@@ -192,55 +17,82 @@ func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
 // will be nil, and you should check err for additional information. This method will only
 // return one full person, and a preview of possible people if < 100% match. Use the SearchAllPossiblePeople()
 // method to get all the details when searching.
-func (c *Client) Search(ctx context.Context, searchPerson *Person) (response *Response, err error) {
+func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, error) {
 
 	// Do we meet the minimum requirements for searching?
 	if !SearchMeetsMinimumCriteria(searchPerson) {
-		err = fmt.Errorf("the search request submitted does not contain enough sufficient terms. " +
-			"You must have one of the following: full name, email, phone, username, userID, url, or full street address")
-		return
+		return nil, ErrDoesNotMeetMinimumCriteria
 	}
 
 	// Start the post data
 	postData := url.Values{}
 
-	// Add the API key
-	postData.Add("key", c.Parameters.Search.apiKey)
+	// Add the API key (always - API is required by default)
+	postData.Add(fieldAPIKey, c.options.apiKey)
 
-	// Do not return formatted
-	postData.Add("pretty", "false")
+	// Option for pretty response
+	if !c.options.searchOptions.Search.Pretty {
+		postData.Add(fieldPretty, valueFalse)
+	}
 
 	// Should we show sources?
-	if c.Parameters.Search.ShowSources != ShowSourcesNone {
-		postData.Add("show_sources", string(c.Parameters.Search.ShowSources))
+	if c.options.searchOptions.Search.ShowSources != ShowSourcesNone {
+		postData.Add(fieldShowSources, string(c.options.searchOptions.Search.ShowSources))
 	}
 
 	// Add match requirements?
-	if c.Parameters.Search.MatchRequirements != MatchRequirementsNone {
-		postData.Add("match_requirements", string(c.Parameters.Search.MatchRequirements))
+	if c.options.searchOptions.Search.MatchRequirements != MatchRequirementsNone {
+		postData.Add(fieldMatchRequirements, string(c.options.searchOptions.Search.MatchRequirements))
 	}
 
 	// Add source category requirements?
-	if c.Parameters.Search.SourceCategoryRequirements != SourceCategoryRequirementsNone {
-		postData.Add("source_category_requirements", string(c.Parameters.Search.SourceCategoryRequirements))
+	if c.options.searchOptions.Search.SourceCategoryRequirements != SourceCategoryRequirementsNone {
+		postData.Add(fieldSourceCategoryRequirements, string(c.options.searchOptions.Search.SourceCategoryRequirements))
+	}
+
+	// Custom minimum match
+	if c.options.searchOptions.Search.MinimumMatch != MinimumMatch {
+		postData.Add(fieldMinimumMatch, fmt.Sprintf("%v", c.options.searchOptions.Search.MinimumMatch))
+	}
+
+	// Set the "hide sponsors" flag (default is false)
+	if c.options.searchOptions.Search.HideSponsored {
+		postData.Add(fieldHideSponsored, valueTrue)
+	}
+
+	// Set the "infer persons" flag (default is false)
+	if c.options.searchOptions.Search.InferPersons {
+		postData.Add(fieldInferPersons, valueTrue)
 	}
 
 	// Ask for the top match?
-	if c.Parameters.Search.TopMatch {
-		postData.Add("top_match", "true")
+	if c.options.searchOptions.Search.TopMatch {
+		postData.Add(fieldTopMatch, valueTrue)
+	}
+
+	// Set the live feeds flag (default is true)
+	if !c.options.searchOptions.Search.LiveFeeds {
+		postData.Add(fieldLiveFeeds, valueFalse)
 	}
 
 	// Parse the search object
-	var personJSON []byte
-	if personJSON, err = json.Marshal(searchPerson); err != nil {
-		return
+	personJSON, err := json.Marshal(searchPerson)
+	if err != nil { // This should NEVER error out since the struct is being generated
+		return nil, err
 	}
 
 	// Add the person to the request
-	postData.Add("person", string(personJSON))
+	postData.Add(fieldPerson, string(personJSON))
 
 	// Fire the request
-	return c.PiplRequest(ctx, searchAPIEndpoint, http.MethodPost, &postData)
+	var response *Response
+	response, err = httpRequest(ctx, c, searchAPIEndpoint, &postData)
+	if err != nil {
+		return nil, err
+	} else if len(response.Error) > 0 {
+		return nil, errors.New(response.Error)
+	}
+	return response, nil
 }
 
 // SearchAllPossiblePeople takes a person object (filled with search terms) and returns the
@@ -275,103 +127,33 @@ func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Pers
 
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
-func (c *Client) SearchByPointer(ctx context.Context, searchPointer string) (response *Response, err error) {
+func (c *Client) SearchByPointer(ctx context.Context, searchPointer string) (*Response, error) {
 
 	// So we have a search pointer?
 	if len(searchPointer) < 20 {
-		err = fmt.Errorf("invalid search pointer: %s", searchPointer)
-		return
+		return nil, ErrInvalidSearchPointer
 	}
 
 	// Start the post data
 	postData := url.Values{}
 
 	// Add the API key
-	postData.Add("key", c.Parameters.Search.apiKey)
+	postData.Add(fieldAPIKey, c.options.apiKey)
+
+	// Option for pretty response
+	if !c.options.searchOptions.Search.Pretty {
+		postData.Add(fieldPretty, valueFalse)
+	}
 
 	// Add the search pointer
-	postData.Add("search_pointer", searchPointer)
+	postData.Add(fieldSearchPointer, searchPointer)
 
 	// Fire the request
-	return c.PiplRequest(ctx, searchAPIEndpoint, http.MethodPost, &postData)
-}
-
-// PiplRequest is a generic pipl request wrapper that can be used without the constraints
-// of the Search or SearchByPointer methods
-func (c *Client) PiplRequest(ctx context.Context, endpoint, method string, params *url.Values) (response *Response, err error) {
-
-	// Set reader
-	var bodyReader io.Reader
-
-	// Switch on method
-	switch method {
-	case http.MethodPost:
-		{
-			encodedParams := params.Encode()
-			bodyReader = strings.NewReader(encodedParams)
-			c.LastRequest.PostData = encodedParams
-		}
-	case http.MethodGet:
-		if params != nil {
-			endpoint += "?" + params.Encode()
-		}
+	response, err := httpRequest(ctx, c, searchAPIEndpoint, &postData)
+	if err != nil {
+		return nil, err
+	} else if len(response.Error) > 0 {
+		return nil, errors.New(response.Error)
 	}
-
-	// Store for debugging purposes
-	c.LastRequest.Method = method
-	c.LastRequest.URL = endpoint
-
-	// Start the request
-	var request *http.Request
-	if request, err = http.NewRequestWithContext(ctx, method, endpoint, bodyReader); err != nil {
-		return
-	}
-
-	// Set the headers
-	request.Header.Set("User-Agent", c.Parameters.UserAgent)
-
-	// Set the content type on method
-	if method == http.MethodPost {
-		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	}
-
-	// Fire the http request
-	var resp *http.Response
-	if resp, err = c.httpClient.Do(request); err != nil {
-		return
-	}
-
-	// Close the response body
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	// Read the body
-	var body []byte
-	if body, err = io.ReadAll(resp.Body); err != nil {
-		return
-	}
-
-	// Parse the response
-	response = new(Response)
-	if err = json.Unmarshal(body, response); err != nil {
-		return
-	}
-
-	// Thumbnail generation enabled?
-	if c.Parameters.Thumbnail.Enabled {
-
-		// Process the current person
-		response.Person.ProcessThumbnails(c)
-
-		// Do we have possible persons?
-		if len(response.PossiblePersons) > 0 {
-			for index := range response.PossiblePersons {
-				response.PossiblePersons[index].ProcessThumbnails(c)
-			}
-		}
-	}
-
-	// Done
-	return
+	return response, nil
 }

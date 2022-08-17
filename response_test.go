@@ -48,7 +48,6 @@ func Test_GoodResponse(t *testing.T) {
 	require.NoError(t, err)
 
 	// Set the defaults (these are in the JSON file)
-	var testEmail = "clark.kent@example.com"
 	var personID GUID = "f4a7d898-6fc1-4a24-b043-43eb292a6fd5"
 
 	// ==================================================================================================================
@@ -167,7 +166,7 @@ func Test_GoodResponse(t *testing.T) {
 	// ==================================================================================================================
 
 	// Test person struct and data (gender)
-	require.Equal(t, "male", response.Person.Gender.Content)
+	require.Equal(t, genderMale, response.Person.Gender.Content)
 
 	// ==================================================================================================================
 
@@ -213,14 +212,24 @@ func Test_GoodResponse(t *testing.T) {
 	require.Equal(t, "2005-02-12", response.Person.Addresses[0].ValidSince)
 	require.Equal(t, "work", response.Person.Addresses[0].Type)
 	require.Equal(t, DefaultCountry, response.Person.Addresses[0].Country)
-	require.Equal(t, "KS", response.Person.Addresses[0].State)
+	require.Equal(t, testState, response.Person.Addresses[0].State)
 	require.Equal(t, "Metropolis", response.Person.Addresses[0].City)
 	require.Equal(t, "Broadway", response.Person.Addresses[0].Street)
 	require.Equal(t, "1000", response.Person.Addresses[0].House)
 	require.Equal(t, "355", response.Person.Addresses[0].Apartment)
 	require.Equal(t, "1000-355 Broadway, Metropolis, Kansas", response.Person.Addresses[0].Display)
 
-	// todo: add address #2
+	// Test address 2
+	require.Equal(t, "1999-02-01", response.Person.Addresses[1].ValidSince)
+	require.Equal(t, "home", response.Person.Addresses[1].Type)
+	require.Equal(t, DefaultCountry, response.Person.Addresses[1].Country)
+	require.Equal(t, testState, response.Person.Addresses[1].State)
+	require.Equal(t, testCity, response.Person.Addresses[1].City)
+	require.Equal(t, testStreet, response.Person.Addresses[1].Street)
+	require.Equal(t, testHouseNumber, response.Person.Addresses[1].House)
+	require.Equal(t, testApartment, response.Person.Addresses[1].Apartment)
+	require.Equal(t, "66605", response.Person.Addresses[1].ZipCode)
+	require.Equal(t, "10-1 Hickory Lane, Smallville, Kansas", response.Person.Addresses[1].Display)
 
 	// ==================================================================================================================
 
@@ -235,7 +244,19 @@ func Test_GoodResponse(t *testing.T) {
 	require.Equal(t, "2000-12-08", response.Person.Jobs[0].DateRange.Start)
 	require.Equal(t, "2012-10-09", response.Person.Jobs[0].DateRange.End)
 
-	// todo: add job #2 and #3
+	// Test job 2
+	require.Equal(t, "Junior Reporter", response.Person.Jobs[1].Title)
+	require.Equal(t, "The Daily Planet", response.Person.Jobs[1].Organization)
+	require.Equal(t, "Journalism", response.Person.Jobs[1].Industry)
+	require.Equal(t, "1999-10-10", response.Person.Jobs[1].DateRange.Start)
+	require.Equal(t, "2000-10-10", response.Person.Jobs[1].DateRange.End)
+	require.Equal(t, "Junior Reporter at The Daily Planet (1999-2000)", response.Person.Jobs[1].Display)
+
+	// Test job 3
+	require.Equal(t, "Top Reporter", response.Person.Jobs[2].Title)
+	require.Equal(t, "The Daily Planet", response.Person.Jobs[2].Organization)
+	require.Equal(t, "Reporting", response.Person.Jobs[2].Industry)
+	require.Equal(t, "Top Reporter at The Daily Planet", response.Person.Jobs[2].Display)
 
 	// ==================================================================================================================
 
@@ -249,7 +270,11 @@ func Test_GoodResponse(t *testing.T) {
 	require.Equal(t, "2005-09-01", response.Person.Educations[0].DateRange.Start)
 	require.Equal(t, "2008-05-14", response.Person.Educations[0].DateRange.End)
 
-	// todo: add education #2
+	// Test education #2
+	require.Equal(t, "Smallville High", response.Person.Educations[1].School)
+	require.Equal(t, "2001-09-01", response.Person.Educations[1].DateRange.Start)
+	require.Equal(t, "2005-06-01", response.Person.Educations[1].DateRange.End)
+	require.Equal(t, "Smallville High (2001-2005)", response.Person.Educations[1].Display)
 
 	// ==================================================================================================================
 
@@ -285,7 +310,17 @@ func Test_GoodResponse(t *testing.T) {
 	require.Equal(t, "professional_and_business", response.Person.URLs[0].Category)
 	require.Equal(t, "https://linkedin.com/clark.kent", response.Person.URLs[0].URL)
 
-	// todo: add url #2 and #3
+	// Test url #2
+	require.Equal(t, "5d836a4acc55922e49fc709c7a39e233", response.Person.URLs[1].SourceID)
+	require.Equal(t, "facebook.com", response.Person.URLs[1].Domain)
+	require.Equal(t, "Facebook", response.Person.URLs[1].Name)
+	require.Equal(t, "personal_profiles", response.Person.URLs[1].Category)
+	require.Equal(t, "https://facebook.com/superman", response.Person.URLs[1].URL)
+
+	// Test url #3
+	require.Equal(t, "linkedin.com", response.Person.URLs[2].Domain)
+	require.Equal(t, "professional_and_business", response.Person.URLs[2].Category)
+	require.Equal(t, "https://www.linkedin.com/pub/superman/20/7a/365", response.Person.URLs[2].URL)
 }
 
 // Test_PersonNotFoundResponse test a person not found response JSON

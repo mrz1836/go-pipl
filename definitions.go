@@ -9,13 +9,13 @@ const (
 	thumbnailEndpoint string = "https://thumb.pipl.com/image"
 
 	// ShowSourcesNone specifies that we don't need the source info back with search results
-	ShowSourcesNone SourceLevel = "false"
+	ShowSourcesNone SourceLevel = valueFalse
 
 	// ShowSourcesAll specifies that we want all source info back with our search results
 	ShowSourcesAll SourceLevel = "all"
 
 	// ShowSourcesMatching specifies that we want source info that corresponds to data that satisfies our match requirements
-	ShowSourcesMatching SourceLevel = "true"
+	ShowSourcesMatching SourceLevel = valueTrue
 
 	// MatchRequirementsNone specifies that we don't have any match requirements for this search
 	MatchRequirementsNone MatchRequirements = ""
@@ -35,7 +35,6 @@ const (
 	// MatchRequirementsEmailOrPhone specifies that we want to match on this field
 	MatchRequirementsEmailOrPhone MatchRequirements = "email or phone"
 
-	// todo: finish adding match criteria - also make this flexible and easier to use
 	// https://docs.pipl.com/reference#match-criteria
 
 	// MinimumProbability is the score for probability
@@ -64,7 +63,107 @@ const (
 
 	// DefaultDisplayLanguage is the default display language
 	DefaultDisplayLanguage string = "en_US"
+
+	// Internal field for HTTP request
+	fieldAPIKey                     = "key"
+	fieldHideSponsored              = "hide_sponsored"
+	fieldInferPersons               = "infer_persons"
+	fieldLiveFeeds                  = "live_feeds"
+	fieldMatchRequirements          = "match_requirements"
+	fieldMinimumMatch               = "minimum_match"
+	fieldPerson                     = "person"
+	fieldPretty                     = "pretty"
+	fieldSearchPointer              = "search_pointer"
+	fieldShowSources                = "show_sources"
+	fieldSourceCategoryRequirements = "source_category_requirements"
+	fieldTopMatch                   = "top_match"
+	valueFalse                      = "false"
+	valueTrue                       = "true"
 )
+
+// SourceLevel is used internally to represent the possible values
+// for show_sources in queries to be submitted: {"all", "matching"/"true", "false"}
+type SourceLevel string
+
+// MatchRequirements specifies the conditions for a successful person match in our search.
+// This is useful for saving money with the Pipl API, as you only need to pay for the
+// data you wanted back. If your search results didn't satisfy the match requirements, then
+// no data is returned, and you don't pay.
+type MatchRequirements string
+
+// SourceCategoryRequirements specifies the data categories that must be included in
+// results for a successful match. If there is no data from the requested categories,
+// then the results returned are empty, and you're not charged.
+type SourceCategoryRequirements string
+
+// SearchParameters holds options that can affect data returned by a search.
+//
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
+//
+// Source: https://docs.pipl.com/reference#configuration-parameters
+type SearchParameters struct {
+
+	// ShowSources specifies the level of sources info to return with search results, one of {ShowSourcesMatching, ShowSourcesAll, ShowSourcesNone}
+	ShowSources SourceLevel
+
+	// MatchRequirements specifies the criteria for a successful Person match.
+	// Results that don't fit your match requirements are discarded. If the remaining
+	// search results would be empty, you are not charged for the query.
+	MatchRequirements MatchRequirements
+
+	// SourceCategoryRequirements specifies the data categories that must be included in
+	// results for a successful match. If there is no data from the requested categories,
+	// then the results returned are empty, and you're not charged.
+	SourceCategoryRequirements SourceCategoryRequirements
+
+	// MinimumProbability is the minimum acceptable probability for inferred data
+	MinimumProbability float32
+
+	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
+	MinimumMatch float32
+
+	// InferPersons specifies whether the Pipl should return results inferred by statistical analysis
+	InferPersons bool
+
+	// HideSponsored specifies whether to omit sponsored data from search results
+	HideSponsored bool
+
+	// LiveFeeds specifies whether to use live data sources
+	LiveFeeds bool
+
+	// Returns the best high ranking match to your search. API will return either a Person (when high scoring profile is found) or a No Match
+	TopMatch bool
+
+	// Returns formatted response in pretty mode for JSON (default is false)
+	Pretty bool
+}
+
+// ThumbnailSettings is for the thumbnail url settings to be automatically returned
+// if any images are found and meet the criteria
+//
+// DO NOT CHANGE ORDER - Optimized for memory (malign)
+//
+// Example: http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
+type ThumbnailSettings struct {
+
+	// URL is the thumbnail url
+	URL string
+
+	// Height of the image
+	Height int
+
+	// Width of the image
+	Width int
+
+	// Enabled (detects images, automatically adds thumbnail urls)
+	Enabled bool
+
+	// Favicon if the icon should be shown or not
+	Favicon bool
+
+	// ZoomFace is whether to enable face zoom.
+	ZoomFace bool
+}
 
 // GUID is a unique format (but is just a string internally, since there's currently
 // nothing all that fancy done with GUIDs). Additional guid-handling code may be
