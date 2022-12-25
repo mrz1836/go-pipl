@@ -2,7 +2,7 @@
 > The unofficial golang wrapper for the [pipl.com API](https://pipl.com/api/).
 
 [![Release](https://img.shields.io/github/release-pre/mrz1836/go-pipl.svg?logo=github&style=flat&v=1)](https://github.com/mrz1836/go-pipl/releases)
-[![Build Status](https://img.shields.io/github/workflow/status/mrz1836/go-pipl/run-go-tests?logo=github&v=1)](https://github.com/mrz1836/go-pipl/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/mrz1836/go-pipl/run-tests.yml?branch=master&logo=github&v=1)](https://github.com/mrz1836/go-pipl/actions)
 [![Report](https://goreportcard.com/badge/github.com/mrz1836/go-pipl?style=flat&v=1)](https://goreportcard.com/report/github.com/mrz1836/go-pipl)
 [![codecov](https://codecov.io/gh/mrz1836/go-pipl/branch/master/graph/badge.svg?v=1)](https://codecov.io/gh/mrz1836/go-pipl)
 [![Go](https://img.shields.io/github/go-mod/go-version/mrz1836/go-pipl?v=1)](https://golang.org/)
