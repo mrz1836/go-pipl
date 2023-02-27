@@ -49,7 +49,7 @@ func TestNewClient(t *testing.T) {
 func ExampleNewClient() {
 	client := NewClient(WithAPIKey(testKey))
 	fmt.Println(client.UserAgent())
-	// Output:go-pipl: v0.5.0
+	// Output:go-pipl: v0.5.1
 }
 
 // BenchmarkNewClient benchmarks the NewClient method
