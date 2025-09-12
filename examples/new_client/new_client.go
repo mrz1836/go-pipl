@@ -1,3 +1,4 @@
+// Package main demonstrates how to create a new PIPL client.
 package main
 
 import (

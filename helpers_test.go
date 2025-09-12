@@ -38,7 +38,7 @@ func TestAddName(t *testing.T) {
 		person = NewPerson()
 		err := person.AddName(testFirstName, testMiddleName, testLastName, "mr", "jr")
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Names))
+		require.NotEmpty(t, person.Names)
 		require.Equal(t, testFirstName, person.Names[0].First)
 		require.Equal(t, testMiddleName, person.Names[0].Middle)
 		require.Equal(t, testLastName, person.Names[0].Last)
@@ -78,7 +78,7 @@ func TestAddNameRaw(t *testing.T) {
 		person := NewPerson()
 		err := person.AddNameRaw("clark ryan kent")
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Names))
+		require.NotEmpty(t, person.Names)
 		require.Equal(t, "clark ryan kent", person.Names[0].Raw)
 	})
 }
@@ -121,7 +121,7 @@ func TestAddEmail(t *testing.T) {
 		person := NewPerson()
 		err := person.AddEmail(testEmailSecondary)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Emails))
+		require.NotEmpty(t, person.Emails)
 		require.Equal(t, testEmailSecondary, person.Emails[0].Address)
 	})
 }
@@ -171,7 +171,7 @@ func TestAddUsername(t *testing.T) {
 		person := NewPerson()
 		err := person.AddUsername(testUserName, testUserNameServiceProvider)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Usernames))
+		require.NotEmpty(t, person.Usernames)
 		require.Equal(t, testUserName+"@"+testUserNameServiceProvider, person.Usernames[0].Content)
 	})
 }
@@ -221,7 +221,7 @@ func TestAddUserID(t *testing.T) {
 		person := NewPerson()
 		err := person.AddUserID(testUserName, testUserNameServiceProvider)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.UserIDs))
+		require.NotEmpty(t, person.UserIDs)
 		require.Equal(t, testUserName+"@"+testUserNameServiceProvider, person.UserIDs[0].Content)
 	})
 }
@@ -271,7 +271,7 @@ func TestAddPhone(t *testing.T) {
 		person := NewPerson()
 		err := person.AddPhone(testPhone, testPhoneCountryCode)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Phones))
+		require.NotEmpty(t, person.Phones)
 		require.Equal(t, testPhone, person.Phones[0].Number)
 		require.Equal(t, 1, person.Phones[0].CountryCode)
 	})
@@ -308,7 +308,7 @@ func TestAddPhoneRaw(t *testing.T) {
 		person := NewPerson()
 		err := person.AddPhoneRaw(testPhoneRaw)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Phones))
+		require.NotEmpty(t, person.Phones)
 		require.Equal(t, testPhoneRaw, person.Phones[0].Raw)
 	})
 }
@@ -464,7 +464,7 @@ func TestAddLanguage(t *testing.T) {
 		person := NewPerson()
 		err := person.AddLanguage(DefaultLanguage, DefaultCountry)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Languages))
+		require.NotEmpty(t, person.Languages)
 		require.Equal(t, DefaultLanguage, person.Languages[0].Language)
 		require.Equal(t, DefaultCountry, person.Languages[0].Region)
 		require.Equal(t, DefaultLanguage+"_"+DefaultCountry, person.Languages[0].Display)
@@ -509,7 +509,7 @@ func TestAddEthnicity(t *testing.T) {
 		person := NewPerson()
 		err := person.AddEthnicity(testEthnicity)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Ethnicities))
+		require.NotEmpty(t, person.Ethnicities)
 		require.Equal(t, testEthnicity, person.Ethnicities[0].Content)
 	})
 }
@@ -545,7 +545,7 @@ func TestAddOriginCountry(t *testing.T) {
 		person := NewPerson()
 		err := person.AddOriginCountry(DefaultCountry)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.OriginCountries))
+		require.NotEmpty(t, person.OriginCountries)
 		require.Equal(t, DefaultCountry, person.OriginCountries[0].Country)
 	})
 }
@@ -602,7 +602,7 @@ func TestAddAddress(t *testing.T) {
 		person := NewPerson()
 		err := person.AddAddress(testHouseNumber, testStreet, testApartment, testCity, testState, DefaultCountry, testPOBox)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Addresses))
+		require.NotEmpty(t, person.Addresses)
 		require.Equal(t, testHouseNumber, person.Addresses[0].House)
 		require.Equal(t, testStreet, person.Addresses[0].Street)
 		require.Equal(t, testApartment, person.Addresses[0].Apartment)
@@ -644,7 +644,7 @@ func TestAddAddressRaw(t *testing.T) {
 		person := NewPerson()
 		err := person.AddAddressRaw(testHouseNumber + " " + testStreet + ", Kansas, " + DefaultCountry)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Addresses))
+		require.NotEmpty(t, person.Addresses)
 		require.Equal(t, "10 Hickory Lane, Kansas, "+DefaultCountry, person.Addresses[0].Raw)
 	})
 }
@@ -687,7 +687,7 @@ func TestAddJob(t *testing.T) {
 		person := NewPerson()
 		err := person.AddJob("reporter", "daily post", "news", "2010-01-01", "2011-01-01")
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Jobs))
+		require.NotEmpty(t, person.Jobs)
 		require.Equal(t, "reporter", person.Jobs[0].Title)
 		require.Equal(t, "daily post", person.Jobs[0].Organization)
 		require.Equal(t, "news", person.Jobs[0].Industry)
@@ -727,7 +727,7 @@ func TestAddEducation(t *testing.T) {
 		person := NewPerson()
 		err := person.AddEducation("masters", "fau", "2010-01-01", "2011-01-01")
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.Educations))
+		require.NotEmpty(t, person.Educations)
 		require.Equal(t, "masters", person.Educations[0].Degree)
 		require.Equal(t, "fau", person.Educations[0].School)
 		require.Equal(t, "2010-01-01", person.Educations[0].DateRange.Start)
@@ -801,7 +801,7 @@ func TestAddURL(t *testing.T) {
 		person := NewPerson()
 		err := person.AddURL(testURL)
 		require.NoError(t, err)
-		require.NotEqual(t, 0, len(person.URLs))
+		require.NotEmpty(t, person.URLs)
 		require.Equal(t, testURL, person.URLs[0].URL)
 	})
 }
@@ -923,112 +923,112 @@ func TestSearchMeetsMinimumCriteria(t *testing.T) {
 
 	t.Run("missing data", func(t *testing.T) {
 		person := new(Person)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("raw name", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddNameRaw(testFirstName + " " + testLastName)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("missing last name", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddName(testFirstName, "", "", "", "")
 		require.NoError(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("missing first name", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddName("", "", testLastName, "", "")
 		require.NoError(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("first and last name", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddName(testFirstName, "", testLastName, "", "")
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("email address", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddEmail(testEmailSecondary)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("valid phone number", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddPhone(testPhone, testPhoneCountryCode)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("missing phone code", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddPhone(testPhone, 0)
 		require.Error(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("valid raw phone number", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddPhoneRaw(testPhoneRaw)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("valid user id", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddUserID(testUserName+"123", testUserNameServiceProvider)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("valid username", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddUsername(testUserName, testUserNameServiceProvider)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("valid url", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddURL(testURL)
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("partial address number", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddAddress(testHouseNumber, "", "", "", "", "", "")
 		require.Error(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("partial address street", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddAddress(testHouseNumber, testStreet, "", "", "", "", "")
 		require.Error(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("partial address city", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddAddress(testHouseNumber, testStreet, "", testCity, "", "", "")
 		require.NoError(t, err)
-		require.Equal(t, false, SearchMeetsMinimumCriteria(person))
+		require.False(t, SearchMeetsMinimumCriteria(person))
 	})
 
 	t.Run("full address", func(t *testing.T) {
 		person := new(Person)
 		err := person.AddAddress(testHouseNumber, testStreet, "", testCity, testState, "", "")
 		require.NoError(t, err)
-		require.Equal(t, true, SearchMeetsMinimumCriteria(person))
+		require.True(t, SearchMeetsMinimumCriteria(person))
 	})
 }
 

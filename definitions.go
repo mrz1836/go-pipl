@@ -277,8 +277,8 @@ type UserID struct {
 //
 // Source: https://docs.pipl.com/reference#section-list-of-known-services
 //
-// Note: all lowercase, case-sensitive
-var AllowedServiceProviders = []string{
+// All values are lowercase, case-sensitive
+var AllowedServiceProviders = []string{ //nolint:gochecknoglobals // Public API for validation
 	"aboutme",
 	"badoo",
 	"bebo",
@@ -439,8 +439,8 @@ type Ethnicity struct {
 //
 // Source: https://docs.pipl.com/reference#ethinicity
 //
-// Note: all lowercase, case-sensitive
-var AllowedEthnicities = []string{
+// All values are lowercase, case-sensitive
+var AllowedEthnicities = []string{ //nolint:gochecknoglobals // Public API for validation
 	"alaska_native",
 	"american_indian",
 	"black",

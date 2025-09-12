@@ -1,3 +1,4 @@
+// Package main demonstrates how to search for a person using the PIPL API.
 package main
 
 import (

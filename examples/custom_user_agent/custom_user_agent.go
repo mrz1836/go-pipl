@@ -1,3 +1,4 @@
+// Package main demonstrates how to use a custom user agent with the PIPL API.
 package main
 
 import (

@@ -19,7 +19,7 @@ func TestDefaultHTTPOptions(t *testing.T) {
 	assert.Equal(t, 2*time.Millisecond, options.BackOffInitialTimeout)
 	assert.Equal(t, 2*time.Millisecond, options.BackOffMaximumJitterInterval)
 	assert.Equal(t, 2, options.RequestRetryCount)
-	assert.Equal(t, 2.0, options.BackOffExponentFactor)
+	assert.InEpsilon(t, 2.0, options.BackOffExponentFactor, 0.001)
 	assert.Equal(t, 20*time.Second, options.DialerKeepAlive)
 	assert.Equal(t, 20*time.Second, options.TransportIdleTimeout)
 	assert.Equal(t, 3*time.Second, options.TransportExpectContinueTimeout)
@@ -36,20 +36,20 @@ func TestDefaultSearchOptions(t *testing.T) {
 	require.NotNil(t, options.Search)
 	require.NotNil(t, options.Thumbnail)
 
-	assert.Equal(t, false, options.Search.InferPersons)
-	assert.Equal(t, false, options.Search.TopMatch)
+	assert.False(t, options.Search.InferPersons)
+	assert.False(t, options.Search.TopMatch)
 	assert.Equal(t, MatchRequirementsNone, options.Search.MatchRequirements)
-	assert.Equal(t, float32(MinimumMatch), options.Search.MinimumMatch)
-	assert.Equal(t, float32(MinimumProbability), options.Search.MinimumProbability)
+	assert.InDelta(t, float32(MinimumMatch), options.Search.MinimumMatch, 0.001)
+	assert.InEpsilon(t, float32(MinimumProbability), options.Search.MinimumProbability, 0.001)
 	assert.Equal(t, ShowSourcesAll, options.Search.ShowSources)
 	assert.Equal(t, SourceCategoryRequirementsNone, options.Search.SourceCategoryRequirements)
-	assert.Equal(t, false, options.Search.HideSponsored)
-	assert.Equal(t, true, options.Search.LiveFeeds)
-	assert.Equal(t, false, options.Search.Pretty)
+	assert.False(t, options.Search.HideSponsored)
+	assert.True(t, options.Search.LiveFeeds)
+	assert.False(t, options.Search.Pretty)
 
-	assert.Equal(t, false, options.Thumbnail.Enabled)
-	assert.Equal(t, false, options.Thumbnail.Favicon)
-	assert.Equal(t, false, options.Thumbnail.ZoomFace)
+	assert.False(t, options.Thumbnail.Enabled)
+	assert.False(t, options.Thumbnail.Favicon)
+	assert.False(t, options.Thumbnail.ZoomFace)
 	assert.Equal(t, ThumbnailHeight, options.Thumbnail.Height)
 	assert.Equal(t, thumbnailEndpoint, options.Thumbnail.URL)
 	assert.Equal(t, ThumbnailWidth, options.Thumbnail.Width)
@@ -68,7 +68,7 @@ func TestWithAPIKey(t *testing.T) {
 		options := &ClientOptions{}
 		opt := WithAPIKey("")
 		opt(options)
-		assert.Equal(t, "", options.apiKey)
+		assert.Empty(t, options.apiKey)
 	})
 
 	t.Run("test applying option", func(t *testing.T) {
@@ -154,7 +154,7 @@ func TestWithSearchOptions(t *testing.T) {
 		opt := WithSearchOptions(customSearchOpts)
 		opt(options)
 		assert.Equal(t, customSearchOpts, options.searchOptions)
-		assert.Equal(t, float32(0.6), options.searchOptions.Search.MinimumProbability)
+		assert.InEpsilon(t, float32(0.6), options.searchOptions.Search.MinimumProbability, 0.001)
 	})
 }
 
@@ -171,7 +171,7 @@ func TestWithUserAgent(t *testing.T) {
 		options := &ClientOptions{}
 		opt := WithUserAgent("")
 		opt(options)
-		assert.Equal(t, "", options.userAgent)
+		assert.Empty(t, options.userAgent)
 	})
 
 	t.Run("test applying option", func(t *testing.T) {

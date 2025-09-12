@@ -27,7 +27,7 @@ const (
 	testSearchPointer           = "1906090343183157724859920008073008866"
 	testState                   = "KS"
 	testStreet                  = "Hickory Lane"
-	testThumbnailToken          = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3F484345CE74536C19A85D0BA3D32DC9E7D1878CD4D341254E7AD129255C6983E6E154C4530A0DAAF665EA325FC0206F8B1D7E0B6B7AD9EBF71FCF610D57D"
+	testThumbnailToken          = "AE2861B242686E7BD0CB4D9049298EB7D18FEF66D950E8AB78BCD3F484345CE74536C19A85D0BA3D32DC9E7D1878CD4D341254E7AD129255C6983E6E154C4530A0DAAF665EA325FC0206F8B1D7E0B6B7AD9EBF71FCF610D57D" //nolint:gosec // Test token
 	testURL                     = "https://twitter.com/clarkkent"
 	testUserAgent               = "test-user-agent"
 	testUserName                = "clarkkent"
@@ -306,7 +306,7 @@ func TestClient_SearchAllPossiblePeople(t *testing.T) {
 		require.Equal(t, testEmail, response.Query.Emails[0].Address)
 	})
 
-	t.Run("basic search, multiple possible persons", func(t *testing.T) {
+	t.Run("basic search, multiple possible persons", func(_ *testing.T) {
 		// todo: add new JSON with possible persons
 
 		// todo: test thumbnail generation of persons

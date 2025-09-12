@@ -80,3 +80,15 @@ var ErrInvalidCountryCode = errors.New("invalid country code")
 
 // ErrInvalidGender is when the GENDER is invalid
 var ErrInvalidGender = errors.New("invalid gender")
+
+// ErrMissingRequest is when the HTTP request is missing
+var ErrMissingRequest = errors.New("missing request")
+
+// ErrRequestNotFound is when the request is not found
+var ErrRequestNotFound = errors.New("request not found")
+
+// ErrBadRequest is when the request is bad
+var ErrBadRequest = errors.New("bad request")
+
+// ErrAPIResponse is when the API returns an error response
+var ErrAPIResponse = errors.New("API response error")

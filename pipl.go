@@ -6,7 +6,6 @@ package pipl
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 )
@@ -89,7 +88,7 @@ func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, e
 	if err != nil {
 		return nil, err
 	} else if len(response.Error) > 0 {
-		return nil, errors.New(response.Error)
+		return nil, fmt.Errorf("%w: %s", ErrAPIResponse, response.Error)
 	}
 	return response, nil
 }
@@ -150,7 +149,7 @@ func (c *Client) SearchByPointer(ctx context.Context, searchPointer string) (*Re
 	if err != nil {
 		return nil, err
 	} else if len(response.Error) > 0 {
-		return nil, errors.New(response.Error)
+		return nil, fmt.Errorf("%w: %s", ErrAPIResponse, response.Error)
 	}
 	return response, nil
 }

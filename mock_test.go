@@ -3,7 +3,6 @@ package pipl
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 )
@@ -18,7 +17,7 @@ func (v *validResponse) Do(req *http.Request) (*http.Response, error) {
 
 	// No req found
 	if req == nil {
-		return resp, errors.New("missing request")
+		return resp, ErrMissingRequest
 	}
 
 	// Parse the form data
@@ -49,8 +48,8 @@ func (v *validResponse) Do(req *http.Request) (*http.Response, error) {
 	}
 
 	// No request found, return an error
-	resp.Body = io.NopCloser(bytes.NewBuffer([]byte(`{"error":"no-route-found"}`)))
-	return resp, errors.New("request not found")
+	resp.Body = io.NopCloser(bytes.NewReader([]byte(`{"error":"no-route-found"}`)))
+	return resp, ErrRequestNotFound
 }
 
 // errorHTTPResponse will return error response(s)
@@ -60,7 +59,7 @@ type errorHTTPResponse struct{}
 func (v *errorHTTPResponse) Do(_ *http.Request) (*http.Response, error) {
 	resp := new(http.Response)
 	resp.StatusCode = http.StatusBadRequest
-	return resp, errors.New("bad request")
+	return resp, ErrBadRequest
 }
 
 // errorBadJSONResponse will return error response(s)
@@ -70,7 +69,7 @@ type errorBadJSONResponse struct{}
 func (v *errorBadJSONResponse) Do(_ *http.Request) (*http.Response, error) {
 	resp := new(http.Response)
 	resp.StatusCode = http.StatusOK
-	resp.Body = io.NopCloser(bytes.NewBuffer([]byte(`{error:bad-json}`)))
+	resp.Body = io.NopCloser(bytes.NewReader([]byte(`{error:bad-json}`)))
 	return resp, nil
 }
 
@@ -81,6 +80,6 @@ type errorMissingAPIKeyResponse struct{}
 func (v *errorMissingAPIKeyResponse) Do(_ *http.Request) (*http.Response, error) {
 	resp := new(http.Response)
 	resp.StatusCode = http.StatusForbidden
-	resp.Body = io.NopCloser(bytes.NewBuffer([]byte(`{"@http_status_code": 403,"error": "Please provide an API key"}`)))
+	resp.Body = io.NopCloser(bytes.NewReader([]byte(`{"@http_status_code": 403,"error": "Please provide an API key"}`)))
 	return resp, nil
 }

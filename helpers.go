@@ -69,7 +69,7 @@ func NewPerson() *Person {
 //
 // Source: https://docs.pipl.com/reference#name
 //
-// Note: Values are assumed to be sanitized already
+// # Values are assumed to be sanitized already
 //
 // Plan: All Plans
 func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string) error {
@@ -94,7 +94,7 @@ func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string)
 //
 // Source: https://docs.pipl.com/reference#name
 //
-// Note: Values are assumed to be sanitized already
+// # Values are assumed to be sanitized already
 //
 // Plan: All Plans
 func (p *Person) AddNameRaw(fullName string) error {
@@ -114,7 +114,7 @@ func (p *Person) AddNameRaw(fullName string) error {
 //
 // Source: https://docs.pipl.com/reference#email
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Business Plan
 func (p *Person) AddEmail(emailAddress string) (err error) {
@@ -134,7 +134,7 @@ func (p *Person) AddEmail(emailAddress string) (err error) {
 //
 // Source: https://docs.pipl.com/reference#username
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
 func (p *Person) AddUsername(username, serviceProvider string) error {
@@ -164,7 +164,7 @@ func (p *Person) AddUsername(username, serviceProvider string) error {
 //
 // Source: https://docs.pipl.com/reference#user-id
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
 func (p *Person) AddUserID(userID, serviceProvider string) error {
@@ -194,7 +194,7 @@ func (p *Person) AddUserID(userID, serviceProvider string) error {
 //
 // Source: https://docs.pipl.com/reference#url
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
 func (p *Person) AddURL(url string) error {
@@ -214,7 +214,7 @@ func (p *Person) AddURL(url string) error {
 //
 // Source: https://docs.pipl.com/reference#phone
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Landline phones are available in all plans, mobile phones
 //
@@ -243,7 +243,7 @@ func (p *Person) AddPhone(phoneNumber int64, countryCode int) error {
 //
 // Source:https://docs.pipl.com/reference#phone
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Landline phones are available in all plans, mobile phones
 //
@@ -265,7 +265,7 @@ func (p *Person) AddPhoneRaw(phoneNumber string) error {
 //
 // Source: https://docs.pipl.com/reference#address
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) AddAddress(house, street, apartment, city, state, country, poBox string) error {
@@ -304,7 +304,7 @@ func (p *Person) AddAddress(house, street, apartment, city, state, country, poBo
 //
 // Source: https://docs.pipl.com/reference#address
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) AddAddressRaw(fullAddress string) error {
@@ -324,7 +324,7 @@ func (p *Person) AddAddressRaw(fullAddress string) error {
 //
 // Source: https://docs.pipl.com/reference#job
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Business Plan
 func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) error {
@@ -356,7 +356,7 @@ func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRange
 //
 // Source: https://docs.pipl.com/reference#education
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Business Plan
 func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) error {
@@ -388,7 +388,7 @@ func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd strin
 //
 // Source: https://docs.pipl.com/reference#language
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) AddLanguage(languageCode, regionCode string) error {
@@ -422,7 +422,7 @@ func (p *Person) AddLanguage(languageCode, regionCode string) error {
 //
 // Source: https://docs.pipl.com/reference#ethinicity
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) AddEthnicity(ethnicity string) error {
@@ -448,7 +448,7 @@ func (p *Person) AddEthnicity(ethnicity string) error {
 //
 // Source: https://docs.pipl.com/reference#origin-country
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) AddOriginCountry(countryCode string) error {
@@ -470,7 +470,7 @@ func (p *Person) AddOriginCountry(countryCode string) error {
 //
 // Source: https://docs.pipl.com/reference#relationship
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
 func (p *Person) AddRelationship(relationship Relationship) (err error) {
@@ -485,7 +485,7 @@ func (p *Person) AddRelationship(relationship Relationship) (err error) {
 //
 // Source: https://docs.pipl.com/reference#gender
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) SetGender(gender string) error {
@@ -508,7 +508,7 @@ func (p *Person) SetGender(gender string) error {
 //
 // Source: https://docs.pipl.com/reference#date-of-birth
 //
-// Note: Values are assumed to be sanitized/validated already
+// Values are assumed to be sanitized/validated already
 //
 // Plan: All Plans
 func (p *Person) SetDateOfBirth(startDate, endDate string) error {

@@ -19,7 +19,7 @@ func httpRequest(ctx context.Context, client *Client, endpoint string,
 	if request, err = http.NewRequestWithContext(
 		ctx, http.MethodPost, endpoint, strings.NewReader(params.Encode()),
 	); err != nil {
-		return
+		return nil, err
 	}
 
 	// Set the headers
@@ -31,7 +31,7 @@ func httpRequest(ctx context.Context, client *Client, endpoint string,
 	// Fire the http request
 	var resp *http.Response
 	if resp, err = client.options.httpClient.Do(request); err != nil {
-		return
+		return nil, err
 	}
 
 	// Close the response body
@@ -44,13 +44,13 @@ func httpRequest(ctx context.Context, client *Client, endpoint string,
 	// Read the body
 	var body []byte
 	if body, err = io.ReadAll(resp.Body); err != nil {
-		return
+		return nil, err
 	}
 
 	// Parse the response
 	response = new(Response)
 	if err = json.Unmarshal(body, response); err != nil {
-		return
+		return nil, err
 	}
 
 	// Thumbnail generation enabled?
@@ -67,5 +67,5 @@ func httpRequest(ctx context.Context, client *Client, endpoint string,
 		}
 	}
 
-	return
+	return response, nil
 }

@@ -1,7 +1,7 @@
 package pipl
 
 import (
-	"crypto/md5"
+	"crypto/md5" //nolint:gosec // MD5 is used by PIPL API for email hashing
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,7 +16,7 @@ import (
 func loadResponseData(filename string) (response *Response, err error) {
 	// Open our jsonFile
 	var jsonFile *os.File
-	if jsonFile, err = os.Open("responses/" + filename); err != nil {
+	if jsonFile, err = os.Open("responses/" + filename); err != nil { //nolint:gosec // Safe test file inclusion
 		return
 	}
 
@@ -60,7 +60,7 @@ func Test_GoodResponse(t *testing.T) {
 
 	// Test query parameters (hash of email)
 	require.Equal(t, testEmail, response.Query.Emails[0].Address)
-	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(testEmail))), response.Query.Emails[0].AddressMD5)
+	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(testEmail))), response.Query.Emails[0].AddressMD5) //nolint:gosec // Testing PIPL API MD5 behavior
 
 	// ==================================================================================================================
 
@@ -87,7 +87,7 @@ func Test_GoodResponse(t *testing.T) {
 
 	// Test person struct and data (base)
 	require.Equal(t, personID, response.Person.ID)
-	require.Equal(t, float32(response.PersonsCount), response.Person.Match)
+	require.InEpsilon(t, float32(response.PersonsCount), response.Person.Match, 0.001)
 	require.Equal(t, "1906090343183157724859920008073008866", response.Person.SearchPointer)
 
 	// ==================================================================================================================
@@ -116,27 +116,27 @@ func Test_GoodResponse(t *testing.T) {
 
 	// Test email 1
 	require.Equal(t, "work", response.Person.Emails[0].Type)
-	require.Equal(t, false, response.Person.Emails[0].EmailProvider)
+	require.False(t, response.Person.Emails[0].EmailProvider)
 	require.Equal(t, "clark.kent@thedailyplanet.com", response.Person.Emails[0].Address)
-	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[0].Address))), response.Person.Emails[0].AddressMD5)
+	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[0].Address))), response.Person.Emails[0].AddressMD5) //nolint:gosec // Testing PIPL API MD5 behavior
 
 	// Test email 2
-	require.Equal(t, true, response.Person.Emails[1].Disposable)
-	require.Equal(t, false, response.Person.Emails[1].EmailProvider)
+	require.True(t, response.Person.Emails[1].Disposable)
+	require.False(t, response.Person.Emails[1].EmailProvider)
 	require.Equal(t, "ck242@guerrillamail.com", response.Person.Emails[1].Address)
-	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[1].Address))), response.Person.Emails[1].AddressMD5)
+	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[1].Address))), response.Person.Emails[1].AddressMD5) //nolint:gosec // Testing PIPL API MD5 behavior
 
 	// Test email 3
 	require.Equal(t, "personal", response.Person.Emails[2].Type)
-	require.Equal(t, true, response.Person.Emails[2].EmailProvider)
+	require.True(t, response.Person.Emails[2].EmailProvider)
 	require.Equal(t, "clark@gmail.com", response.Person.Emails[2].Address)
-	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[2].Address))), response.Person.Emails[2].AddressMD5)
+	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[2].Address))), response.Person.Emails[2].AddressMD5) //nolint:gosec // Testing PIPL API MD5 behavior
 
 	// Test email 4
-	require.Equal(t, true, response.Person.Emails[3].Disposable)
-	require.Equal(t, false, response.Person.Emails[3].EmailProvider)
+	require.True(t, response.Person.Emails[3].Disposable)
+	require.False(t, response.Person.Emails[3].EmailProvider)
 	require.Equal(t, "clark.kent@example.com", response.Person.Emails[3].Address)
-	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[3].Address))), response.Person.Emails[3].AddressMD5)
+	require.Equal(t, fmt.Sprintf("%x", md5.Sum([]byte(response.Person.Emails[3].Address))), response.Person.Emails[3].AddressMD5) //nolint:gosec // Testing PIPL API MD5 behavior
 
 	// ==================================================================================================================
 
@@ -330,7 +330,7 @@ func Test_PersonNotFoundResponse(t *testing.T) {
 	require.Equal(t, 0, response.PersonsCount)
 	require.Equal(t, 0, response.AvailableSources)
 	require.Equal(t, http.StatusOK, response.HTTPStatusCode)
-	require.Equal(t, "", response.Error)
+	require.Empty(t, response.Error)
 }
 
 // Test_BadKeyResponse test a bad api key response JSON

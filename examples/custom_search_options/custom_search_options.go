@@ -1,3 +1,4 @@
+// Package main demonstrates how to use custom search options with the PIPL API.
 package main
 
 import (

@@ -1,3 +1,4 @@
+// Package main demonstrates how to search by pointer using the PIPL API.
 package main
 
 import (
