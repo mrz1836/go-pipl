@@ -14,7 +14,6 @@ import (
 
 // loadResponseData loads a good forged response JSON (6/8/2019)
 func loadResponseData(filename string) (response *Response, err error) {
-
 	// Open our jsonFile
 	var jsonFile *os.File
 	if jsonFile, err = os.Open("responses/" + filename); err != nil {
@@ -42,7 +41,6 @@ func loadResponseData(filename string) (response *Response, err error) {
 
 // Test_GoodResponse test a good response JSON (expected)
 func Test_GoodResponse(t *testing.T) {
-
 	// Load the response data
 	response, err := loadResponseData("response_success.json")
 	require.NoError(t, err)

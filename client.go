@@ -63,7 +63,6 @@ type (
 
 // createDefaultHTTPClient will create a default HTTP client interface
 func createDefaultHTTPClient(c *Client) HTTPInterface {
-
 	// dial is the net dialer for clientDefaultTransport
 	dial := &net.Dialer{
 		KeepAlive: c.options.httpOptions.DialerKeepAlive,
@@ -112,7 +111,6 @@ func createDefaultHTTPClient(c *Client) HTTPInterface {
 
 // NewClient will make a new client with the provided options
 func NewClient(opts ...ClientOps) ClientInterface {
-
 	// Create a client with defaults
 	c := &Client{
 		options: &ClientOptions{

@@ -5,8 +5,10 @@ import (
 	"strings"
 )
 
-const genderMale = "male"
-const genderFemale = "female"
+const (
+	genderMale   = "male"
+	genderFemale = "female"
+)
 
 // SearchMeetsMinimumCriteria is used internally by Search to do some very
 // basic verification that the verify that search object has enough terms to
@@ -19,7 +21,6 @@ const genderFemale = "female"
 //	alone. We’re not a directory and can't provide bulk lists of people,
 //	rather we specialize in identity resolution of single individuals."
 func SearchMeetsMinimumCriteria(searchPerson *Person) bool {
-
 	// If an email is found, that meets minimum criteria
 	if searchPerson.HasEmail() {
 		return true
@@ -72,7 +73,6 @@ func NewPerson() *Person {
 //
 // Plan: All Plans
 func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string) error {
-
 	// We need a first or last name
 	if len(firstName) == 0 && len(lastName) == 0 {
 		return ErrMissingFirstLastName
@@ -98,7 +98,6 @@ func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string)
 //
 // Plan: All Plans
 func (p *Person) AddNameRaw(fullName string) error {
-
 	// Do we have a valid name?
 	if len(fullName) <= 5 {
 		return ErrNameTooShort
@@ -119,7 +118,6 @@ func (p *Person) AddNameRaw(fullName string) error {
 //
 // Plan: Business Plan
 func (p *Person) AddEmail(emailAddress string) (err error) {
-
 	// No Email or missing @ sign
 	if len(emailAddress) == 0 || !strings.Contains(emailAddress, "@") {
 		return ErrInvalidEmailAddress
@@ -139,8 +137,7 @@ func (p *Person) AddEmail(emailAddress string) (err error) {
 // Note: Values are assumed to be sanitized/validated already
 //
 // Plan: Social Plan
-func (p *Person) AddUsername(username string, serviceProvider string) error {
-
+func (p *Person) AddUsername(username, serviceProvider string) error {
 	// Must be greater than 3 characters
 	if len(username) <= 3 {
 		return ErrUserNameTooShort
@@ -171,7 +168,6 @@ func (p *Person) AddUsername(username string, serviceProvider string) error {
 //
 // Plan: Social Plan
 func (p *Person) AddUserID(userID, serviceProvider string) error {
-
 	// Must be greater than 2 characters
 	if len(userID) <= 2 {
 		return ErrUserIDTooShort
@@ -224,7 +220,6 @@ func (p *Person) AddURL(url string) error {
 //
 //	in the BUSINESS plan only.
 func (p *Person) AddPhone(phoneNumber int64, countryCode int) error {
-
 	// Phone is required (min length unknown)
 	if phoneNumber == 0 {
 		return ErrInvalidPhoneNumber
@@ -254,7 +249,6 @@ func (p *Person) AddPhone(phoneNumber int64, countryCode int) error {
 //
 //	in the BUSINESS plan only.
 func (p *Person) AddPhoneRaw(phoneNumber string) error {
-
 	// Phone is required (min length unknown)
 	if len(phoneNumber) < 4 {
 		return ErrInvalidPhoneNumber
@@ -275,7 +269,6 @@ func (p *Person) AddPhoneRaw(phoneNumber string) error {
 //
 // Plan: All Plans
 func (p *Person) AddAddress(house, street, apartment, city, state, country, poBox string) error {
-
 	// Must have a number and street
 	if len(house) == 0 || len(street) == 0 {
 		return ErrMissingNumberOrStreet
@@ -315,7 +308,6 @@ func (p *Person) AddAddress(house, street, apartment, city, state, country, poBo
 //
 // Plan: All Plans
 func (p *Person) AddAddressRaw(fullAddress string) error {
-
 	// Must have a minimum length
 	if len(fullAddress) < 5 {
 		return ErrAddressTooShort
@@ -336,7 +328,6 @@ func (p *Person) AddAddressRaw(fullAddress string) error {
 //
 // Plan: Business Plan
 func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRangeEnd string) error {
-
 	// Title required
 	if len(title) == 0 || len(organization) == 0 {
 		return ErrMissingTitleOrOrganization
@@ -369,7 +360,6 @@ func (p *Person) AddJob(title, organization, industry, dateRangeStart, dateRange
 //
 // Plan: Business Plan
 func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd string) error {
-
 	// School is required
 	if len(school) == 0 {
 		return ErrMissingSchool
@@ -402,7 +392,6 @@ func (p *Person) AddEducation(degree, school, dateRangeStart, dateRangeEnd strin
 //
 // Plan: All Plans
 func (p *Person) AddLanguage(languageCode, regionCode string) error {
-
 	// Invalid language code (2 char only)
 	if len(languageCode) >= 3 {
 		return ErrInvalidLanguageCode
@@ -437,7 +426,6 @@ func (p *Person) AddLanguage(languageCode, regionCode string) error {
 //
 // Plan: All Plans
 func (p *Person) AddEthnicity(ethnicity string) error {
-
 	// No ethnicity
 	if len(ethnicity) == 0 {
 		return ErrInvalidEthnicity
@@ -464,7 +452,6 @@ func (p *Person) AddEthnicity(ethnicity string) error {
 //
 // Plan: All Plans
 func (p *Person) AddOriginCountry(countryCode string) error {
-
 	// No code
 	if len(countryCode) == 0 {
 		return ErrInvalidCountryCode
@@ -502,7 +489,6 @@ func (p *Person) AddRelationship(relationship Relationship) (err error) {
 //
 // Plan: All Plans
 func (p *Person) SetGender(gender string) error {
-
 	// Invalid gender
 	if gender != genderMale && gender != genderFemale {
 		return ErrInvalidGender
@@ -526,7 +512,6 @@ func (p *Person) SetGender(gender string) error {
 //
 // Plan: All Plans
 func (p *Person) SetDateOfBirth(startDate, endDate string) error {
-
 	// No start date
 	if len(startDate) == 0 || len(endDate) == 0 {
 		return ErrMissingBirthDate
@@ -640,7 +625,6 @@ func (p *Person) HasAddress() bool {
 // ProcessThumbnails checks for any images and adds thumbnail urls to the existing image
 // Requires the client for now since the client has the current configuration
 func (p *Person) ProcessThumbnails(thumbnailSettings *ThumbnailSettings) {
-
 	// No images to process or no client
 	if len(p.Images) == 0 || thumbnailSettings == nil {
 		return

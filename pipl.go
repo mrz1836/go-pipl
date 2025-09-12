@@ -18,7 +18,6 @@ import (
 // return one full person, and a preview of possible people if < 100% match. Use the SearchAllPossiblePeople()
 // method to get all the details when searching.
 func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, error) {
-
 	// Do we meet the minimum requirements for searching?
 	if !SearchMeetsMinimumCriteria(searchPerson) {
 		return nil, ErrDoesNotMeetMinimumCriteria
@@ -99,7 +98,6 @@ func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, e
 // results in the form of a Response struct. If possible people are found, they are also
 // looked up using the SearchByPointer()
 func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Person) (response *Response, err error) {
-
 	// Lookup the person(s)
 	if response, err = c.Search(ctx, searchPerson); err != nil {
 		return
@@ -128,7 +126,6 @@ func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Pers
 // SearchByPointer takes a search pointer string and returns the full
 // information for the person associated with that pointer
 func (c *Client) SearchByPointer(ctx context.Context, searchPointer string) (*Response, error) {
-
 	// So we have a search pointer?
 	if len(searchPointer) < 20 {
 		return nil, ErrInvalidSearchPointer

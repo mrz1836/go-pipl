@@ -307,10 +307,8 @@ func TestClient_SearchAllPossiblePeople(t *testing.T) {
 	})
 
 	t.Run("basic search, multiple possible persons", func(t *testing.T) {
-
 		// todo: add new JSON with possible persons
 
 		// todo: test thumbnail generation of persons
-
 	})
 }

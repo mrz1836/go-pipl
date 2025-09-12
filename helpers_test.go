@@ -548,7 +548,6 @@ func TestAddOriginCountry(t *testing.T) {
 		require.NotEqual(t, 0, len(person.OriginCountries))
 		require.Equal(t, DefaultCountry, person.OriginCountries[0].Country)
 	})
-
 }
 
 // ExamplePerson_AddOriginCountry example using AddOriginCountry()
@@ -842,7 +841,6 @@ func TestPerson_ProcessThumbnails(t *testing.T) {
 	})
 
 	t.Run("valid settings", func(t *testing.T) {
-
 		// Create person and image
 		person := NewPerson()
 		image := new(Image)

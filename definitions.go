@@ -102,7 +102,6 @@ type SourceCategoryRequirements string
 //
 // Source: https://docs.pipl.com/reference#configuration-parameters
 type SearchParameters struct {
-
 	// ShowSources specifies the level of sources info to return with search results, one of {ShowSourcesMatching, ShowSourcesAll, ShowSourcesNone}
 	ShowSources SourceLevel
 
@@ -145,7 +144,6 @@ type SearchParameters struct {
 //
 // Example: http://thumb.pipl.com/image?height=250&width=250&favicon=true&zoom_face=true&tokens=FIRST_TOKEN,SECOND_TOKEN
 type ThumbnailSettings struct {
-
 	// URL is the thumbnail url
 	URL string
 

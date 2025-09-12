@@ -1,6 +1,6 @@
 module github.com/mrz1836/go-pipl
 
-go 1.17
+go 1.24
 
 require (
 	github.com/gojektech/heimdall/v6 v6.1.0

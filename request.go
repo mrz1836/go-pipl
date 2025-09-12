@@ -12,8 +12,8 @@ import (
 // httpRequest is a generic pipl request wrapper that can be used without the constraints
 // of the Search or SearchByPointer methods
 func httpRequest(ctx context.Context, client *Client, endpoint string,
-	params *url.Values) (response *Response, err error) {
-
+	params *url.Values,
+) (response *Response, err error) {
 	// Start the request
 	var request *http.Request
 	if request, err = http.NewRequestWithContext(

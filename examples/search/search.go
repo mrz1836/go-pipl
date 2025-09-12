@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	// Load the client with your API key
 	c := pipl.NewClient(
 		pipl.WithAPIKey(os.Getenv("PIPL_API_KEY")),
