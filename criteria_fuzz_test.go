@@ -150,55 +150,65 @@ func FuzzPersonHasMethods(f *testing.F) {
 		person := NewPerson()
 
 		// Test HasEmail
+		var emailAdded bool
 		if email != "" {
-			_ = person.AddEmail(email)
+			err := person.AddEmail(email)
+			emailAdded = err == nil
 		}
 		hasEmailResult := person.HasEmail()
-		expectedHasEmail := email != ""
+		expectedHasEmail := emailAdded
 
 		if hasEmailResult != expectedHasEmail {
 			t.Errorf("HasEmail returned %v, expected %v", hasEmailResult, expectedHasEmail)
 		}
 
 		// Test HasPhone
+		var phoneAdded bool
 		if phone != "" {
-			_ = person.AddPhoneRaw(phone)
+			err := person.AddPhoneRaw(phone)
+			phoneAdded = err == nil
 		}
 		hasPhoneResult := person.HasPhone()
-		expectedHasPhone := phone != ""
+		expectedHasPhone := phoneAdded
 
 		if hasPhoneResult != expectedHasPhone {
 			t.Errorf("HasPhone returned %v, expected %v", hasPhoneResult, expectedHasPhone)
 		}
 
 		// Test HasAddress
+		var addressAdded bool
 		if house != "" && street != "" && city != "" && state != "" {
-			_ = person.AddAddress(house, street, "", city, state, "US", "")
+			err := person.AddAddress(house, street, "", city, state, "US", "")
+			addressAdded = err == nil
 		}
 		hasAddressResult := person.HasAddress()
-		expectedHasAddress := house != "" && street != "" && city != "" && state != ""
+		expectedHasAddress := addressAdded
 
 		if hasAddressResult != expectedHasAddress {
 			t.Errorf("HasAddress returned %v, expected %v", hasAddressResult, expectedHasAddress)
 		}
 
 		// Test HasName
+		var nameAdded bool
 		if firstName != "" && lastName != "" {
-			_ = person.AddName(firstName, "", lastName, "", "")
+			err := person.AddName(firstName, "", lastName, "", "")
+			nameAdded = err == nil
 		}
 		hasNameResult := person.HasName()
-		expectedHasName := firstName != "" && lastName != ""
+		expectedHasName := nameAdded
 
 		if hasNameResult != expectedHasName {
 			t.Errorf("HasName returned %v, expected %v", hasNameResult, expectedHasName)
 		}
 
 		// Test HasURL
+		var urlAdded bool
 		if url != "" {
-			_ = person.AddURL(url)
+			err := person.AddURL(url)
+			urlAdded = err == nil
 		}
 		hasURLResult := person.HasURL()
-		expectedHasURL := url != ""
+		expectedHasURL := urlAdded
 
 		if hasURLResult != expectedHasURL {
 			t.Errorf("HasURL returned %v, expected %v", hasURLResult, expectedHasURL)

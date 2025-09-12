@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,6 +43,32 @@ func TestNewClient(t *testing.T) {
 		c := NewClient(WithHTTPOptions(opts))
 		require.NotNil(t, c)
 		require.NotNil(t, c.HTTPClient())
+
+		// Should return standard http.Client
+		_, ok := c.HTTPClient().(*http.Client)
+		assert.True(t, ok, "should return http.Client when retry count is 0")
+	})
+
+	t.Run("custom http options, with retry", func(t *testing.T) {
+		opts := DefaultHTTPOptions()
+		opts.RequestRetryCount = 3
+		opts.BackOffInitialTimeout = 5 * time.Millisecond
+		opts.BackOffMaxTimeout = 50 * time.Millisecond
+		opts.BackOffExponentFactor = 2.5
+		opts.BackOffMaximumJitterInterval = 10 * time.Millisecond
+
+		c := NewClient(WithHTTPOptions(opts))
+		require.NotNil(t, c)
+		require.NotNil(t, c.HTTPClient())
+
+		// Should return retryableHTTPClient
+		retryClient, ok := c.HTTPClient().(*retryableHTTPClient)
+		require.True(t, ok, "should return retryableHTTPClient when retry count > 0")
+		assert.Equal(t, 3, retryClient.retryCount)
+		assert.Equal(t, opts.BackOffInitialTimeout, retryClient.backoff.initialTimeout)
+		assert.Equal(t, opts.BackOffMaxTimeout, retryClient.backoff.maxTimeout)
+		assert.InDelta(t, opts.BackOffExponentFactor, retryClient.backoff.exponentFactor, 0.001)
+		assert.Equal(t, opts.BackOffMaximumJitterInterval, retryClient.backoff.maxJitterInterval)
 	})
 }
 
