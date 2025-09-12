@@ -99,10 +99,16 @@ go get github.com/mrz1836/go-pipl
 ## Documentation
 View the generated [documentation](https://pkg.go.dev/github.com/mrz1836/go-pipl?tab=doc)
 
+> **Heads up!** `go-pipl` is intentionally light on dependencies. The only
+external package it uses is the excellent `testify` suite—and that's just for
+our tests. You can drop this library into your projects without dragging along
+extra baggage.
+
+<br>
+
 ### Features
 - Complete coverage for the [pipl.com API](https://pipl.com/api/)
 - [Client](client.go) is completely configurable
-- Using [heimdall http client](https://github.com/gojek/heimdall) with exponential backoff & more
 - Minimum criteria detection before submitting a pipl query
 - Search by pipl pointer reference
 - Search for a single person via any of the following:
