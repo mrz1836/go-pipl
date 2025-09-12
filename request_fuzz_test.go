@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"unicode/utf8"
 )
 
 // FuzzJSONUnmarshalResponse tests JSON unmarshaling of API responses with various malformed inputs
@@ -273,6 +274,12 @@ func FuzzResponseJSONRoundTrip(f *testing.F) {
 	f.Add("search123", "API Error", 200, 1, 5, true)
 
 	f.Fuzz(func(t *testing.T, searchID, errorMsg string, httpStatus, personsCount, availableSources int, topMatch bool) {
+		// Skip test cases with invalid UTF-8 strings as JSON marshaling will replace
+		// invalid UTF-8 sequences with replacement characters, making round-trip impossible
+		if !utf8.ValidString(searchID) || !utf8.ValidString(errorMsg) {
+			t.Skip("Skipping test with invalid UTF-8 strings")
+		}
+
 		originalResponse := Response{
 			SearchID:         searchID,
 			Error:            errorMsg,
