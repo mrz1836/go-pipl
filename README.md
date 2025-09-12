@@ -74,7 +74,7 @@
 
 <br/>
 
-## 🗂️ Table of Contents
+## Table of Contents
 * [Installation](#installation)
 * [Documentation](#documentation)
 * [Examples & Tests](#examples--tests)
