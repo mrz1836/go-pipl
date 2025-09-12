@@ -507,7 +507,7 @@ func FuzzAddEthnicity(f *testing.F) {
 			// Check if ethnicity is in allowed list
 			allowed := false
 			for _, allowedEth := range AllowedEthnicities {
-				if ethnicity == allowedEth {
+				if strings.ToLower(ethnicity) == allowedEth {
 					allowed = true
 					break
 				}
