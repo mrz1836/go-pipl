@@ -1,12 +1,13 @@
 package pipl
 
 import (
+	"crypto/rand"
+	"fmt"
+	"math"
+	"math/big"
 	"net"
 	"net/http"
 	"time"
-
-	"github.com/gojektech/heimdall/v6"
-	"github.com/gojektech/heimdall/v6/httpclient"
 )
 
 const (
@@ -61,6 +62,73 @@ type (
 	}
 )
 
+// retryableHTTPClient implements HTTPInterface with retry logic using native Go
+type retryableHTTPClient struct {
+	client     HTTPInterface
+	retryCount int
+	backoff    backoffConfig
+}
+
+// backoffConfig holds the exponential backoff configuration
+type backoffConfig struct {
+	initialTimeout    time.Duration
+	maxTimeout        time.Duration
+	exponentFactor    float64
+	maxJitterInterval time.Duration
+}
+
+// Do executes the HTTP request with retry logic
+func (r *retryableHTTPClient) Do(req *http.Request) (*http.Response, error) {
+	if r.retryCount <= 0 {
+		return r.client.Do(req)
+	}
+
+	var lastErr error
+	for attempt := 0; attempt <= r.retryCount; attempt++ {
+		resp, err := r.client.Do(req)
+		if err == nil && resp != nil {
+			// Success - check if we should retry based on status code
+			if resp.StatusCode < 500 {
+				return resp, nil
+			}
+			// Server error - close body and retry
+			if resp.Body != nil {
+				_ = resp.Body.Close()
+			}
+		}
+
+		lastErr = err
+
+		// Don't sleep after the last attempt
+		if attempt < r.retryCount {
+			delay := r.calculateBackoff(attempt)
+			time.Sleep(delay)
+		}
+	}
+
+	return nil, fmt.Errorf("request failed after %d attempts: %w", r.retryCount+1, lastErr)
+}
+
+// calculateBackoff calculates the backoff delay with exponential backoff and jitter
+func (r *retryableHTTPClient) calculateBackoff(attempt int) time.Duration {
+	// Calculate exponential backoff
+	delay := float64(r.backoff.initialTimeout) * math.Pow(r.backoff.exponentFactor, float64(attempt))
+
+	// Apply maximum timeout limit
+	if delay > float64(r.backoff.maxTimeout) {
+		delay = float64(r.backoff.maxTimeout)
+	}
+
+	// Add jitter to prevent thundering herd
+	if r.backoff.maxJitterInterval > 0 {
+		jitterMax := big.NewInt(int64(r.backoff.maxJitterInterval))
+		jitterVal, _ := rand.Int(rand.Reader, jitterMax)
+		delay += float64(jitterVal.Int64())
+	}
+
+	return time.Duration(delay)
+}
+
 // createDefaultHTTPClient will create a default HTTP client interface
 func createDefaultHTTPClient(c *Client) HTTPInterface {
 	// dial is the net dialer for clientDefaultTransport
@@ -79,34 +147,27 @@ func createDefaultHTTPClient(c *Client) HTTPInterface {
 		TLSHandshakeTimeout:   c.options.httpOptions.TransportTLSHandshakeTimeout,
 	}
 
-	// Determine the strategy for the http client (no retry enabled)
-	if c.options.httpOptions.RequestRetryCount <= 0 {
-		return httpclient.NewClient(
-			httpclient.WithHTTPTimeout(c.options.httpOptions.RequestTimeout),
-			httpclient.WithHTTPClient(&http.Client{
-				Transport: clientDefaultTransport,
-				Timeout:   c.options.httpOptions.RequestTimeout,
-			}),
-		)
+	// Create base HTTP client
+	baseClient := &http.Client{
+		Transport: clientDefaultTransport,
+		Timeout:   c.options.httpOptions.RequestTimeout,
 	}
 
-	// Create exponential back-off
-	backOff := heimdall.NewExponentialBackoff(
-		c.options.httpOptions.BackOffInitialTimeout,
-		c.options.httpOptions.BackOffMaxTimeout,
-		c.options.httpOptions.BackOffExponentFactor,
-		c.options.httpOptions.BackOffMaximumJitterInterval,
-	)
+	// Return client with or without retry logic
+	if c.options.httpOptions.RequestRetryCount <= 0 {
+		return baseClient
+	}
 
-	return httpclient.NewClient(
-		httpclient.WithHTTPTimeout(c.options.httpOptions.RequestTimeout),
-		httpclient.WithRetrier(heimdall.NewRetrier(backOff)),
-		httpclient.WithRetryCount(c.options.httpOptions.RequestRetryCount),
-		httpclient.WithHTTPClient(&http.Client{
-			Transport: clientDefaultTransport,
-			Timeout:   c.options.httpOptions.RequestTimeout,
-		}),
-	)
+	return &retryableHTTPClient{
+		client:     baseClient, // baseClient implements HTTPInterface
+		retryCount: c.options.httpOptions.RequestRetryCount,
+		backoff: backoffConfig{
+			initialTimeout:    c.options.httpOptions.BackOffInitialTimeout,
+			maxTimeout:        c.options.httpOptions.BackOffMaxTimeout,
+			exponentFactor:    c.options.httpOptions.BackOffExponentFactor,
+			maxJitterInterval: c.options.httpOptions.BackOffMaximumJitterInterval,
+		},
+	}
 }
 
 // NewClient will make a new client with the provided options
