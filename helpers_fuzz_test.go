@@ -1,6 +1,7 @@
 package pipl
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -148,7 +149,7 @@ func FuzzAddUsername(f *testing.F) {
 		if !shouldError {
 			providerAllowed := false
 			for _, allowed := range AllowedServiceProviders {
-				if allowed == serviceProvider {
+				if allowed == strings.ToLower(serviceProvider) {
 					providerAllowed = true
 					break
 				}
@@ -198,7 +199,7 @@ func FuzzAddUserID(f *testing.F) {
 		if !shouldError {
 			providerAllowed := false
 			for _, allowed := range AllowedServiceProviders {
-				if allowed == serviceProvider {
+				if allowed == strings.ToLower(serviceProvider) {
 					providerAllowed = true
 					break
 				}
