@@ -478,7 +478,7 @@ func (p *Person) AddRelationship(relationship Relationship) (err error) {
 
 	// Set relationship
 	p.Relationships = append(p.Relationships, relationship)
-	return
+	return err
 }
 
 // SetGender sets the gender of the specified search object
@@ -651,8 +651,8 @@ func isAcceptedValue(testValue string, allowedValues *[]string) (success bool) {
 	for _, value := range *allowedValues {
 		if testValue == value {
 			success = true
-			return
+			return success
 		}
 	}
-	return
+	return success
 }

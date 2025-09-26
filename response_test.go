@@ -17,7 +17,7 @@ func loadResponseData(filename string) (response *Response, err error) {
 	// Open our jsonFile
 	var jsonFile *os.File
 	if jsonFile, err = os.Open("responses/" + filename); err != nil { //nolint:gosec // Safe test file inclusion
-		return
+		return response, err
 	}
 
 	// Defer the closing of our jsonFile so that we can parse it later on
@@ -28,7 +28,7 @@ func loadResponseData(filename string) (response *Response, err error) {
 	// Read our opened xmlFile as a byte array.
 	var byteValue []byte
 	if byteValue, err = io.ReadAll(jsonFile); err != nil {
-		return
+		return response, err
 	}
 
 	// Set the JSON (for debugging)
@@ -36,7 +36,7 @@ func loadResponseData(filename string) (response *Response, err error) {
 
 	// Set the response
 	err = json.Unmarshal(byteValue, &response)
-	return
+	return response, err
 }
 
 // Test_GoodResponse test a good response JSON (expected)
