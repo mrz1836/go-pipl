@@ -99,7 +99,7 @@ func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, e
 func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Person) (response *Response, err error) {
 	// Lookup the person(s)
 	if response, err = c.Search(ctx, searchPerson); err != nil {
-		return
+		return response, err
 	}
 
 	// When multiple PossiblePersons are returned, we get a "preview" of each of them (< 100% match confidence)
@@ -111,7 +111,7 @@ func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Pers
 			searchPointer := person.SearchPointer
 			var searchResponse *Response
 			if searchResponse, err = c.SearchByPointer(ctx, searchPointer); err != nil {
-				return
+				return response, err
 			}
 
 			// Replace the preview with the full details
@@ -119,7 +119,7 @@ func (c *Client) SearchAllPossiblePeople(ctx context.Context, searchPerson *Pers
 		}
 	}
 
-	return
+	return response, err
 }
 
 // SearchByPointer takes a search pointer string and returns the full
