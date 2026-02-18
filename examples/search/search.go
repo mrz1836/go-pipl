@@ -26,10 +26,10 @@ func main() {
 	var response *pipl.Response
 	response, err = c.Search(context.Background(), searchPerson)
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatalln(err.Error()) //nolint:gosec // Example code logging error message
 	} else if response == nil {
 		log.Fatalln("person not found")
 	}
 
-	log.Println("found person:", response.Person.Names[0].Display)
+	log.Println("found person:", response.Person.Names[0].Display) //nolint:gosec // Example code logging API response data
 }

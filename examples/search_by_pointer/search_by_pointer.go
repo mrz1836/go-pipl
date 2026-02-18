@@ -18,10 +18,10 @@ func main() {
 	// Submit the search request
 	response, err := c.SearchByPointer(context.Background(), os.Getenv("PIPL_SEARCH_POINTER"))
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatalln(err.Error()) //nolint:gosec // Example code logging error message
 	} else if response == nil {
 		log.Fatalln("person not found")
 	}
 
-	log.Println("found person:", response.Person.Names[0].Display)
+	log.Println("found person:", response.Person.Names[0].Display) //nolint:gosec // Example code logging API response data
 }

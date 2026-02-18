@@ -20,5 +20,5 @@ func main() {
 		pipl.WithHTTPOptions(customHTTPClientOptions),
 	)
 
-	log.Println("client loaded:", c.UserAgent())
+	log.Println("client loaded:", c.UserAgent()) //nolint:gosec // Example code logging known user-agent value
 }
