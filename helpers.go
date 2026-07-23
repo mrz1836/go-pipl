@@ -633,7 +633,8 @@ func (p *Person) ProcessThumbnails(thumbnailSettings *ThumbnailSettings) {
 	// Loop all images
 	for index, image := range p.Images {
 		if image.ThumbnailToken != "" {
-			p.Images[index].ThumbnailURL = fmt.Sprintf("%s?height=%d&width=%d&favicon=%t&zoom_face=%t&tokens=%s",
+			p.Images[index].ThumbnailURL = fmt.Sprintf(
+				"%s?height=%d&width=%d&favicon=%t&zoom_face=%t&tokens=%s",
 				thumbnailSettings.URL,
 				thumbnailSettings.Height,
 				thumbnailSettings.Width,
