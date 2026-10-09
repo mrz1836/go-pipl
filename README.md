@@ -118,8 +118,9 @@ extra baggage.
 ### Features
 - Complete coverage for the [pipl.com API](https://pipl.com/api/)
 - [Client](client.go) is completely configurable
-- Minimum criteria detection before submitting a pipl query
+- Minimum criteria detection before submitting a pipl query (a raw name needs at least two name parts, such as a first and a last name)
 - Search by pipl pointer reference
+- Search parameters (match requirements, minimum match, minimum probability, and the rest) are sent with each search when they differ from the API's defaults
 - Search for a single person via any of the following:
     - Full Name
     - Full Street Address
