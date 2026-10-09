@@ -21,8 +21,8 @@ var ErrMissingBirthDate = errors.New("missing start or end date of birth")
 // ErrMissingFirstLastName is when the FIRST and LAST name is missing
 var ErrMissingFirstLastName = errors.New("first name and last name are missing")
 
-// ErrNameTooShort is when the NAME is too short
-var ErrNameTooShort = errors.New("name is too short, minimum of 5 characters")
+// ErrNameTooShort is when a raw NAME has fewer than two name parts (a first and a last name)
+var ErrNameTooShort = errors.New("name is too short, a first and a last name are required")
 
 // ErrUserNameTooShort is when the USERNAME is too short
 var ErrUserNameTooShort = errors.New("username is too short")

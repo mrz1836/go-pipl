@@ -81,6 +81,60 @@ func TestAddNameRaw(t *testing.T) {
 		require.NotEmpty(t, person.Names)
 		require.Equal(t, "clark ryan kent", person.Names[0].Raw)
 	})
+
+	t.Run("accepts a name with two name parts", func(t *testing.T) {
+		tests := []struct {
+			name     string
+			fullName string
+		}{
+			{"two short name parts", "Li Na"},
+			{"two name parts with an accent", "Zo\u00eb Li"},
+			{"prefix and last name", "Dr. Kent"},
+			{"surrounding whitespace is kept as given", " Li Na\n"},
+			{"han name without spaces", "\u738b\u5c0f\u660e"},         // Wang Xiaoming
+			{"two han letters", "\u738b\u4f1f"},                       // Wang Wei
+			{"kanji name without spaces", "\u5c71\u7530\u592a\u90ce"}, // Yamada Taro
+			{"hangul name without spaces", "\ud64d\uae38\ub3d9"},      // Hong Gildong
+			{"hiragana name without spaces", "\u3055\u304f\u3089"},    // Sakura
+			{"katakana name without spaces", "\u30b5\u30af\u30e9"},    // Sakura
+		}
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				person := NewPerson()
+				err := person.AddNameRaw(test.fullName)
+				require.NoError(t, err)
+				require.Len(t, person.Names, 1)
+				require.Equal(t, test.fullName, person.Names[0].Raw)
+			})
+		}
+	})
+
+	t.Run("refuses a name with fewer than two name parts", func(t *testing.T) {
+		tests := []struct {
+			name     string
+			fullName string
+			message  string // the error text to check, when set
+		}{
+			{"one name part", "Superman", "name is too short, a first and a last name are required"},
+			{"one accented name part", "Ren\u00e9e", ""},
+			{"one han letter", "\u738b", ""}, // Wang
+			{"spaces only", "      ", ""},
+			{"punctuation only", "- -", ""},
+			{"digits only", "12 34", ""},
+			{"empty", "", ""},
+		}
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				person := NewPerson()
+				err := person.AddNameRaw(test.fullName)
+				require.ErrorIs(t, err, ErrNameTooShort)
+				if test.message != "" {
+					require.EqualError(t, err, test.message)
+				}
+				require.Empty(t, person.Names)
+			})
+		}
+	})
 }
 
 // ExamplePerson_AddNameRaw example using AddNameRaw()

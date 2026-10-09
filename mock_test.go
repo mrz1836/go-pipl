@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 // validResponse will return valid response(s)
@@ -50,6 +51,28 @@ func (v *validResponse) Do(req *http.Request) (*http.Response, error) {
 	// No request found, return an error
 	resp.Body = io.NopCloser(bytes.NewReader([]byte(`{"error":"no-route-found"}`)))
 	return resp, ErrRequestNotFound
+}
+
+// capturedFormResponse records the form of the last request and answers with the success response
+type capturedFormResponse struct {
+	form url.Values
+}
+
+// Do will do the HTTP request
+func (c *capturedFormResponse) Do(req *http.Request) (*http.Response, error) {
+	if err := req.ParseForm(); err != nil {
+		return nil, err
+	}
+	c.form = req.PostForm
+	response, err := loadResponseData("response_success.json")
+	if err != nil {
+		return nil, err
+	}
+	var b []byte
+	if b, err = json.Marshal(response); err != nil {
+		return nil, err
+	}
+	return &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(b))}, nil
 }
 
 // errorHTTPResponse will return error response(s)

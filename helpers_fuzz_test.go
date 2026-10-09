@@ -3,6 +3,9 @@ package pipl
 import (
 	"strings"
 	"testing"
+	"unicode"
+
+	"github.com/stretchr/testify/require"
 )
 
 // FuzzAddName tests the AddName function with various input combinations
@@ -46,9 +49,8 @@ func FuzzAddName(f *testing.F) {
 	})
 }
 
-// FuzzAddNameRaw tests the AddNameRaw function with various raw name inputs
-//
-//nolint:nestif // Comprehensive fuzz testing requires complex validation logic
+// FuzzAddNameRaw tests that AddNameRaw accepts a raw name only with two name parts
+// (each Han, Hiragana, Katakana, or Hangul letter counting as one) and stores it as given
 func FuzzAddNameRaw(f *testing.F) {
 	f.Add("John William Doe Jr.")
 	f.Add("Jane")
@@ -58,26 +60,43 @@ func FuzzAddNameRaw(f *testing.F) {
 	f.Add("Dr. Richard P. Feynman III")
 	f.Add("王小明") //nolint:gosmopolitan // Testing Unicode names
 	f.Add("محمد عبدالله")
+	f.Add("Li Na")
+	f.Add("Superman")
+	f.Add("      ")
+	f.Add("\u3055\u304f\u3089") // Sakura, in hiragana
+
+	// unspaced reports a letter of a script that writes names without spaces
+	unspaced := func(r rune) bool {
+		return unicode.IsLetter(r) && unicode.In(r, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Hangul)
+	}
 
 	f.Fuzz(func(t *testing.T, fullName string) {
 		person := NewPerson()
 		err := person.AddNameRaw(fullName)
 
-		if len(fullName) <= 5 {
-			if err == nil {
-				t.Errorf("Expected error for short name: %q", fullName)
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Unexpected error for valid name: %q, error: %v", fullName, err)
-			} else {
-				if len(person.Names) != 1 {
-					t.Errorf("Expected 1 name, got %d", len(person.Names))
-				} else if person.Names[0].Raw != fullName {
-					t.Errorf("Raw name not set correctly: expected %q, got %q", fullName, person.Names[0].Raw)
-				}
+		fields := strings.Fields(fullName)
+		lettered := 0 // the fields that hold a letter
+		for _, field := range fields {
+			if strings.ContainsFunc(field, unicode.IsLetter) {
+				lettered++
 			}
 		}
+
+		if err != nil {
+			require.ErrorIs(t, err, ErrNameTooShort)
+			require.Empty(t, person.Names)
+			require.Falsef(t, lettered >= 2 && lettered == len(fields),
+				"refused %q, which has two or more fields that each hold a letter", fullName)
+			return
+		}
+
+		require.Len(t, person.Names, 1)
+		require.Equal(t, fullName, person.Names[0].Raw)
+		require.Truef(t, strings.ContainsFunc(fullName, unicode.IsLetter), "accepted %q, which holds no letter", fullName)
+		require.Truef(t, len(fields) >= 2 || strings.ContainsFunc(fullName, unspaced),
+			"accepted %q, which is one field without a letter of a script that writes names without spaces", fullName)
+		require.NoErrorf(t, NewPerson().AddNameRaw(" \t"+fullName+"\n"),
+			"surrounding whitespace changed the outcome for %q", fullName)
 	})
 }
 

@@ -159,6 +159,70 @@ func TestClient_Search(t *testing.T) {
 
 		require.Equal(t, testEmail, response.Query.Emails[0].Address)
 	})
+
+	t.Run("valid request - custom minimum probability is sent", func(t *testing.T) {
+		capture := &capturedFormResponse{}
+		opts := DefaultSearchOptions()
+		opts.Search.MinimumProbability = 0.5
+		c := NewClient(WithAPIKey(testKey), WithHTTPClient(capture), WithSearchOptions(opts))
+		require.NotNil(t, c)
+
+		searchObject := NewPerson()
+		err := searchObject.AddUsername("superman", "facebook")
+		require.NoError(t, err)
+
+		_, err = c.Search(context.Background(), searchObject)
+		require.NoError(t, err)
+		require.Equal(t, "0.5", capture.form.Get("minimum_probability"))
+	})
+
+	t.Run("valid request - minimum probability keeps its precision", func(t *testing.T) {
+		capture := &capturedFormResponse{}
+		opts := DefaultSearchOptions()
+		opts.Search.MinimumProbability = 0.95
+		c := NewClient(WithAPIKey(testKey), WithHTTPClient(capture), WithSearchOptions(opts))
+		require.NotNil(t, c)
+
+		searchObject := NewPerson()
+		err := searchObject.AddUsername("superman", "facebook")
+		require.NoError(t, err)
+
+		_, err = c.Search(context.Background(), searchObject)
+		require.NoError(t, err)
+		require.Equal(t, "0.95", capture.form.Get("minimum_probability"))
+	})
+
+	t.Run("valid request - default minimum probability is not sent", func(t *testing.T) {
+		capture := &capturedFormResponse{}
+		opts := DefaultSearchOptions()
+		opts.Search.MinimumProbability = MinimumProbability
+		c := NewClient(WithAPIKey(testKey), WithHTTPClient(capture), WithSearchOptions(opts))
+		require.NotNil(t, c)
+
+		searchObject := NewPerson()
+		err := searchObject.AddUsername("superman", "facebook")
+		require.NoError(t, err)
+
+		_, err = c.Search(context.Background(), searchObject)
+		require.NoError(t, err)
+		require.NotContains(t, capture.form, "minimum_probability")
+	})
+
+	t.Run("valid request - zero minimum probability is not sent", func(t *testing.T) {
+		capture := &capturedFormResponse{}
+		opts := DefaultSearchOptions()
+		opts.Search.MinimumProbability = 0
+		c := NewClient(WithAPIKey(testKey), WithHTTPClient(capture), WithSearchOptions(opts))
+		require.NotNil(t, c)
+
+		searchObject := NewPerson()
+		err := searchObject.AddUsername("superman", "facebook")
+		require.NoError(t, err)
+
+		_, err = c.Search(context.Background(), searchObject)
+		require.NoError(t, err)
+		require.NotContains(t, capture.form, "minimum_probability")
+	})
 }
 
 // TestClient_SearchByPointer will test the method SearchByPointer()
