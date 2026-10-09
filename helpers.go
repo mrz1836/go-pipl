@@ -3,11 +3,15 @@ package pipl
 import (
 	"fmt"
 	"strings"
+	"unicode"
 )
 
 const (
 	genderMale   = "male"
 	genderFemale = "female"
+
+	// minimumRawNameParts is the fewest name parts a raw name needs: a first and a last name
+	minimumRawNameParts = 2
 )
 
 // SearchMeetsMinimumCriteria is used internally by Search to do some very
@@ -92,14 +96,20 @@ func (p *Person) AddName(firstName, middleName, lastName, prefix, suffix string)
 // AddNameRaw can be used when you're unsure how to handle breaking down the name in
 // question into its constituent parts. Basically, let Pipl handle parsing it.
 //
+// The name needs at least two name parts, such as a first and a last name ("Li Na").
+// A part is a run of characters between spaces that holds a letter; Han, Hiragana,
+// Katakana, and Hangul write names without spaces, so each of their letters is a part.
+// A name with fewer parts returns ErrNameTooShort and is not added. The name is stored
+// as given.
+//
 // Source: https://docs.pipl.com/reference#name
 //
 // # Values are assumed to be sanitized already
 //
 // Plan: All Plans
 func (p *Person) AddNameRaw(fullName string) error {
-	// Do we have a valid name?
-	if len(fullName) <= 5 {
+	// A raw name needs a first and a last name
+	if rawNameParts(fullName) < minimumRawNameParts {
 		return ErrNameTooShort
 	}
 
@@ -656,4 +666,28 @@ func isAcceptedValue(testValue string, allowedValues *[]string) (success bool) {
 		}
 	}
 	return success
+}
+
+// rawNameParts counts the name parts in a raw name, stopping once it reaches
+// minimumRawNameParts. A part is a run of characters between spaces that holds
+// at least one letter, and each Han, Hiragana, Katakana, or Hangul letter is a
+// part of its own, because those scripts write names without spaces.
+func rawNameParts(fullName string) (parts int) {
+	inPart := false // a letter of the current run is already counted
+	for _, r := range fullName {
+		switch {
+		case unicode.IsSpace(r):
+			inPart = false
+		case unicode.IsLetter(r) && unicode.In(r, unicode.Han, unicode.Hiragana, unicode.Katakana, unicode.Hangul):
+			parts++
+			inPart = false
+		case unicode.IsLetter(r) && !inPart:
+			parts++
+			inPart = true
+		}
+		if parts >= minimumRawNameParts {
+			return parts
+		}
+	}
+	return parts
 }

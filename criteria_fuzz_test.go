@@ -328,9 +328,8 @@ func FuzzPersonWithEmptyFields(f *testing.F) {
 		// Attempt to add fields with only whitespace
 		_ = person.AddEmail(email)
 		_ = person.AddPhoneRaw(phone)
-		if len(name) > 5 { // AddNameRaw has minimum length requirement
-			_ = person.AddNameRaw(name)
-		}
+		_ = person.AddNameRaw(name) // refused unless it has two name parts
+
 		if len(address) > 5 { // AddAddressRaw has minimum length requirement
 			_ = person.AddAddressRaw(address)
 		}
