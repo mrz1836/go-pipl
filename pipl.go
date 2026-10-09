@@ -53,6 +53,12 @@ func (c *Client) Search(ctx context.Context, searchPerson *Person) (*Response, e
 		postData.Add(fieldMinimumMatch, fmt.Sprintf("%v", c.options.searchOptions.Search.MinimumMatch))
 	}
 
+	// Custom minimum probability for inferred data (zero leaves the API's default)
+	if minimumProbability := c.options.searchOptions.Search.MinimumProbability; minimumProbability != 0 &&
+		minimumProbability != MinimumProbability {
+		postData.Add(fieldMinimumProbability, fmt.Sprintf("%v", minimumProbability))
+	}
+
 	// Set the "hide sponsors" flag (default is false)
 	if c.options.searchOptions.Search.HideSponsored {
 		postData.Add(fieldHideSponsored, valueTrue)

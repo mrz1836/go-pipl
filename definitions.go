@@ -37,7 +37,7 @@ const (
 
 	// https://docs.pipl.com/reference#match-criteria
 
-	// MinimumProbability is the score for probability
+	// MinimumProbability is the API's default minimum probability for inferred data; Search sends a different, non-zero value
 	MinimumProbability = 0.9
 
 	// MinimumMatch is the minimum for a match
@@ -71,6 +71,7 @@ const (
 	fieldLiveFeeds                  = "live_feeds"
 	fieldMatchRequirements          = "match_requirements"
 	fieldMinimumMatch               = "minimum_match"
+	fieldMinimumProbability         = "minimum_probability"
 	fieldPerson                     = "person"
 	fieldPretty                     = "pretty"
 	fieldSearchPointer              = "search_pointer"
@@ -115,7 +116,8 @@ type SearchParameters struct {
 	// then the results returned are empty, and you're not charged.
 	SourceCategoryRequirements SourceCategoryRequirements
 
-	// MinimumProbability is the minimum acceptable probability for inferred data
+	// MinimumProbability is the minimum acceptable probability for inferred data. Search sends it when it is set
+	// and differs from MinimumProbability, the API's default; zero leaves the API's default
 	MinimumProbability float32
 
 	// MinimumMatch specifies the minimum match confidence for a possible person to be returned in search results
