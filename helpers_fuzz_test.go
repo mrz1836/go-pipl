@@ -9,8 +9,6 @@ import (
 )
 
 // FuzzAddName tests the AddName function with various input combinations
-//
-//nolint:nestif // Comprehensive fuzz testing requires complex validation logic
 func FuzzAddName(f *testing.F) {
 	// Seed corpus with valid and edge case inputs
 	f.Add("John", "William", "Doe", "Mr.", "Jr.")
@@ -27,25 +25,20 @@ func FuzzAddName(f *testing.F) {
 
 		// Should only error if both first and last names are empty
 		if len(firstName) == 0 && len(lastName) == 0 {
-			if err == nil {
-				t.Errorf("Expected error when both first and last names are empty")
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Unexpected error with valid name inputs: %v", err)
-			} else {
-				// Verify the name was added correctly
-				if len(person.Names) != 1 {
-					t.Errorf("Expected 1 name, got %d", len(person.Names))
-				} else {
-					name := person.Names[0]
-					if name.First != firstName || name.Middle != middleName ||
-						name.Last != lastName || name.Prefix != prefix || name.Suffix != suffix {
-						t.Errorf("Name fields not set correctly")
-					}
-				}
-			}
+			require.Error(t, err, "expected error when both first and last names are empty")
+			return
 		}
+
+		require.NoError(t, err, "unexpected error with valid name inputs")
+
+		// Verify the name was added correctly
+		require.Len(t, person.Names, 1)
+		name := person.Names[0]
+		require.Equal(t, firstName, name.First)
+		require.Equal(t, middleName, name.Middle)
+		require.Equal(t, lastName, name.Last)
+		require.Equal(t, prefix, name.Prefix)
+		require.Equal(t, suffix, name.Suffix)
 	})
 }
 
@@ -101,8 +94,6 @@ func FuzzAddNameRaw(f *testing.F) {
 }
 
 // FuzzAddEmail tests the AddEmail function with various email formats
-//
-//nolint:nestif // Comprehensive fuzz testing requires complex validation logic
 func FuzzAddEmail(f *testing.F) {
 	f.Add("user@example.com")
 	f.Add("test@domain.org")
@@ -119,29 +110,15 @@ func FuzzAddEmail(f *testing.F) {
 		person := NewPerson()
 		err := person.AddEmail(emailAddress)
 
-		hasAt := false
-		for _, r := range emailAddress {
-			if r == '@' {
-				hasAt = true
-				break
-			}
+		// An empty address has no '@', so this also covers the empty case
+		if !strings.Contains(emailAddress, "@") {
+			require.Errorf(t, err, "expected error for invalid email: %q", emailAddress)
+			return
 		}
 
-		if len(emailAddress) == 0 || !hasAt {
-			if err == nil {
-				t.Errorf("Expected error for invalid email: %q", emailAddress)
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Unexpected error for potentially valid email: %q, error: %v", emailAddress, err)
-			} else {
-				if len(person.Emails) != 1 {
-					t.Errorf("Expected 1 email, got %d", len(person.Emails))
-				} else if person.Emails[0].Address != emailAddress {
-					t.Errorf("Email address not set correctly")
-				}
-			}
-		}
+		require.NoErrorf(t, err, "unexpected error for potentially valid email: %q", emailAddress)
+		require.Len(t, person.Emails, 1)
+		require.Equal(t, emailAddress, person.Emails[0].Address)
 	})
 }
 
@@ -282,8 +259,6 @@ func FuzzAddURL(f *testing.F) {
 }
 
 // FuzzAddPhone tests the AddPhone function with various phone number combinations
-//
-//nolint:nestif // Comprehensive fuzz testing requires complex validation logic
 func FuzzAddPhone(f *testing.F) {
 	f.Add(int64(5551234567), 1)
 	f.Add(int64(0), 1)
@@ -296,23 +271,14 @@ func FuzzAddPhone(f *testing.F) {
 		err := person.AddPhone(phoneNumber, countryCode)
 
 		if phoneNumber == 0 || countryCode == 0 {
-			if err == nil {
-				t.Errorf("Expected error for phone: %d, country: %d", phoneNumber, countryCode)
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Unexpected error for phone: %d, country: %d, error: %v", phoneNumber, countryCode, err)
-			} else {
-				if len(person.Phones) != 1 {
-					t.Errorf("Expected 1 phone, got %d", len(person.Phones))
-				} else {
-					phone := person.Phones[0]
-					if phone.Number != phoneNumber || phone.CountryCode != countryCode {
-						t.Errorf("Phone not set correctly")
-					}
-				}
-			}
+			require.Errorf(t, err, "expected error for phone: %d, country: %d", phoneNumber, countryCode)
+			return
 		}
+
+		require.NoErrorf(t, err, "unexpected error for phone: %d, country: %d", phoneNumber, countryCode)
+		require.Len(t, person.Phones, 1)
+		require.Equal(t, phoneNumber, person.Phones[0].Number)
+		require.Equal(t, countryCode, person.Phones[0].CountryCode)
 	})
 }
 
@@ -350,8 +316,6 @@ func FuzzAddPhoneRaw(f *testing.F) {
 }
 
 // FuzzAddAddress tests the AddAddress function with various address components
-//
-//nolint:nestif // Comprehensive fuzz testing requires complex validation logic
 func FuzzAddAddress(f *testing.F) {
 	f.Add("123", "Main St", "Apt 1", "Springfield", "IL", "US", "")
 	f.Add("", "Main St", "", "Springfield", "IL", "US", "")
@@ -366,24 +330,15 @@ func FuzzAddAddress(f *testing.F) {
 		shouldError := (len(house) == 0 || len(street) == 0) || (len(city) == 0 && len(state) == 0)
 
 		if shouldError {
-			if err == nil {
-				t.Errorf("Expected error for incomplete address")
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Unexpected error for valid address, error: %v", err)
-			} else {
-				if len(person.Addresses) != 1 {
-					t.Errorf("Expected 1 address, got %d", len(person.Addresses))
-				} else {
-					addr := person.Addresses[0]
-					// Country should be forced to DefaultCountry
-					if addr.Country != DefaultCountry {
-						t.Errorf("Country not set to default: expected %q, got %q", DefaultCountry, addr.Country)
-					}
-				}
-			}
+			require.Error(t, err, "expected error for incomplete address")
+			return
 		}
+
+		require.NoError(t, err, "unexpected error for valid address")
+		require.Len(t, person.Addresses, 1)
+
+		// Country should be forced to DefaultCountry
+		require.Equal(t, DefaultCountry, person.Addresses[0].Country)
 	})
 }
 
